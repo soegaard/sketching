@@ -1,8 +1,18 @@
 #lang info
-(define collection "sketching")
-(define deps '("base"))
-(define build-deps '("scribble-lib" "racket-doc" "rackunit-lib"))
-(define scribblings '(("scribblings/sketching.scrbl" ())))
-(define pkg-desc "Description Here")
-(define version "0.0")
+
+(define collection 'multi)
+
+(define deps '("base"
+               "draw-lib"
+               "pict-lib"
+               "math-lib"))
+
+(define build-deps '())
+
+(define pkg-desc "Drawing and animation library inspired by Processing.")
+
 (define pkg-authors '(soegaard))
+
+(define version "1.0")
+
+(define test-responsibles '((all jensaxel@soegaard.net)))
