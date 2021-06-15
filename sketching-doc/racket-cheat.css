@@ -1,0 +1,80 @@
+div.main > h2 {
+    display: none;
+}
+
+.SAuthorListBox {
+    display: none;
+}
+
+.maincolumn {
+    margin-right: 0em;
+    max-width: 900px;
+}
+
+div.Csheet {
+    display: -webkit-flex;
+    display: flex;
+    flex: 1;
+    -webkit-flex: 1;
+}
+
+div.Ccolumn {
+    display: flex;
+    flex: 0 0 50%;
+    -webkit-flex: 0 0 50%;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+div.Ccolumn#Cleft {
+    order: -1;
+}
+
+div.Csection {
+    min-width: 50%;
+    background: #ccb;
+    padding-left:   0.25em;
+    padding-right:  0.25em;
+    padding-top:    0.25em;
+    padding-bottom: 1em;
+    margin-bottom:  1em;
+}
+
+dic.Csection text { padding-bottom: 3.25em; }
+
+div.Csection > h1 {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin: 0;
+}
+
+div.Cgroup {
+}
+
+div.Cgroup > h2 {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin: 0;
+    padding-top: 0.25em;
+}
+
+div.Cgroup > table {
+    background: hsl(60, 29%, 94%);
+    width: 100%;
+    font-size: 90%;
+}
+
+div.Cgroup > table td {
+    border: 1px solid hsl(60, 29%, 80%);
+    padding: 1px;
+}
+
+
+div.Cgroup > table tr:nth-child(even) {
+    background: hsl(60, 29%, 97%);
+}
+
+div.Cgroup > table tr:nth-child(odd) {
+}
