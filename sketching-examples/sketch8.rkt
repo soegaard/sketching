@@ -1,5 +1,4 @@
-#lang racket
-(require sketching)
+#lang sketching
 
 (define (setup)
   (size 200 200))
@@ -19,8 +18,3 @@
 
   (fill 100)
   (rect 15 10 50 50)) ; gray 
-  
-(setup)
-(current-draw draw)
-(start)
-

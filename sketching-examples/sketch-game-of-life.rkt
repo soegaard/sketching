@@ -1,5 +1,4 @@
-#lang racket
-(require sketching)
+#lang sketching
 
 (define N 50)
 
@@ -8,8 +7,7 @@
                   (if (> (random 1) 0.5)
                       1 0))))
 
-(define (ref i j)   (vector-ref  (vector-ref board i) j))
-(define (set i j x) (vector-set! (vector-ref board i) j x))
+(define (ref i j)   (vector-ref (vector-ref board i) j))
 
 (define (live? i j) (equal? (ref i j) 1))
 (define (dead? i j) (equal? (ref i j) 0))
@@ -56,13 +54,3 @@
       (fill (if (live? i j) 0 255))
       (rect (* 10 j) (* 10 i) 10 10))))
 
-(setup)
-(current-draw draw)
-(start)
-
- 
-  
-  
-                     
-        
-  

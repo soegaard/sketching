@@ -1,5 +1,4 @@
-#lang racket
-(require sketching)
+#lang sketching
 
 (define (setup)
   (size 600 400))
@@ -8,7 +7,3 @@
   (if (< mouse-x 300)
       (cursor 'cross)
       (cursor 'hand)))
-
-(setup)
-(current-draw draw)
-(start)

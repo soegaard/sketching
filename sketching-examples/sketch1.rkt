@@ -1,7 +1,6 @@
-#lang racket
-(require sketching)
+#lang sketching
 
-#;(define (draw)
+(define (draw)
   (define n frame-count)
   (background 125)
   (stroke "red")
@@ -25,13 +24,10 @@
   (rect-mode 'center)
   (rect 300 50 20 40 5)
   (triangle 10 10 20 20 0 50)
-    )
+  )
 
 (define value 0)
 
-(define (draw)
-  (fill value)
-  (rect 25 25 50 50))
 
 (define (setup)
   (size 600 400)
@@ -39,25 +35,15 @@
   (displayln (list       width       height))
   (displayln (list pixel-width pixel-height)))
 
-(define (on-mouse-pressed)
+(define (mouse-pressed)
   (case mouse-button
     [(left)  (fill 255)]
     [(right) (fill 0)]))
 
-(define (on-mouse-dragged)
+(define (mouse-dragged)
   (set! value (+ value 5))
   (when (> value 255)
     (set! value 0)))
 
-(current-draw draw)
-(current-on-mouse-pressed on-mouse-pressed)
-; (current-mouse-moved   mouse-moved)
-(current-on-mouse-dragged on-mouse-dragged)
-(setup)
-(start)
-
 
 (frame-rate 30)
-(displayln focused)
-(displayln frame-rate)
-(displayln frame-count)

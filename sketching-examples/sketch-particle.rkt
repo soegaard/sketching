@@ -1,5 +1,5 @@
-#lang racket
-(require sketching)
+#lang sketching
+(require racket/match)
 
 (struct particle (x y vx vy ax ay α) #:transparent)
 
@@ -43,9 +43,3 @@
   (map draw-particle particles)
   (update-particles!)
   (add-particle! (new-particle 300 200)))
-
-
-(setup)
-(current-draw draw)
-(current-on-mouse-pressed mouse-pressed)
-(start)

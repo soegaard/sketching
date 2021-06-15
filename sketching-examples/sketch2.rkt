@@ -1,5 +1,4 @@
-#lang racket
-(require sketching)
+#lang sketching
 
 (define (setup)
   (size 600 400)
@@ -30,8 +29,5 @@
   ; (no-stroke)
   (circle x y 20))
 
-(current-draw draw)
-(setup)
-(start)
 
 

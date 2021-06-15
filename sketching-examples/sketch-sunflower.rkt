@@ -1,5 +1,4 @@
-#lang racket
-(require sketching)
+#lang sketching
 ; http://algorithmicbotany.org/papers/abop/abop-ch4.pdf
 
 (define c 5)
@@ -16,7 +15,3 @@
   (stroke-weight 5)
   (translate (/ width 2) (/ height 2))
   (point (* r (cos φ)) (* r (sin φ))))
-
-(setup)
-(current-draw draw)
-(start)

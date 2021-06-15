@@ -1,5 +1,4 @@
-#lang racket
-(require sketching)
+#lang sketching
 
 (define (setup)
   (frame-rate 30)
@@ -19,6 +18,3 @@
     [key-released
      (fill "white")]))
 
-(setup)
-(current-draw draw)
-(start)
