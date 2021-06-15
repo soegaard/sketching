@@ -18,13 +18,17 @@
  sq
  sqr
  ; constants
- pi
- half-pi
- quarter-pi
- two-pi
- tau
+ pi   π
+ pi/2 π/2
+ pi/4 π/4
+ 2pi 2π
+ 
+ atan2
+ round-up)
 
- )
+(define (atan2 y x)
+  (atan y x))
+
 
 ; abs
 (define (ceil x) (ceiling x))
@@ -59,10 +63,16 @@
 (define (sq  x) (* x x))
 
 ; (define pi         3.141592653589793)
-(define half-pi    (/ pi 2))
-(define quarter-pi (/ pi 4))
-(define two-pi     (* 2 pi))
-(define tau        two-pi) ; sigh
+(define π pi)
+
+(define pi/2 (/ pi 2))
+(define π/2  pi/2)
+
+(define pi/4 (/ pi 4))
+(define π/4  pi/4)
+
+(define 2pi (* 2 pi))
+(define 2π  2pi)
 
 
 (define r/d (/ 3.141592653589793 180.))
@@ -79,4 +89,6 @@
     [(low high) (+ low (* (- high low) (random)))]))
 
     
-
+(define (round-up x)
+  ; round ties towards +inf.0
+  (floor (+ x 0.5)))

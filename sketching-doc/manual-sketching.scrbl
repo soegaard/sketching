@@ -2,16 +2,30 @@
 @; raco scribble +m --dest html --redirect-main http://docs.racket-lang.org manual-sketching.scrbl && open html/manual-sketching.html
 @(require scribble/example)
 @(require racket/format)
+@(require (for-syntax racket/base syntax/parse))
 @(require (for-label ; (except-in racket/base #%app #%top)
            (except-in racket
                       #%app #%top #%module-begin class delay
-                      second struct random
+                      second struct random round
                       )
            sketching))
+
 
 @; Used to reference other manuals.
 @(define reference.scrbl '(lib "scribblings/reference/reference.scrbl"))
 @(define math.scrbl      '(lib "math/scribblings/math.scrbl"))
+
+@; only id is linked with @racket[] the arguments are not
+
+@(define-syntax (racketusage stx)
+   ; (displayln stx)
+   (syntax-parse stx
+     [(_ (id arg ...))
+      (syntax/loc stx
+        @racket[#:escape esc (id (esc @racketid[arg]) ...)])]
+     [(_ other)
+      (syntax/loc stx
+        @racket[other])]))
 
 @; Long urls
 
@@ -52,11 +66,181 @@ The documentation is based on the documentation for Processing (same documentati
 
 @author[@author+email["Jens Axel Søgaard" "jensaxel@soegaard.net"]]
 
-@local-table-of-contents[]
+@;local-table-of-contents[]
+
+@(require "racket-cheat.rkt")
+
+@(CSection
+  #:which 'left
+  "Color"
+  (CGroup
+   #f
+   (CRow "Setting"
+         @elem{@racket[background]
+               @racket[stroke]
+               @racket[fill]
+               @;racket[clear]
+               @racket[color-mode]               
+               @racket[no-stroke]
+               @racket[no-fill]})
+   (CRow "Creating and Reading"
+         @elem{@racket[color]
+               @racket[red]
+               @racket[green]
+               @racket[blue]
+               @racket[alpha]
+               @racket[hue]               
+               @racket[saturation]
+               @racket[brightness]
+               @racket[lerp-color]})))
+
+@(CSection
+  #:which 'left
+  "Input"
+  (CGroup
+   #f
+   (CRow "Mouse"
+         @elem{@racket[mouse-x]
+               @racket[mouse-y]
+               @racket[pmouse-x]
+               @racket[pmouse-y]
+               @racket[mouse-button]
+               @racket[mouse-pressed]
+               @racket[mouse-released]
+               @; racket[mouse-wheel]
+
+               @; racket[on-mouse-clicked] ; clicked is pressed+released (in the same component)
+               @racket[on-mouse-dragged]
+               @racket[on-mouse-moved]
+               @racket[on-mouse-pressed]
+               @racket[on-mouse-released]
+               @; racket[on-mouse-wheel]
+               })
+
+   (CRow "Keyboard"
+         @elem{@racket[key]
+               @racket[key-code]
+               @racket[key-pressed]
+               @racket[key-released]
+               @racket[key-typed]})
+
+   
+   (CRow "Time and Date"
+         @elem{@racket[year]
+               @racket[month]
+               @racket[day]
+               @racket[hour]
+               @racket[minute]
+               @racket[second]               
+               @racket[millis]})))
+
+
+
+@(CSection
+  #:which 'right
+  "Shape"
+  (CGroup
+   #f
+   (CRow "2D Primitives"
+         @elem{@racket[arc]
+               @racket[circle]
+               @racket[ellipse]
+               @racket[line]
+               @racket[point]               
+               @racket[quad]
+               @racket[rect]
+               @racket[square]
+               @racket[triangle]}))
+  (CGroup
+   #f
+   (CRow "Curves"
+         @elem{@racket[bezier]}))
+  (CGroup
+   #f
+   (CRow "Attributes"
+         @elem{@racket[ellipse-mode]
+               @racket[rect-mode]
+               @racket[stroke-cap]
+               @racket[stroke-join]
+               @racket[stroke-weight]}))
+  (CGroup
+   #f
+   (CRow "Vertex"
+         @elem{@racket[begin-shape]
+               @racket[vertex]
+               @racket[end-shape]})))
+
+@(CSection
+  #:which 'right
+  "Transform"
+  (CGroup
+   #f
+   (CRow "Transform"
+         @elem{@racket[rotate]
+               @racket[scale]
+               @racket[translate]
+               @racket[push-matrix]
+               @racket[pop-matrix]})))
+
+@(CSection
+  #:which 'right
+  "Math"
+  (CGroup
+   #f
+   (CRow "Operators"
+         @elem{@racket[modulo]
+               @racket[remainder]
+               @racket[quotient]
+               @racket[+=] @racket[-=]
+               @racket[*=] @racket[/=]
+               @racket[++] @racket[--]})
+   (CRow "Calculation"
+         @elem{@racket[abs]
+               @racket[ceil]
+               @racket[constrain]
+               @racket[dist]
+               @racket[exp]
+               @racket[floor]
+               @racket[lerp]
+               @racket[log]
+               @racket[mag]
+               @racket[remap]
+               @racket[max]
+               @racket[min]
+               @racket[norm]
+               @racket[pow]
+               @racket[round]
+               @racket[sq]
+               @racket[sqrt]})
+   (CRow "Trigonometry"
+         @elem{@racket[cos]
+               @racket[sin]
+               @racket[tan]
+               @racket[acos]
+               @racket[asin]
+               @racket[atan]
+               @racket[atan2]
+               @racket[radians]
+               @racket[degrees]})
+   (CRow "Constants"
+         @elem{@racket[pi]
+               @racket[π]
+               @racket[pi/2]
+               @racket[π/2]
+               @racket[pi/4]
+               @racket[π/4]
+               @racket[2pi]
+               @racket[2π]
+               })))
+
+@(render-cheat-sheet)
+
 
 @section{Reference}
 
 @local-table-of-contents[#:style 'immediate-only]
+
+
 
 @subsection{Color}
 
@@ -106,28 +290,32 @@ Sets the background color.
               (begin (background 255 204 0)
                      (send dc get-bitmap)))]
 
+
+
 @bold{Usage}
 
-@racket[(background rgb)]            @linebreak[]
-@racket[(background rgb alpha)]      @linebreak[]
-@racket[(background gray)]           @linebreak[]
-@racket[(background gray alpha)]     @linebreak[]
-@racket[(background v1 v2 v3)]       @linebreak[]
-@racket[(background v1 v2 v3 alpha)] @linebreak[]
-@racket[(background image)]          @linebreak[]
+
+
+@racketusage[(background rgb)]            @linebreak[]
+@racketusage[(background rgb alpha)]      @linebreak[]
+@racketusage[(background gray)]           @linebreak[]
+@racketusage[(background gray alpha)]     @linebreak[]
+@racketusage[(background v1 v2 v3)]       @linebreak[]
+@racketusage[(background v1 v2 v3 alpha)] @linebreak[]
+@racketusage[(background image)]          @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[rgb]   "A color value.")
-               (list @racket[alpha] "An alpha level.")
-               (list @racket[gray]  "An integer.")
-               (list @racket[v1]    "Red or hue value.")
-               (list @racket[v2]    "Green or saturation value.")
-               (list @racket[v3]    "Blue or brightness value."))]
+         (list (list @racketid[rgb]   "A color value.")
+               (list @racketid[alpha] "An alpha level.")
+               (list @racketid[gray]  "An integer.")
+               (list @racketid[v1]    "Red or hue value.")
+               (list @racketid[v2]    "Green or saturation value.")
+               (list @racketid[v3]    "Blue or brightness value."))]
 
-If the color mode is rgb, then the values @racket[v1], @racket[v2], @racket[v3] are rgb-values. @linebreak[]
-If the color mode is hsb, then the values @racket[v1], @racket[v2], @racket[v3] are hsb-values.
+If the color mode is rgb, then the values @racketid[v1], @racketid[v2], @racketid[v3] are rgb-values. @linebreak[]
+If the color mode is hsb, then the values @racketid[v1], @racketid[v2], @racketid[v3] are hsb-values.
 
 
 @bold{Description}
@@ -185,12 +373,12 @@ Extracts the red component of a color.
 
 @bold{Usage}
 
-@racket[(red rgb)]            @linebreak[]
+@racketusage[(red rgb)]            @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[rgb]   "A color value."))]
+         (list (list @racketid[rgb]   "A color value."))]
 
 
 @bold{Description}
@@ -234,12 +422,12 @@ Extracts the green component of a color.
 
 @bold{Usage}
 
-@racket[(green rgb)] @linebreak[]
+@racketusage[(green rgb)] @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[rgb]   "A color value."))]
+         (list (list @racketid[rgb]   "A color value."))]
 
 
 @bold{Description}
@@ -283,12 +471,12 @@ Extracts the blue component of a color.
 
 @bold{Usage}
 
-@racket[(blue rgb)] @linebreak[]
+@racketusage[(blue rgb)] @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[rgb]   "A color value."))]
+         (list (list @racketid[rgb]   "A color value."))]
 
 
 @bold{Description}
@@ -307,7 +495,7 @@ to change the default range.
 
 @bold{Name: } @defidentifier[#'alpha]
 
-Extracts the alpha component of the color @racket[c].
+Extracts the alpha component of the color @racketid[c].
 
 @bold{Examples}
 
@@ -331,12 +519,12 @@ Extracts the alpha component of the color @racket[c].
 
 @bold{Usage}
 
-@racket[(alpha rgb)] @linebreak[]
+@racketusage[(alpha rgb)] @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[rgb]   "A color value."))]
+         (list (list @racketid[rgb]   "A color value."))]
 
 
 @bold{Description}
@@ -390,12 +578,12 @@ Computes the hue value of a color.
 
 @bold{Usage}
 
-@racket[(hue rgb)] @linebreak[]
+@racketusage[(hue rgb)] @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[rgb]   "A color value."))]
+         (list (list @racketid[rgb]   "A color value."))]
 
 
 @bold{Description}
@@ -451,12 +639,12 @@ Computes the saturation value of a color.
 
 @bold{Usage}
 
-@racket[(saturation rgb)] @linebreak[]
+@racketusage[(saturation rgb)] @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[rgb]   "A color value."))]
+         (list (list @racketid[rgb]   "A color value."))]
 
 
 @bold{Description}
@@ -511,12 +699,12 @@ Computes the brightness value of a color.
 
 @bold{Usage}
 
-@racket[(brightness rgb)] @linebreak[]
+@racketusage[(brightness rgb)] @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[rgb]   "A color value."))]
+         (list (list @racketid[rgb]   "A color value."))]
 
 
 @bold{Description}
@@ -570,26 +758,26 @@ Sets the color used to fill shapes.
 
 @bold{Usage}
 
-@racket[(fill rgb)]            @linebreak[]
-@racket[(fill rgb alpha)]      @linebreak[]
-@racket[(fill gray)]           @linebreak[]
-@racket[(fill gray alpha)]     @linebreak[]
-@racket[(fill v1 v2 v3)]       @linebreak[]
-@racket[(fill v1 v2 v3 alpha)] @linebreak[]
-@racket[(fill image)]          @linebreak[]
+@racketusage[(fill rgb)]            @linebreak[]
+@racketusage[(fill rgb alpha)]      @linebreak[]
+@racketusage[(fill gray)]           @linebreak[]
+@racketusage[(fill gray alpha)]     @linebreak[]
+@racketusage[(fill v1 v2 v3)]       @linebreak[]
+@racketusage[(fill v1 v2 v3 alpha)] @linebreak[]
+@racketusage[(fill image)]          @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[rgb]   "A color value.")
-               (list @racket[alpha] "An alpha level.")
-               (list @racket[gray]  "An integer.")
-               (list @racket[v1]    "Red or hue value.")
-               (list @racket[v2]    "Green or saturation value.")
-               (list @racket[v3]    "Blue or brightness value."))]
+         (list (list @racketid[rgb]   "A color value.")
+               (list @racketid[alpha] "An alpha level.")
+               (list @racketid[gray]  "An integer.")
+               (list @racketid[v1]    "Red or hue value.")
+               (list @racketid[v2]    "Green or saturation value.")
+               (list @racketid[v3]    "Blue or brightness value."))]
 
-If the color mode is rgb, then the values @racket[v1], @racket[v2], @racket[v3] are rgb-values. @linebreak[]
-If the color mode is hsb, then the values @racket[v1], @racket[v2], @racket[v3] are hsb-values.
+If the color mode is rgb, then the values @racketid[v1], @racketid[v2], @racketid[v3] are rgb-values. @linebreak[]
+If the color mode is hsb, then the values @racketid[v1], @racketid[v2], @racketid[v3] are hsb-values.
 
 
 @bold{Description}
@@ -597,7 +785,7 @@ If the color mode is hsb, then the values @racket[v1], @racket[v2], @racket[v3] 
 Sets the color used to fill shapes. For example, if you run @racket[(fill 204 102 0)],
 all subsequent shapes will be filled with orange. This color
 is either specified in terms of the RGB or HSB color depending on the
-current @racket[color-Mode]. The default color space is RGB, with each value
+current @racket[color-mode]. The default color space is RGB, with each value
 in the range from 0 to 255.
 
 When using hexadecimal notation to specify a color, use a string beginning with @racket["#"]
@@ -659,26 +847,26 @@ Sets the color used to draw lines and borders around shapes.
 
 @bold{Usage}
 
-@racket[(stroke rgb)]            @linebreak[]
-@racket[(stroke rgb alpha)]      @linebreak[]
-@racket[(stroke gray)]           @linebreak[]
-@racket[(stroke gray alpha)]     @linebreak[]
-@racket[(stroke v1 v2 v3)]       @linebreak[]
-@racket[(stroke v1 v2 v3 alpha)] @linebreak[]
-@racket[(stroke image)]          @linebreak[]
+@racketusage[(stroke rgb)]            @linebreak[]
+@racketusage[(stroke rgb alpha)]      @linebreak[]
+@racketusage[(stroke gray)]           @linebreak[]
+@racketusage[(stroke gray alpha)]     @linebreak[]
+@racketusage[(stroke v1 v2 v3)]       @linebreak[]
+@racketusage[(stroke v1 v2 v3 alpha)] @linebreak[]
+@racketusage[(stroke image)]          @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[rgb]   "A color value.")
-               (list @racket[alpha] "An alpha level.")
-               (list @racket[gray]  "An integer.")
-               (list @racket[v1]    "Red or hue value.")
-               (list @racket[v2]    "Green or saturation value.")
-               (list @racket[v3]    "Blue or brightness value."))]
+         (list (list @racketid[rgb]   "A color value.")
+               (list @racketid[alpha] "An alpha level.")
+               (list @racketid[gray]  "An integer.")
+               (list @racketid[v1]    "Red or hue value.")
+               (list @racketid[v2]    "Green or saturation value.")
+               (list @racketid[v3]    "Blue or brightness value."))]
 
-If the color mode is rgb, then the values @racket[v1], @racket[v2], @racket[v3] are rgb-values. @linebreak[]
-If the color mode is hsb, then the values @racket[v1], @racket[v2], @racket[v3] are hsb-values.
+If the color mode is rgb, then the values @racketid[v1], @racketid[v2], @racketid[v3] are rgb-values. @linebreak[]
+If the color mode is hsb, then the values @racketid[v1], @racketid[v2], @racketid[v3] are hsb-values.
 
 
 @bold{Description}
@@ -687,7 +875,7 @@ If the color mode is hsb, then the values @racket[v1], @racket[v2], @racket[v3] 
 Sets the color used to draw lines and borders around shapes.
 For example, after @racket[(stroke 204 102 0)], all subsequent shapes will be filled with orange.
 This color is either specified in terms of the RGB or HSB color depending on the
-current @racket[color-Mode]. The default color space is RGB, with each value
+current @racket[color-mode]. The default color space is RGB, with each value
 in the range from 0 to 255.
 
 When using hexadecimal notation to specify a color, use a string beginning with @racket["#"]
@@ -730,7 +918,7 @@ Disables filling of shapes.
 
 @bold{Usage}
 
-@racket[(no-fill)]            @linebreak[]
+@racketusage[(no-fill)]            @linebreak[]
 
 
 @bold{Description}
@@ -760,7 +948,7 @@ Disables drawing the stroke (outline).
 
 @bold{Usage}
 
-@racket[(no-stroke)]            @linebreak[]
+@racketusage[(no-stroke)]            @linebreak[]
 
 
 @bold{Description}
@@ -816,20 +1004,20 @@ Sets the color mode to rgb or hsb.
 
 @bold{Usage}
 
-@racket[(color-mode mode)]                         @linebreak[]
-@racket[(color-mode mode max)]                     @linebreak[]
-@racket[(color-mode mode max1 max2 max3)]          @linebreak[]
-@racket[(color-mode mode max1 max2 max3 maxA)]     @linebreak[]
+@racketusage[(color-mode mode)]                         @linebreak[]
+@racketusage[(color-mode mode max)]                     @linebreak[]
+@racketusage[(color-mode mode max1 max2 max3)]          @linebreak[]
+@racketusage[(color-mode mode max1 max2 max3 maxA)]     @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[mode]  "'rgb or 'hsb corresponding to red/greeb/blue or huse/saturation/brightness")
-               (list @racket[max]   "maximum value for all color elements")
-               (list @racket[max1]  "maximum value for the red value or hue value according to the mode")
-               (list @racket[max2]  "maximum value for the green value or saturation value according to the mode")
-               (list @racket[max3]  "maximum value for the blue value or brightness value according to the mode")
-               (list @racket[maxA]  "maximum value for the alpha value"))]
+         (list (list @racketid[mode]  "'rgb or 'hsb corresponding to red/greeb/blue or huse/saturation/brightness")
+               (list @racketid[max]   "maximum value for all color elements")
+               (list @racketid[max1]  "maximum value for the red value or hue value according to the mode")
+               (list @racketid[max2]  "maximum value for the green value or saturation value according to the mode")
+               (list @racketid[max3]  "maximum value for the blue value or brightness value according to the mode")
+               (list @racketid[maxA]  "maximum value for the alpha value"))]
 
 
 @bold{Description}
@@ -839,9 +1027,9 @@ parameters for @racket[fill], @racket[stroke], @racket[background], and @racket[
 by values between 0 and 255 using the RGB color model. The @racket[color-mode]
 function is used to change the numerical range used for specifying
 colors and to switch color systems. For example, calling
-@racket[(colorMode 'rgb 1.0)] will specify that values are specified between 0
+@racket[(color-mode 'rgb 1.0)] will specify that values are specified between 0
 and 1. The limits for defining colors are altered by setting the
-parameters @racket[max], @racket[max1], @racket[max2], @racket[max3], and @racket[maxA].
+parameters @racketid[max], @racketid[max1], @racketid[max2], @racketid[max3], and @racketid[maxA].
 
 After changing the range of values for colors, in expressions like
 @racket[(color-mode 'hsb 360 100 100)], those ranges remain in use until they
@@ -887,14 +1075,14 @@ Calculates a color between two colors at a specific increment.
 
 @bold{Usage}
 
-@racket[(lerp-color color1 color22 amount)]                         @linebreak[]
+@racketusage[(lerp-color color1 color22 amount)]                         @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[color1]  "interpolate from this color")
-               (list @racket[color2]  "interpolate to this color")
-               (list @racket[amount]  "value between 0.0 and 1.0"))]
+         (list (list @racketid[color1]  "interpolate from this color")
+               (list @racketid[color2]  "interpolate to this color")
+               (list @racketid[amount]  "value between 0.0 and 1.0"))]
 
 
 @bold{Description}
@@ -912,6 +1100,8 @@ strange and unexpected colors.
 @;---------
 
 @subsection{2D Primitives}
+
+
 
 @;---------
 
@@ -931,13 +1121,13 @@ Draws an arc to the screen.
 @examples[#:label #f #:eval se
           (stroke 0)
           (fill 255)
-          (arc 50 55 50 50 0 half-pi)
+          (arc 50 55 50 50 0 π/2)
           (no-fill)
-          (arc 50 55 60 60 half-pi    pi)
-          (arc 50 55 70 70 pi      (+ pi quarter-pi))
-          (arc 50 55 80 80 (+ pi quarter-pi) two-pi)
-          (eval:alts        (arc 50 55 80 80 (+ pi quarter-pi) two-pi)
-                     (begin (arc 50 55 80 80 (+ pi quarter-pi) two-pi)
+          (arc 50 55 60 60 π/2    π)
+          (arc 50 55 70 70 π      (+ π π/4))
+          (arc 50 55 80 80 (+ π π/4) 2π)
+          (eval:alts        (arc 50 55 80 80 (+ π π/4) 2π)
+                     (begin (arc 50 55 80 80 (+ π π/4) 2π)
                             (send dc get-bitmap)))]
 
 @examples[#:hidden #:eval se
@@ -982,19 +1172,19 @@ Draws an arc to the screen.
 
 @bold{Usage}
 
-@racket[(arc a b c d start stop)]                         @linebreak[]
-@racket[(arc a b c d start stop mode)]                    @linebreak[]
+@racketusage[(arc a b c d start stop)]                         @linebreak[]
+@racketusage[(arc a b c d start stop mode)]                    @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[a]       "x-coordinate of the arc's ellipse")
-               (list @racket[b]       "y-coordinate of the arc's ellipse")
-               (list @racket[c]       "width of the arc's ellipse by default")
-               (list @racket[d]       "height of the arc's ellipse by default")
-               (list @racket[start]   "angle to start the arc, specified in radians")
-               (list @racket[stop]    "angle to stop the arc, specified in radians")
-               (list @racket[mode]    "one of: 'open-pie 'pie 'open 'chord"))]
+         (list (list @racketid[a]       "x-coordinate of the arc's ellipse")
+               (list @racketid[b]       "y-coordinate of the arc's ellipse")
+               (list @racketid[c]       "width of the arc's ellipse by default")
+               (list @racketid[d]       "height of the arc's ellipse by default")
+               (list @racketid[start]   "angle to start the arc, specified in radians")
+               (list @racketid[stop]    "angle to stop the arc, specified in radians")
+               (list @racketid[mode]    "one of: 'open-pie 'pie 'open 'chord"))]
 
 
 @bold{Description}
@@ -1034,14 +1224,14 @@ Draws a circle to the screen.
 
 @bold{Usage}
 
-@racket[(circle x y extent)]            @linebreak[]
+@racketusage[(circle x y extent)]            @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[x]       "x-coordinate of the arc's ellipse")
-               (list @racket[y]       "y-coordinate of the arc's ellipse")
-               (list @racket[extent]  "width of the arc's ellipse by default"))]
+         (list (list @racketid[x]       "x-coordinate of the arc's ellipse")
+               (list @racketid[y]       "y-coordinate of the arc's ellipse")
+               (list @racketid[extent]  "width of the arc's ellipse by default"))]
 
 
 @bold{Description}
@@ -1074,17 +1264,17 @@ Draws an ellipse to the screen.
 
 @bold{Usage}
 
-@racket[(ellipse a b c d)]            @linebreak[]
+@racketusage[(ellipse a b c d)]            @linebreak[]
 
 @bold{Arguments}
 
 The default interpretation of the arguments is:
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[a]   "x-coordinate of the arc's ellipse")
-               (list @racket[b]   "y-coordinate of the arc's ellipse")
-               (list @racket[c]   "width of the arc's ellipse by default")
-               (list @racket[d]   "height of the arc's ellipse by default"))]
+         (list (list @racketid[a]   "x-coordinate of the arc's ellipse")
+               (list @racketid[b]   "y-coordinate of the arc's ellipse")
+               (list @racketid[c]   "width of the arc's ellipse by default")
+               (list @racketid[d]   "height of the arc's ellipse by default"))]
 
 The interpretation of the arguments are affected by @racket[ellipse-mode].
 
@@ -1133,15 +1323,15 @@ Draws a line to the screen.
 
 @bold{Usage}
 
-@racket[(line x1 y1 x2 y2)]            @linebreak[]
+@racketusage[(line x1 y1 x2 y2)]            @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[x1]   "x-coordinate of the first point")
-               (list @racket[y1]   "y-coordinate of the first point")
-               (list @racket[x2]   "x-coordinate of the second point")
-               (list @racket[y2]   "y-coordinate of the second point"))]
+         (list (list @racketid[x1]   "x-coordinate of the first point")
+               (list @racketid[y1]   "y-coordinate of the first point")
+               (list @racketid[x2]   "x-coordinate of the second point")
+               (list @racketid[y2]   "y-coordinate of the second point"))]
 
 
 
@@ -1216,13 +1406,13 @@ Draws a point to the screen.
 
 @bold{Usage}
 
-@racket[(point x y)]            @linebreak[]
+@racketusage[(point x y)]            @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[x]   "x-coordinate of the point")
-               (list @racket[y]   "y-coordinate of the point"))]
+         (list (list @racketid[x]   "x-coordinate of the point")
+               (list @racketid[y]   "y-coordinate of the point"))]
 
 
 
@@ -1263,19 +1453,19 @@ Draws a quadrilateral (a four-sided polygon) to the screen.
 
 @bold{Usage}
 
-@racket[(quad x1 y1  x2 y2  x3 y3  x4 y4)]            @linebreak[]
+@racketusage[(quad x1 y1  x2 y2  x3 y3  x4 y4)]            @linebreak[]
 
 @bold{Arguments}
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[x1]   "x-coordinate of the first corner")
-               (list @racket[y1]   "y-coordinate of the first corner")
-               (list @racket[x2]   "x-coordinate of the second corner")
-               (list @racket[y2]   "y-coordinate of the second corner")
-               (list @racket[x3]   "x-coordinate of the third corner")
-               (list @racket[y3]   "y-coordinate of the third corner")
-               (list @racket[x4]   "x-coordinate of the fourth corner")
-               (list @racket[y5]   "y-coordinate of the fourth corner"))]
+         (list (list @racketid[x1]   "x-coordinate of the first corner")
+               (list @racketid[y1]   "y-coordinate of the first corner")
+               (list @racketid[x2]   "x-coordinate of the second corner")
+               (list @racketid[y2]   "y-coordinate of the second corner")
+               (list @racketid[x3]   "x-coordinate of the third corner")
+               (list @racketid[y3]   "y-coordinate of the third corner")
+               (list @racketid[x4]   "x-coordinate of the fourth corner")
+               (list @racketid[y4]   "y-coordinate of the fourth corner"))]
 
 
 @bold{Description}
@@ -1332,8 +1522,8 @@ Draws a rectangle to the screen.
 
 @bold{Usage}
 
-@racket[(rect a b c d)]              @linebreak[]
-@racket[(rect a b c d r)]            @linebreak[]
+@racketusage[(rect a b c d)]              @linebreak[]
+@racketusage[(rect a b c d r)]            @linebreak[]
 @;@racket[(rect a b c d tl tr br bl)]  @linebreak[] TODO
 
 @bold{Arguments}
@@ -1343,15 +1533,15 @@ The default interpretation of the arguments is:
 
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[a]    "x-coordinate of corner")
-               (list @racket[b]    "y-coordinate of corner")
-               (list @racket[c]    "width")
-               (list @racket[d]    "height")
-               (list @racket[r]    "radii for all four corners")
-               #;(list @racket[tl]   "radius for top-left corner")
-               #;(list @racket[tr]   "radius for top-right corner")
-               #;(list @racket[br]   "radius for bottom-right corner")
-               #;(list @racket[bl]   "radius for bottom-left corner"))]
+         (list (list @racketid[a]    "x-coordinate of corner")
+               (list @racketid[b]    "y-coordinate of corner")
+               (list @racketid[c]    "width")
+               (list @racketid[d]    "height")
+               (list @racketid[r]    "radii for all four corners")
+               #;(list @racketid[tl]   "radius for top-left corner")
+               #;(list @racketid[tr]   "radius for top-right corner")
+               #;(list @racketid[br]   "radius for bottom-right corner")
+               #;(list @racketid[bl]   "radius for bottom-left corner"))]
 
 The interpretation of the arguments are affected by @racket[rect-mode].
 
@@ -1398,7 +1588,7 @@ Draws a square to the screen.
 
 @bold{Usage}
 
-@racket[(square x y extent)]              @linebreak[]
+@racketusage[(square x y extent)]              @linebreak[]
 
 @bold{Arguments}
 
@@ -1407,9 +1597,9 @@ The default interpretation of the arguments is:
 
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[x]      "x-coordinate of corner")
-               (list @racket[y]      "y-coordinate of corner")
-               (list @racket[extent] "length of side"))]
+         (list (list @racketid[x]      "x-coordinate of corner")
+               (list @racketid[y]      "y-coordinate of corner")
+               (list @racketid[extent] "length of side"))]
 
 The interpretation of the arguments are affected by @racket[rect-mode].
 
@@ -1445,18 +1635,18 @@ Draws a triangle to the screen.
 
 @bold{Usage}
 
-@racket[(triangle x1 y1  x2 y2  x3 y3)]        @linebreak[]
+@racketusage[(triangle x1 y1  x2 y2  x3 y3)]        @linebreak[]
 
 @bold{Arguments}
 
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[x1]   "x-coordinate of the first corner")
-               (list @racket[y1]   "y-coordinate of the first corner")
-               (list @racket[x2]   "x-coordinate of the second corner")
-               (list @racket[y2]   "y-coordinate of the second corner")
-               (list @racket[x3]   "x-coordinate of the third corner")
-               (list @racket[y3]   "y-coordinate of the third corner"))]
+         (list (list @racketid[x1]   "x-coordinate of the first corner")
+               (list @racketid[y1]   "y-coordinate of the first corner")
+               (list @racketid[x2]   "x-coordinate of the second corner")
+               (list @racketid[y2]   "y-coordinate of the second corner")
+               (list @racketid[x3]   "x-coordinate of the third corner")
+               (list @racketid[y3]   "y-coordinate of the third corner"))]
 
 @bold{Description}
 
@@ -1465,7 +1655,79 @@ two arguments specify the first point, the middle two arguments
 specify the second point, and the last two arguments specify the third
 point.
 
+@;---------
+@;---------
+@;---------
 
+@subsection{Curves}
+
+@;---------
+
+@subsubsection{bezier}
+
+@bold{Name: } @defidentifier[#'bezier]
+
+Draws a Bezier curve to the screen.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se          
+          (no-fill)
+          (stroke 255 102 0)
+          (line 85 20 10 10)
+          (line 90 90 15 80)
+          (stroke 0 0 0)                    
+          (eval:alts        (bezier 85 20 10 10 90 90 15 80)
+                     (begin (bezier 85 20 10 10 90 90 15 80)
+                            (send dc get-bitmap)))]
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se          
+          (no-fill)
+          (stroke 255 102 0)
+          (line 30 20 80 5)
+          (line 80 75 30 75)
+          (stroke 0 0 0)                    
+          (eval:alts        (bezier 30 20  80 5  80 75  30 75)
+                     (begin (bezier 30 20  80 5  80 75  30 75)
+                            (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(bezier x1 y1 x2 y2 x3 y3 x4 y4)]        @linebreak[]
+
+@bold{Arguments}
+
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x1]   "x-coordinate of the first anchor point")
+               (list @racketid[y1]   "y-coordinate of the first anchor point")
+               (list @racketid[x2]   "x-coordinate of the second control point")
+               (list @racketid[y2]   "y-coordinate of the second control point")
+               (list @racketid[x3]   "x-coordinate of the third control point")
+               (list @racketid[y3]   "y-coordinate of the third control point")
+               (list @racketid[x4]   "x-coordinate of the fourth anchor point")
+               (list @racketid[y4]   "y-coordinate of the fourth anchor point"))]
+
+@bold{Description}
+
+Draws a Bezier curve on the screen. These curves are defined by a
+series of anchor and control points. The first two parameters specify
+the first anchor point and the last two parameters specify the other
+anchor point. The middle parameters specify the control points which
+define the shape of the curve. Bezier curves were developed by French
+engineer Pierre Bezier. 
+
+@;---------
+@;---------
 @;---------
 
 
@@ -1513,7 +1775,7 @@ Modifies the location from which ellipses are drawn.
 
 @bold{Usage}
 
-@racket[(ellipse-mode mode)]        @linebreak[]
+@racketusage[(ellipse-mode mode)]        @linebreak[]
 
 @bold{Arguments}
 
@@ -1588,13 +1850,13 @@ Modifies the location from which rectangles and squares are drawn.
 
 @bold{Usage}
 
-@racket[(rect-mode mode)]        @linebreak[]
+@racketusage[(rect-mode mode)]        @linebreak[]
 
 @bold{Arguments}
 
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[mode] "one of: 'center 'radius 'corner 'corners"))]
+         (list (list @racketid[mode] "one of: 'center 'radius 'corner 'corners"))]
 
 @bold{Description}
 
@@ -1645,13 +1907,13 @@ Sets the style for rendering line endings.
 
 @bold{Usage}
 
-@racket[(stroke-cap cap)]        @linebreak[]
+@racketusage[(stroke-cap cap)]        @linebreak[]
 
 @bold{Arguments}
 
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[cap] "one of: 'round 'square 'project"))]
+         (list (list @racketid[cap] "one of: 'round 'square 'project"))]
 
 @bold{Description}
 
@@ -1724,13 +1986,13 @@ Sets the style of the joints which connect line segments.
 
 @bold{Usage}
 
-@racket[(stroke-join join)]        @linebreak[]
+@racketusage[(stroke-join join)]        @linebreak[]
 
 @bold{Arguments}
 
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[join] "one of: 'miter 'bevel 'round"))]
+         (list (list @racketid[join] "one of: 'miter 'bevel 'round"))]
 
 @bold{Description}
 
@@ -1768,13 +2030,13 @@ Sets the width of the stroke used for lines, points, and the border around shape
 
 @bold{Usage}
 
-@racket[(stroke-weight weight)]        @linebreak[]
+@racketusage[(stroke-weight weight)]        @linebreak[]
 
 @bold{Arguments}
 
 
 @tabular[#:sep @hspace[1]
-         (list (list @racket[weight] "the weight (in pixels) of the stroke"))]
+         (list (list @racketid[weight] "the weight (in pixels) of the stroke"))]
 
 @bold{Description}
 
@@ -1789,6 +2051,7 @@ The default stroke weight is 1.
 
 
 @subsection{Shapes}
+
 
 @;---------
 
@@ -1849,10 +2112,10 @@ Starts recording points used to draw a complex shape.
 
 @bold{Usage}
 
-@racket[(begin-shape)]        @linebreak[]
+@racketusage[(begin-shape)]        @linebreak[]
 
 @;bold{Arguments}
-@;tabular[#:sep @hspace[1] (list (list @racket[weight] "the weight (in pixels) of the stroke"))]
+@;tabular[#:sep @hspace[1] (list (list @racketid[weight] "the weight (in pixels) of the stroke"))]
 
 @bold{Description}
 
@@ -1919,12 +2182,12 @@ Draws the current shape to the screen - and stops the recording of points.
 
 @bold{Usage}
 
-@racket[(end-shape)]          @linebreak[]
-@racket[(end-shape mode)]     @linebreak[]
+@racketusage[(end-shape)]          @linebreak[]
+@racketusage[(end-shape mode)]     @linebreak[]
 
 @bold{Arguments}
 @tabular[#:sep @hspace[1]
-         (list (list @racket[mode] @racket['close]))]
+         (list (list @racketid[mode] @racket['close]))]
 
 
 @bold{Description}
@@ -1996,12 +2259,12 @@ Add a point to the current shape.
 
 @bold{Usage}
 
-@racket[(vertex x y)]          @linebreak[]
+@racketusage[(vertex x y)]          @linebreak[]
 
 @bold{Arguments}
 @tabular[#:sep @hspace[1]
-         (list (list @racket[x] "x-coordinate of the point")
-               (list @racket[y] "y-coordinate of the point"))]
+         (list (list @racketid[x] "x-coordinate of the point")
+               (list @racketid[y] "y-coordinate of the point"))]
 
 
 @bold{Description}
@@ -2010,5 +2273,2391 @@ Add the point (x,y) to the current shape.
 The @racket[vertex] functions must be called between @racket[begin-shape]
 and @racket[end-shape].
 
+@;---------
+@;---------
+@;---------
+
+@subsection{Data}
+
+
+@;---------
+
+@subsubsection{color}
+
+@bold{Name: } @defidentifier[#'color]
+
+Datatype for storing color values.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (define c1 (color 204 153 0))
+          (define c2 "#ffcc00")
+          (no-stroke)
+          (fill c1)
+          (rect 0 0 25 100)
+          (fill c2)
+          (rect 25 0 25 100)
+          ;(define c3 (get 10 50))
+          ;(fill c3)
+          (eval:alts        (rect 50 0 50 100)
+                     (begin (rect 50 0 50 100)
+                            (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(color r g b)]          @linebreak[]
+@racketusage[(color r g b a)]        @linebreak[]
+@racketusage[(color h s b)]          @linebreak[]
+@racketusage[(color h s b a)]        @linebreak[]
+@racketusage["#rrggbb"]              @linebreak[]
+@racketusage["#rrggbbaa"]            @linebreak[]
+@racketusage[colorname]              @linebreak[]
+
+
+@bold{Arguments}
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[r]         "red        component (default range: 0-255)")
+               (list @racketid[g]         "green      component (default range: 0-255)")
+               (list @racketid[b]         "blue       component (default range: 0-255)")
+               (list @racketid[a]         "alpha      component (default range: 0-255)")
+               (list @racketid[h]         "hue        component (default range: 0-255)")
+               (list @racketid[s]         "saturation component (default range: 0-255)")
+               (list @racketid[v]         "brightness component (default range: 0-255)")
+               (list @racketid["#rrggbb"] "hexadecimal string")
+               (list @racketid[colorname] "colorname as a string or symbol"))]
+
+
+@bold{Description}
+
+Datatype for storing color values. Colors may be assigned with @racket[get]
+and @racket[color] or they may be specified directly using hexadecimal
+notation such as @racket["#ffcc00"] or @racket["#ffffcc00"].
+
+
+@;---------
+@;---------
+@;---------
+
+@subsection{Time and Date}
+
+@;---------
+
+@subsubsection{day}
+
+@bold{Name: } @defidentifier[#'day]
+
+Returns current day as a number from 1 to 31.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (day)]
+
+
+@bold{Usage}
+
+@racketusage[(day)]          @linebreak[]
+
+@bold{Description}
+
+Returns the current day as a number from 1 to 31.
+
+If you need the corresponding string, use @racket[~a] or @racket[number->string]
+to convert the number to a string.
+
+@;---------
+
+@subsubsection{hour}
+
+@bold{Name: } @defidentifier[#'hour]
+
+Returns the current hour as a number from 0 to 23.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (hour)]
+
+
+@bold{Usage}
+
+@racketusage[(hour)]          @linebreak[]
+
+@bold{Description}
+
+Returns the current hour as a number from 0 to 23.
+
+If you need the corresponding string, use @racket[~a] or @racket[number->string]
+to convert the number to a string.
+
+@;---------
+
+@subsubsection{millis}
+
+@bold{Name: } @defidentifier[#'millis]
+
+Returns the number of milliseconds since starting the program.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          ; this is normally done by start
+          (reset-milliseconds-at-start-of-program! (- (current-milliseconds) 20))]
+
+@examples[#:label #f #:eval se
+          (millis)]
+
+
+@bold{Usage}
+
+@racketusage[(millis)]          @linebreak[]
+
+@bold{Description}
+
+Returns the number of milliseconds since starting the program.
+
+If you need the corresponding string, use @racket[~a] or @racket[number->string]
+to convert the number to a string.
+
+@;---------
+
+@subsubsection{minute}
+
+@bold{Name: } @defidentifier[#'minute]
+
+Returns the current minutes as a number from 0 to 59.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (minute)]
+
+
+@bold{Usage}
+
+@racketusage[(minute)]          @linebreak[]
+
+@bold{Description}
+
+Returns the current minutes as a number from 0 to 59.
+
+If you need the corresponding string, use @racket[~a] or @racket[number->string]
+to convert the number to a string.
+
+
+@;---------
+
+@subsubsection{month}
+
+@bold{Name: } @defidentifier[#'month]
+
+Returns the current month as a number from 1 to 12.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+          (month)]
+
+
+@bold{Usage}
+
+@racketusage[(month)]          @linebreak[]
+
+@bold{Description}
+
+Returns the current month as a number from 1 to 12.
+
+If you need the corresponding string, use @racket[~a] or @racket[number->string]
+to convert the number to a string.
+
+
+@;---------
+
+@subsubsection{second}
+
+@bold{Name: } @defidentifier[#'second]
+
+Returns the current second as a number from 0 to 59.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+          (second)]
+
+
+@bold{Usage}
+
+@racketusage[(second)]          @linebreak[]
+
+@bold{Description}
+
+Returns the current second as a number from 0 to 59.
+
+If you need the corresponding string, use @racket[~a] or @racket[number->string]
+to convert the number to a string.
+
+@;---------
+
+@subsubsection{year}
+
+@bold{Name: } @defidentifier[#'year]
+
+Returns the current year as a number.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+          (year)]
+
+
+@bold{Usage}
+
+@racketusage[(year)]          @linebreak[]
+
+@bold{Description}
+
+Returns the current year as a number.
+
+If you need the corresponding string, use @racket[~a] or @racket[number->string]
+to convert the number to a string.
+
+
+@;---------
+@;---------
+@;---------
+
+@subsection{Transform}
+
+@;---------
+
+@subsubsection{rotate}
+
+@bold{Name: } @defidentifier[#'rotate]
+
+Rotates the coordinate system around the origin.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se          
+          (code:comment "place the origin in the center of the screen")
+          (translate (/ width 2) (/ height 2))
+          (code:comment "rotate π/3 radians (60 degrees)")
+          (rotate (/ π 3))                  
+          (eval:alts        (rect -26 -26 52 52)
+                     (begin (rect -26 -26 52 52)
+                            (send dc get-bitmap)))]
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se          
+          (code:comment "place the origin in the center of the screen")
+          (translate (/ width 2) (/ height 2))
+          (code:comment "flip the y-axis (now standard orientation)")
+          (scale 1 -1)                         
+          (fill 255)
+          (rect -26 -26 52 52)
+          (fill "red")
+          (code:comment "rotate 10 degrees")
+          (rotate (radians 10))                
+          (eval:alts        (rect -26 -26 52 52)
+                     (begin (rect -26 -26 52 52)
+                            (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(rotate angle)]        @linebreak[]
+
+@bold{Arguments}
+
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[angle] "the angle of rotation (in radians)"))]
+
+@bold{Description}
+
+Rotates the coordinate system around the origin. The argument @racketid[angle]
+determines the amount to rotate. The angle is measured in radians (from 0 to 2π).
+Use the function @racket[radians] to convert angles in degrees to radians.
+
+The coordinate system is in the direction from the x-axis to the y-axis.
+With the default screen coordinate system this looks like a clockwise
+rotation. If the direction of the x-axis is flipped (so we have a standard
+mathematical coordinate system), the rotation is in the standard counter clockwise
+direction.
+
+The coordinate system is rotated around the origin, so use @racket[translate]
+to change the origin to the point of revolution before calling @racket[rotate].
+
+Transformations apply to everything that happens afterward,
+and subsequent calls to the function compound the effect. For example,
+calling @racket[(rotate (/ pi 2))] once and then calling @racket[(rotate (/ pi 2))] a second
+time is the same as a single @racket[(rotate pi)]. All tranformations are reset
+when @racket[draw] begins again.
+
+Technically, @racket[rotate] multiplies the current transformation matrix by
+a rotation matrix. This function can be further controlled by
+@racket[push-matrix] and @racket[pop-matrix].
+
+
+@;---------
+
+@subsubsection{scale}
+
+@bold{Name: } @defidentifier[#'scale]
+
+Changes the scales of the x- and y-axis.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se
+          (fill "white")
+          (rect 30 20  50 50)
+          (code:comment "use different scales on the axes")
+          (scale 0.5 1.3) 
+          (fill "red")
+          (eval:alts        (rect 30 20  50 50)
+                     (begin (rect 30 20  50 50)
+                            (send dc get-bitmap)))]
+
+
+
+@bold{Usage}
+
+@racketusage[(scale s)]        @linebreak[]
+@racketusage[(scale sx sy)]      @linebreak[]
+
+@bold{Arguments}
+
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[s]  "the scale factor for both x and y")
+               (list @racketid[sx] "the scale factor for x")
+               (list @racketid[sy] "the scale factor for y"))]
+
+@bold{Description}
+
+Changes the scales of the x- and y-axis. A scale factor greater than 1 will
+increase the size of objects drawn and a scale factor between 0 and 1 will
+decrease the size. The two argument call @racketusage[(scale sx sy)] can
+be used to get different scale of the two axes.
+
+Transformations apply to everything that happens afterward,
+and subsequent calls to the function compound the effect. For example,
+calling @racket[(scale 2)] once and then calling @racket[(scale 3)] a second
+time is the same as a single @racket[(scale 6)]. All tranformations are reset
+when @racket[draw] begins again.
+
+Technically, @racket[scale] affects the current transformation matrix.
+This function can be further controlled by @racket[push-matrix] and @racket[pop-matrix].
+
+
+@;---------
+
+@subsubsection{translate}
+
+@bold{Name: } @defidentifier[#'translate]
+
+Moves the origin.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se
+          (translate 30 20)          
+          (eval:alts        (rect 0 0  55 55)
+                     (begin (rect 0 0  55 55)
+                            (send dc get-bitmap)))]
+
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se
+          (code:comment "draw rectagnel at orignal (0,0) i.e. top-left")
+          (rect 0 0  55 55)
+          (code:comment "move the origin to (30,20) then draw rectangle")
+          (fill "red")
+          (translate 30 20)
+          (eval:alts        (rect 0 0  55 55)
+                     (begin (rect 0 0  55 55)
+                            (send dc get-bitmap)))]
+
+@bold{Usage}
+
+@racketusage[(translate tx ty)]      @linebreak[]
+
+@bold{Arguments}
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[tx] "the x-coordinate (in the current coordinate system) of the new origin")
+               (list @racketid[ty] "the y-coordinate (in the current coordinate system) of the new origin"))]
+
+@bold{Description}
+
+Moves the origin to (@racketid[tx],@racketid[ty]).
+
+Transformations apply to everything that happens afterward,
+and subsequent calls to the function compound the effect. For example,
+calling @racket[(translate 2 3)] once and then calling @racket[(translate 20 30)] a second
+time is the same as a single @racket[(scale 22 33)]. All tranformations are reset
+when @racket[draw] begins again.
+
+Technically, @racket[translate] changes the current transformation matrix.
+This function can be further controlled by @racket[push-matrix] and @racket[pop-matrix].
+
+
+@;---------
+@;---------
+@;---------
+
+@subsection{Mouse}
+
+@;---------
+
+@subsubsection{mouse-button}
+
+@bold{Name: } @defidentifier[#'mouse-button]
+
+System variable holding the currently pressed mouse button.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Click within the image and press the left and right")
+          (code:comment "mouse buttons to change the color of the rectangle.")
+
+          (define (draw)
+            (cond
+              [(and mouse-pressed (eq? mouse-button 'left))  (fill 0)]
+              [(and mouse-pressed (eq? mouse-button 'right)) (fill 255)]
+              [else                                          (fill 127)])
+            (rect 25 25 50 50))]
+
+
+
+@bold{Usage}
+
+@racketusage[mouse-button]        @linebreak[]
+
+@bold{Values}
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid['left]   "the left mouse was pressed")
+               (list @racketid['middle] "the middle mouse was pressed")
+               (list @racketid['right]  "the right mouse was pressed"))]
+
+
+
+@bold{Description}
+
+System variable holding the currently pressed mouse button.
+
+The value of @racket[mouse-button] is only valid if @racket[mouse-pressed] is true.
+
+
+@;---------
+
+@subsubsection{mouse-pressed}
+
+@bold{Name: } @defidentifier[#'mouse-pressed]
+
+System variable, true if a mouse button is pressed.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Click within the image")
+          (code:comment "to change the color of the rectangle.")
+
+          (define (draw)
+            (cond
+              [mouse-pressed  (fill 0)]
+              [else           (fill 255)])
+            (rect 25 25 50 50))]
+
+
+@bold{Usage}
+
+@racketusage[mouse-pressed]        @linebreak[]
+
+@bold{Values}
+
+@tabular[#:sep @hspace[1]
+         (list (list @racket[#t] "some mouse button is pressed")
+               (list @racket[#f] "no mouse button is pressed"))]
+
+
+
+@bold{Description}
+
+System variable, true if any mouse button is pressed.
+
+Use @racket[mouse-button] to find out, which mouse button is pressed.
+
+
+@;---------
+
+@subsubsection{mouse-x}
+
+@bold{Name: } @defidentifier[#'mouse-x]
+
+System variable holding the current x-coordinate of the mouse.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Move the mouse to move the line horizontally")
+
+          (define (draw)
+            (background 204)
+            (line mouse-x 20 mouse-x 80))]
+
+
+@bold{Usage}
+
+@racketusage[mouse-x]        @linebreak[]
+
+@bold{Values}
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[integer] "current mouse x-coordinate"))]
+
+
+
+@bold{Description}
+
+System variable holding the current x-coordinate of the mouse.
+
+Note that Sketching can only track the mouse position when the
+mouse pointer is over the current window. The default value of @racketid[mouse-x] is @racket[0],
+so @racket[0] will be returned until the mouse moves in front of the sketch
+window. (This typically happens when a sketch is first run.) Once the
+mouse moves away from the window, @racketid[mouse-x] will continue to report its
+most recent position.
+
+@;---------
+
+@subsubsection{mouse-y}
+
+@bold{Name: } @defidentifier[#'mouse-y]
+
+System variable holding the current y-coordinate of the mouse.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Move the mouse to move the line vertically.")
+
+          (define (draw)
+            (background 204)
+            (line 20 mouse-y 80 mouse-y))]
+
+
+@bold{Usage}
+
+@racketusage[mouse-y]        @linebreak[]
+
+@bold{Values}
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[integer] "current mouse y-coordinate"))]
+
+
+
+@bold{Description}
+
+System variable holding the current y-coordinate of the mouse.
+
+Note that Sketching can only track the mouse position when the
+mouse pointer is over the current window. The default value of @racketid[mouse-y] is @racket[0],
+so @racket[0] will be returned until the mouse moves in front of the sketch
+window. (This typically happens when a sketch is first run.) Once the
+mouse moves away from the window, @racketid[mouse-y] will continue to report its
+most recent position.
+
+
+@;---------
+
+@subsubsection{pmouse-x}
+
+@bold{Name: } @defidentifier[#'pmouse-x]
+
+System variable holding the previous x-coordinate of the mouse.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Move the mouse quickly to see the difference ")
+          (code:comment "between the current and previous position.")
+
+          (define (draw)
+            (background 204)
+            (line mouse-x 20 pmouse-x 80)
+            (displayln (~a mouse-x " : " pmouse-x)))]
+
+
+@bold{Usage}
+
+@racketusage[pmouse-x]        @linebreak[]
+
+@bold{Values}
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[integer] "the previous mouse x-coordinate"))]
+
+
+
+@bold{Description}
+
+System variable holding the previous x-coordinate of the mouse. This is the
+value @racketid[mouse-x] had in the previous frame.
+
+@;---------
+
+@subsubsection{pmouse-y}
+
+@bold{Name: } @defidentifier[#'pmouse-y]
+
+System variable holding the previous y-coordinate of the mouse.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Move the mouse quickly to see the difference ")
+          (code:comment "between the current and previous position.")
+          (define (draw)
+            (background 204)
+            (line 20 mouse-y  80 pmouse-y )
+            (displayln (~a mouse-y " : " pmouse-y)))]
+
+
+@bold{Usage}
+
+@racketusage[pmouse-y]        @linebreak[]
+
+@bold{Values}
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[integer] "the previous mouse y-coordinate"))]
+
+
+
+@bold{Description}
+
+System variable holding the previous y-coordinate of the mouse. This is the
+value @racketid[mouse-y] had in the previous frame.
+
+
+@;---------
+
+@subsubsection{on-mouse-pressed}
+
+@bold{Name: } @defidentifier[#'on-mouse-pressed]
+
+If defined in your program, the event handler @racket[on-mouse-pressed]
+is called each time the mouse is pressed.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Press a mouse button to toggle the  ")
+          (code:comment "the color of the rectangle between black and white.")
+
+          (define col 0)
+
+          (define (draw)
+            (fill col)            
+            (rect 25 25 50 50))
+          
+          (define (on-mouse-pressed)
+            (:= col (- 255 col)))]
+
+
+@bold{Usage}
+
+@racketusage[(define (on-mouse-pressed) <body>)]        @linebreak[]
+
+
+@bold{Description}
+
+
+If defined in your program, the event handler @racket[on-mouse-pressed]
+is called each time a mouse button is pressed.
+
+@;---------
+
+@subsubsection{on-mouse-released}
+
+@bold{Name: } @defidentifier[#'on-mouse-released]
+
+If defined in your program, the event handler @racket[on-mouse-released]
+is called each time a mouse button is released.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Press and release mouse button to toggle the  ")
+          (code:comment "the color of the rectangle between black and white.")
+
+          (define col 0)
+
+          (define (draw)
+            (fill col)            
+            (rect 25 25 50 50))
+          
+          (define (on-mouse-released)
+            (:= col (- 255 col)))]
+
+
+@bold{Usage}
+
+@racketusage[(define (on-mouse-released) <body>)]        @linebreak[]
+
+
+@bold{Description}
+
+
+If defined in your program, the event handler @racket[on-mouse-released]
+is called each time a mouse button is released.
+
+
+@;---------
+
+@subsubsection{on-mouse-moved}
+
+@bold{Name: } @defidentifier[#'on-mouse-moved]
+
+If defined in your program, the event handler @racket[on-mouse-moved]
+is called each time the mouse is moved.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Move your mouse across the image")
+          (code:comment "to change the color of the rectangle.")
+
+          (define col 0)
+
+          (define (draw)
+            (fill col)            
+            (rect 25 25 50 50))
+          
+          (define (on-mouse-moved)
+            (:= col (+ col 5))
+            (when (> col 255)
+              (:= col 0)))]
+
+
+@bold{Usage}
+
+@racketusage[(define (on-mouse-moved) <body>)]        @linebreak[]
+
+
+@bold{Description}
+
+
+If defined in your program, the event handler @racket[on-mouse-moved]
+is called each time the mouse is moved.
+
+
+@;---------
+
+@subsubsection{on-mouse-dragged}
+
+@bold{Name: } @defidentifier[#'on-mouse-dragged]
+
+If defined in your program, the event handler @racket[on-mouse-dragged]
+is called each time the mouse is dragged.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Drag (click and hold) your mouse across the ")
+          (code:comment "image to change the color of the rectangle.")
+
+          (define col 0)
+
+          (define (draw)
+            (fill col)            
+            (rect 25 25 50 50))
+          
+          (define (on-mouse-dragged)
+            (:= col (+ col 5))
+            (when (> col 255)
+              (:= col 0)))]
+
+
+@bold{Usage}
+
+@racketusage[(define (on-mouse-dragged) <body>)]        @linebreak[]
+
+
+@bold{Description}
+
+
+If defined in your program, the event handler @racket[on-mouse-dragged]
+is called each time the mouse is dragged. A mouse is dragged, when
+it is moved while while a mouse button is pressed.
+
+
+@;---------
+@;---------
+@;---------
+
+@subsection{Math Operators}
+
+@;---------
+
+@subsubsection{+= (add assign)}
+
+@bold{Name: } @defidentifier[#'+=]
+
+
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (define a 1)
+          (+= a (+ 4 6))
+          a]
+
+
+@bold{Usage}
+
+@racketusage[(+= id expr)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[id]      "an identifier")
+               (list @racketid[expr]    "an expression"))]
+
+
+
+@bold{Description}
+
+The expression @racket[(+= id expr)] is equivalent to:
+
+@racket[(begin
+          (set! id (+ id expr))
+          id)]
+
+That is, @racket[(+= id expr)] computes the sum, stores it in @racketid[id]
+and the returns the sum.
+
+@;---------
+
+@subsubsection{-= (subtract assign)}
+
+@bold{Name: } @defidentifier[#'-=]
+
+
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (define a 10)
+          (-= a (+ 2 1))
+          a]
+
+
+@bold{Usage}
+
+@racketusage[(-= id expr)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[id]      "an identifier")
+               (list @racketid[expr]    "an expression"))]
+
+
+@bold{Description}
+
+The expression @racket[(-= id expr)] is equivalent to:
+
+@racket[(begin
+          (set! id (- id expr))
+          id)]
+
+That is, @racket[(-= id expr)] computes the difference, stores it in @racketid[id]
+and the returns the difference.
+
+
+@;---------
+
+@subsubsection{*= (multiply assign)}
+
+@bold{Name: } @defidentifier[#'*=]
+
+
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (define a 2)
+          (*= a 3)
+          a]
+
+
+@bold{Usage}
+
+@racketusage[(*= id expr)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[id]      "an identifier")
+               (list @racketid[expr]    "an expression"))]
+
+
+
+@bold{Description}
+
+The expression @racket[(*= id expr)] is equivalent to:
+
+@racket[(begin
+          (set! id (* id expr))
+          id)]
+
+That is, @racket[(*= id expr)] computes the product, stores it in @racketid[id]
+and the returns the product.
+
+@;---------
+
+@subsubsection{/= (divide assign)}
+
+@bold{Name: } @defidentifier[#'/=]
+
+
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (define a 10)
+          (/= a 2)
+          a]
+
+
+@bold{Usage}
+
+@racketusage[(/= id expr)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[id]      "an identifier")
+               (list @racketid[expr]    "an expression"))]
+
+
+@bold{Description}
+
+The expression @racket[(/= id expr)] is equivalent to:
+
+@racket[(begin
+          (set! id (/ id expr))
+          id)]
+
+That is, @racket[(/= id expr)] computes the quotient stores it in @racketid[id]
+and the returns the quotient.
+
+
+@;---------
+
+@subsubsection{++ (post increment)}
+
+@bold{Name: } @defidentifier[#'++]
+
+
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (define a 10)
+          (define b  1)
+          (++ a)
+          a
+          (+ (++ b) 10)
+          b]
+
+
+@bold{Usage}
+
+@racketusage[(++ id)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[id]      "an identifier"))]
+
+
+@bold{Description}
+
+The expression @racket[(++ id)] is equivalent to:
+
+@racket[(begin
+          (set! id (+ id 1))
+          id)]
+
+That is, @racket[(++ id)] adds one to @racketid[id], stores the new value,
+and the returns the new value.
+
+Note: This operation is part of Sketching, but not Racket.
+
+Note: Adding one is called incrementing.
+
+@;---------
+
+@subsubsection{-- (post decrement)}
+
+@bold{Name: } @defidentifier[#'--]
+
+
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (define a 10)
+          (define b  1)
+          (-- a)
+          a
+          (+ (-- b) 10)
+          b]
+
+
+@bold{Usage}
+
+@racketusage[(-- id)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[id]      "an identifier"))]
+
+
+@bold{Description}
+
+The expression @racket[(-- id)] is equivalent to:
+
+@racket[(begin
+          (set! id (- id 1))
+          id)]
+
+That is, @racket[(-- id)] subtracts one from @racketid[id], stores the new value,
+and the returns the new value.
+
+Note: This operation is part of Sketching, but not Racket.
+
+Note: Subtracting one is called decrementing.
+
+
+@;---------
+@;---------
+@;---------
+
+@subsection{Math Functions}
+
+@;---------
+
+@subsubsection{@racket[abs] - Absolute Value }
+
+@bold{Name}
+
+@defidentifier[#'abs]
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (abs  1)
+          (abs  0)
+          (abs -1)]
+
+
+@bold{Usage}
+
+@racketusage[(abs x)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]    "a number"))]
+
+
+
+@bold{Description}
+
+The function @racket[abs] computes the absolute value.
+
+The absolute value of a number @racketid[x] is the distance from @racketid[x] to @racket[0]
+on the number line. One can think of @racket[(abs x)] as the "size" of @racketid[id]
+since the sign is discarded.
+
+@;---------
+
+@subsubsection{@racket[ceil] - Ceiling }
+
+@bold{Name}
+
+@defidentifier[#'ceil]
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (ceil 2.6)
+          (ceil 2.5)
+          (ceil 2.4)
+          (ceil -0.1)
+          (ceil -0.4)
+          (ceil -0.5)
+          (ceil -0.6)]
+
+
+@bold{Usage}
+
+@racketusage[(ceil x)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]    "a number"))]
+
+
+
+@bold{Description}
+
+The function @racket[ceil] computes the "ceiling" of a number.
+
+The ceiling of a number is the smallest integer that is at least as large as @racketid[x].
+
+Think of @racket[ceil] as "rounding up" to nearest integer.
+
+If we think of @racketid[x] as a number on the number line, @racketid[(ceil x)] is
+the first integer larger than @racketid[x].
+
+Note: In Racket the ceiling function is called @racket[ceiling] and not @racket[ceil].
+
+@;---------
+
+@subsubsection{@racket[constrain] - Constraining a value to an interval (clamping)}
+
+@bold{Name}
+
+@defidentifier[#'constrain]
+
+@bold{Examples}
+
+
+@examples[#:label #f #:eval se
+          (code:comment "Constraining a value to the interval from 5 to 10.")
+          (constrain 4 5 10)
+          (constrain 5 5 10)
+          (constrain 6 5 10)
+          (code:comment "And from the other side")
+          (constrain  9 5 10)
+          (constrain 10 5 10)
+          (constrain 11 5 10)]
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Move the mouse to affect the horizontal position.")
+
+          (define (draw)
+            (background 204)
+            (define mx (constrain mouse-x 30 70))
+            (rect (- mx 10) 40 20 20))]
+
+
+@bold{Usage}
+
+@racketusage[(constrain x low high)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]     "a number")
+               (list @racketid[low]   "a number, start of the interval")
+               (list @racketid[high]  "a number, end of the interval"))]
+               
+
+
+
+@bold{Description}
+
+The function @racket[constrain] "constrains" a value to a certain interval.
+
+If @racketid[x] is a number between @racketid[low] and @racketid[high],
+then @racketusage[(constrain x low high)] simply returns @racketid[x] unchanged.
+
+If @racketid[x] is a number lower than @racketid[low], 
+then @racketid[low] is returned.
+
+If @racketid[x] is a number higher than @racketid[high], 
+then @racketid[high] is returned.
+
+The result of @racketusage[(constrain x low high)] is thus guaranteed to
+lie between @racketid[low] and @racketid[high].
+
+
+@;---------
+
+@subsubsection{@racket[dist] - Distance between two points}
+
+@bold{Name}
+
+@defidentifier[#'dist]
+
+@bold{Examples}
+
+
+@examples[#:label #f #:eval se
+          (code:comment "The lengths of the sides of a 3-4-5 triangle.")
+          (dist 0 0 3 0)
+          (dist 3 0 3 4)
+          (dist 3 4 0 0)]
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Sets the background gray value based on the distance")
+          (code:comment "from the mouse position to the center of the screen.")
+
+          (define (draw)
+            (no-stroke)
+            (define d            (dist mouse-x mouse-y (/ width 2) (/ height 2)))
+            (define max-distance (dist 0 0 (/ width 2) (/ height 2)))
+            (define gray         (remap d 0 max-distance 0 255))
+            (fill gray)
+            (rect 0 0 width height))]
+
+
+@bold{Usage}
+
+@racketusage[(dist x1 y1 x2 y2)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x1]   "x-coordinate of the first point")
+               (list @racketid[y1]   "y-coordinate of the first point")
+               (list @racketid[x2]   "x-coordinate of the second point")
+               (list @racketid[y2]   "y-coordinate of the second point"))]
+               
+
+
+
+@bold{Description}
+
+Computes the distance from the point (@racketid[x1],@racketid[y1]) to (@racketid[x2],@racketid[y2]).
+
+
+@;---------
+
+@subsubsection{@racket[exp] - The natural exponential function}
+
+@bold{Name}
+
+@defidentifier[#'exp]
+
+@bold{Examples}
+
+
+@examples[#:label #f #:eval se          
+          (exp 0)
+          (exp 1)
+          (exp 2)]
+          
+
+@bold{Usage}
+
+@racketusage[(exp x)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]   "a number"))]
+               
+
+
+
+@bold{Description}
+
+The natural exponential function @racket[exp] computes the power of
+Eulers number, 2.718281828..., to the power of @racketid[x].
+
+As a special case, @racketid[(exp 1)] returns Euler's number.
+
+Normally the result is inexact, but for @racketid[x]=0 an
+exact @racket[1] is returned.
+
+@;---------
+
+@subsubsection{@racket[floor] - Floor}
+
+@bold{Name}
+
+@defidentifier[#'floor]
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (floor 2.6)
+          (floor 2.5)
+          (floor 2.4)
+          (floor -0.1)
+          (floor -0.4)
+          (floor -0.5)
+          (floor -0.6)]
+
+
+@bold{Usage}
+
+@racketusage[(floor x)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]    "a number"))]
+
+
+
+@bold{Description}
+
+The function @racket[floor] computes the "floor" of a number.
+
+The floor of a number is the largest integer that is no more than @racketid[x].
+
+Think of @racket[floor] as "rounding down" to nearest integer.
+
+If we think of @racketid[x] as a number on the number line, @racketid[(ceil x)] is
+the first integer smaller than @racketid[x].
+
+@;---------
+
+@subsubsection{@racket[lerp] - Linear Interpolation}
+
+@bold{Name}
+
+@defidentifier[#'lerp]
+
+@bold{Examples}
+
+
+@examples[#:label #f #:eval se
+          (code:comment "Linear interpolation from 10 to 20.")
+          (lerp  10 20 0.0)
+          (lerp  10 20 0.2)
+          (lerp  10 20 0.4)
+          (lerp  10 20 0.6)
+          (lerp  10 20 0.8)
+          (lerp  10 20 1.0)
+          (code:comment "Values outside the range 0 to 1 works too.")
+          (lerp  10 20 2.0)]
+
+
+@examples[#:label #f #:eval se
+          (stroke-weight 6)
+          (define a 20)
+          (define b 80)
+          (define c (lerp a b .2))
+          (define d (lerp a b .5))
+          (define e (lerp a b .8))
+          (point a 50)
+          (point b 50)
+          (point c 50)
+          (point d 50)
+          (eval:alts        (point e 50)
+                     (begin (point e 50)
+                            (send dc get-bitmap)))]
+
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@bold{Usage}
+
+@racketusage[(lerp start stop t)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[t]    "a number from 0 to 1"))]
+
+
+
+@bold{Description}
+
+Linearly interpolate between the numbers @racketid[start] and @racketid[stop].
+
+The number returned by @racketusage[(lerp start stop t)] is @racketid[(+ start (* t (- stop start)))].
+
+For values of t between 0 and 1, one can think of @racket[lerp] as map from the interval from 0 to 1
+onto the interval from @racketid[start] to @racketid[stop].
+
+The lerp function is convenient for creating motion along a straight path and for drawing dotted lines.
+
+
+@;---------
+
+@subsubsection{@racket[log] - Logarithms}
+
+@bold{Name}
+
+@defidentifier[#'log]
+
+@bold{Examples}
+
+
+@examples[#:label #f #:eval se          
+          (log 1)
+          (log 2)
+          (log 8 2)
+          (log (exp 1))
+          (log (exp 2))]
+          
+
+@bold{Usage}
+
+@racketusage[(log x)]          @linebreak[]
+@racketusage[(log x b)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]   "a positive number")
+               (list @racketid[x]   "the base of the logarithm (defaults to e)"))]
+               
+
+
+
+@bold{Description}
+
+The natural logarithm function @racket[log] computes the
+base @racketid[b] logarithm of @racketid[x]. The base default
+to Eulers number, 2.718281828. That is, the one argument
+version of @racket[log] is the natural logarithm.
+
+
+Normally the result is inexact, but for @racketid[1]=0 an
+exact @racket[0] is returned.
+
+
+@;---------
+
+@subsubsection{@racket[mag] - Vector Magnitude}
+
+@bold{Name}
+
+@defidentifier[#'mag]
+
+Computes the magnitude of a vector.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se          
+          (mag 3 4)]
+          
+
+@bold{Usage}
+
+@racketusage[(mag x y)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]   "the x-coordinate")
+               (list @racketid[y]   "the y-coordinate"))]
+
+
+@bold{Description}
+
+The function @racketusage[(mag x y)] computes the magnitude (length) of the vector (@racketid[x],@racketid[y]).
+
+The formula used to compute the magnitude is @racket[(sqrt (+ (* x x) (* y y)))].
+
+
+@;---------
+
+@subsubsection{@racket[remap] - Convert from one range to another}
+
+@bold{Name}
+
+@defidentifier[#'remap]
+
+Maps a value in one range into another range.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+          (code:comment "The number 15 in the range 10 to 20 maps to 150 in the range 100 to 200.")
+          (remap 15 10 20 100 200)
+          (code:comment "Values aren't clamped to the interval")
+          (remap 5 10 20 100 200)]
+          
+
+@bold{Usage}
+
+@racketusage[(remap x from1 to1 from2 start2)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]     "a number")
+               (list @racketid[from1] "start of the first interval")
+               (list @racketid[to1]   "end of the first interval")
+               (list @racketid[from2] "start of the second interval")
+               (list @racketid[to2]   "end of the second interval"))]
+
+
+@bold{Description}
+
+The function @racket[remap] maps a value @racketid[x] in one interval 
+[@racketid[from1];@racketid[to1]] into another interval [@racketid[from2];@racketid[to2]].
+
+          
+@;---------
+
+@subsubsection{@racket[max] - Maximum}
+
+@bold{Name}
+
+@defidentifier[#'max]
+
+Computes the maximum of one or more values.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+          (max 0 1)
+          (max 0 1 2)]
+          
+
+@bold{Usage}
+
+@racketusage[(max x1 x2 ...)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x1]     "a number")
+               (list @racketid[x2 ...] "zero or more numbers"))]
+
+
+@bold{Description}
+
+Computes the maximum of one or more numbers.
+
+
+@;---------
+
+@subsubsection{@racket[min] - Minimum}
+
+@bold{Name}
+
+@defidentifier[#'min]
+
+Computes the minimum of one or more values.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+          (min 0 1)
+          (min 0 1 2)]
+          
+
+@bold{Usage}
+
+@racketusage[(min x1 x2 ...)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x1]     "a number")
+               (list @racketid[x2 ...] "zero or more numbers"))]
+
+
+@bold{Description}
+
+Computes the minimum of one or more numbers.
+
+@;---------
+
+@subsubsection{@racket[norm] - Normalize number}
+
+@bold{Name}
+
+@defidentifier[#'norm]
+
+Normalizes a number from another range into a value between 0 and 1. 
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+          (norm 20. 0 50)
+          (norm -10. 0 100)]
+          
+
+@bold{Usage}
+
+@racketusage[(norm x start end)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]     "number to be normalized")
+               (list @racketid[start] "start of interval")
+               (list @racketid[ned]   "end of interval"))]
+
+
+@bold{Description}
+
+Normalizes a number from a range into a value between 0 and 1.
+Identical to @racketusage[(remap x start end 0 1)].
+
+Numbers outside of the range are not clamped to 0 and 1,
+because out-of-range values are often intentional and useful. 
+
+
+@;---------
+
+@subsubsection{@racket[pow] - Powers}
+
+@bold{Name}
+
+@defidentifier[#'pow]
+
+Computes powers of a number.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+          (pow  1  3)
+          (pow  2  3)
+          (pow  2 -3)
+          (pow -2  3)]
+          
+
+@bold{Usage}
+
+@racketusage[(pow x y)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]   "base number")
+               (list @racketid[y]   "exponent"))]
+
+
+@bold{Description}
+
+Computes the power @racketid[x] to @racketid[y].
+
+Note: In Racket we normally use @racket[expt] (short for exponentiate) 
+instead of @racket[pow].
+
+
+@;---------
+
+@subsubsection{@racket[round] - Round to nearest integer}
+
+@bold{Name}
+
+@defidentifier[#'round]
+
+Rounds to nearest integer.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+          (round 0.4)
+          (round 0.5)
+          (round 0.6)
+          (round 1.4)
+          (round 2.5)
+          (round 3.6)]
+          
+
+@bold{Usage}
+
+@racketusage[(round x)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]   "a number"))]
+
+
+@bold{Description}
+
+Rounds @racketid[x] to nearest integer.
+
+Note: This is the standard Racket @racket[round] that for numbers ending in .5
+rounds to even following the recommendations of the IEEE floating point standard.
+
+If you need a rounding function that always rounds towards plus infinity, then
+use this definition in your program:
+
+@examples[#:label #f #:eval se
+(code:comment "round ties towards +inf.0")
+(define (round-up x)
+  (floor (+ x 0.5)))]
+
+@;---------
+
+@subsubsection{@racket[sq] - Squaring}
+
+@bold{Name}
+
+@defidentifier[#'sq]
+
+Computes the square of a number.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+(sq 2)
+(sq 3)]
+
+
+@bold{Usage}
+
+@racketusage[(sq x)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]   "a number"))]
+
+
+@bold{Description}
+
+For a number @racketid[x] computes the square @racket[(* x x)] of the number.
+
+@;---------
+
+@subsubsection{@racket[sqrt] - Square Root}
+
+@bold{Name}
+
+@defidentifier[#'sqrt]
+
+Computes the square root of a number.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+(sqrt 2)
+(sqrt 4)
+(sqrt 16)]
+
+
+@bold{Usage}
+
+@racketusage[(sqrt x)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]   "a number"))]
+
+
+@bold{Description}
+
+Computes the square root of the number.
+
+
+@;---------
+
+
+@;---------
+@;---------
+@;---------
+
+@subsection{Trigonometry}
+
+@;---------
+
+@subsubsection{@racket[cos] - Cosine}
+
+
+@bold{Name}
+
+@defidentifier[#'cos]
+
+Computes the cosine of an angle in radians.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+(cos 0)
+(cos (/ π 2))
+(cos (radians 90))]
+
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 360 100))
+          (fill 196) (no-stroke) (rect 0 0 360 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se
+(size 360 100)
+(eval:alts
+ (for ([d (in-range 0 360 4)]) 
+   (line d 50 d (+ 50 (* 40 (cos (radians d))))))
+ (begin
+   (for ([d (in-range 0 360 4)]) 
+     (line d 50 d (+ 50 (* 40 (cos (radians d))))))
+   (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(cos x)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]   "an angle in radians"))]
+
+
+@bold{Description}
+
+Computes the cosine of angle @racketid[x] measured in radians.
+
+Note: Use @racket[radians] to convert an angle in degrees to radians.
+
+
+@;---------
+
+@subsubsection{@racket[sin] - Sine}
+
+@bold{Name}
+
+@defidentifier[#'sin]
+
+Computes the sine of a number in radians.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+(sin 0)
+(sin (/ π 2))
+(sin (radians 90))]
+
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 360 100))
+          (fill 196) (no-stroke) (rect 0 0 360 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se
+(size 360 100)
+(eval:alts
+ (for ([d (in-range 0 360 4)]) 
+   (line d 50 d (+ 50 (* 40 (sin (radians d))))))
+ (begin
+   (for ([d (in-range 0 360 4)]) 
+     (line d 50 d (+ 50 (* 40 (sin (radians d))))))
+   (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(sin x)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]   "an angle in radians"))]
+
+
+@bold{Description}
+
+Computes the sine of angle @racketid[x] measured in radians.
+
+Note: Use @racket[radians] to convert an angle in degrees to radians.
+
+@;---------
+
+@subsubsection{@racket[tan] - Tangent}
+
+@bold{Name}
+
+@defidentifier[#'tan]
+
+Computes the tangent of a number in radians.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+(tan 0)
+(tan (/ π 4))
+(tan (radians 45))]
+
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 360 300))
+          (fill 196) (no-stroke) (rect 0 0 360 300) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se
+(size 360 300)
+(eval:alts
+ (for ([d (in-range 0 360 4)]) 
+   (line d 150 d (+ 150 (* 40 (tan (radians d))))))
+ (begin
+   (for ([d (in-range 0 360 4)]) 
+     (line d 150 d (+ 150 (* 40 (tan (radians d))))))
+   (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(tan x)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]   "an angle in radians"))]
+
+
+@bold{Description}
+
+Computes the tangent of angle @racketid[x] measured in radians.
+
+Note: Use @racket[radians] to convert an angle in degrees to radians.
+
+
+@;---------
+
+@subsubsection{@racket[acos] - Inverse Cosine}
+
+@bold{Name}
+
+@defidentifier[#'acos]
+
+Computes the inverse cosine.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+(acos -1)
+(acos 0)
+(acos 1)]
+
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 200 180))
+          (fill 196) (no-stroke) (rect 0 0 200 180) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se
+(size 200 180)
+(code:comment "Put (0,0) in the lower, left corner")
+(translate 100 180)
+(code:comment "Make the y-axis point up")
+(scale 1 -1)
+(code:comment "Plot acos")
+(eval:alts
+ (for ([x (in-range -100 104 4)])
+   (line x 0 x  (degrees (acos (/ x 100.)))))
+ (begin
+   (for ([x (in-range -100 104 4)])
+   (line x 0 x  (degrees (acos (/ x 100.)))))
+   (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(acos x)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]   "a number between -1 and 1 (inclusive)"))]
+
+
+@bold{Description}
+
+Computes the inverse cosine of a number. The result is in radians.
+
+Note: Use @racket[degrees] to convert an angle in radians to degrees.
+
+
+@;---------
+
+@subsubsection{@racket[asin] - Inverse Sine}
+
+@bold{Name}
+
+@defidentifier[#'asin]
+
+Computes the inverse sine.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+(asin -1)
+(asin 0)
+(asin 1)]
+
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 200 180))
+          (fill 196) (no-stroke) (rect 0 0 200 180) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se
+(size 200 180)
+(code:comment "Put (0,0) in the center of the screen")
+(translate 100 90)
+(code:comment "Make the y-axis point up")
+(scale 1 -1)
+(code:comment "Plot asin")
+(eval:alts
+ (for ([x (in-range -100 104 4)])
+   (line x 0 x  (degrees (asin (/ x 100.)))))
+ (begin
+   (for ([x (in-range -100 104 4)])
+     (line x 0 x  (degrees (asin (/ x 100.)))))
+   (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(asin x)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]   "a number between -1 and 1 (inclusive)"))]
+
+
+@bold{Description}
+
+Computes the inverse sine of a number. The result is in radians.
+
+Note: Use @racket[degrees] to convert an angle in radians to degrees.
+
+
+@;---------
+
+@subsubsection{@racket[atan] - Inverse Tangent}
+
+@bold{Name}
+
+@defidentifier[#'atan]
+
+Computes the inverse tangent.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+(atan -1/2)
+(atan 0)
+(atan 1/2)]
+
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 400 180))
+          (fill 196) (no-stroke) (rect 0 0 400 180) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se
+(size 400 180)
+(code:comment "Put (0,0) in the center of the screen")
+(translate 200 90)
+(code:comment "Make the y-axis point up")
+(scale 1 -1)
+(code:comment "Plot atan")
+(eval:alts
+ (for ([x (in-range -200 204 4)])
+   (line x 0 x  (degrees (atan (/ x 100.)))))
+ (begin
+   (for ([x (in-range -200 204 4)])
+     (line x 0 x  (degrees (atan (/ x 100.)))))
+   (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(atan x)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]   "a number between -1 and 1 (inclusive)"))]
+
+
+@bold{Description}
+
+Computes the inverse tangent of a number. The result is in radians.
+
+Note: Use @racket[degrees] to convert an angle in radians to degrees.
+
+
+@;---------
+
+@subsubsection{@racket[atan2] - Inverse Tangent}
+
+@bold{Name}
+
+@defidentifier[#'atan2]
+
+Computes the angle between the positive part of the @racketid[x]-axis and the 
+line segment from (@racketid[0],@racketid[0]) to (@racketid[x],@racketid[y]).
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+(degrees (atan2  0  1))
+(degrees (atan2  1  1))
+(degrees (atan2  1  0))
+(degrees (atan2  1 -1))
+(degrees (atan2  0 -1))]
+
+
+
+@examples[#:label #f #:eval se #:lang sketching
+(define (setup)
+  (size 200 200)
+  (define w/2 (/ width 2))
+  (define h/2 (/ height 2))
+  (code:comment "Put (0,0) in the center of the screen")
+  (translate w/2 h/2)
+  (code:comment "Make the y-axis point up")
+  (scale 1 -1))
+(define (draw)
+  (code:comment "Angle to mouse")
+  (define a (atan2 (- mouse-y h/2) (- mouse-x w/2)))
+  (rotate a)
+  (rect -30 -5 60 10))]
+
+
+@bold{Usage}
+
+@racketusage[(atan2 y x)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+(list (list @racketid[y]   "y-coordinate")
+      (list @racketid[x]   "x-coordinate"))]
+
+
+@bold{Description}
+
+Computes the angle between the positive part of the @racketid[x]-axis and the 
+line segment from (@racketid[0],@racketid[0]) to (@racketid[x],@racketid[y]).
+
+Note that @racket[atan2] has the @racketid[y]-coordinate first.
+
+The resulting angle is in radians. Use @racket[degrees] if you need
+to convert the angle to degrees.
+
+@;---------
+
+@subsubsection{@racket[radians] - Convert Degrees to Radians}
+
+@bold{Name}
+
+@defidentifier[#'radians]
+
+Converts an angle in degrees to radians.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+(radians   0)
+(radians  90)
+(radians 180)
+(radians 360)]
+
+
+@bold{Usage}
+
+@racketusage[(radians deg)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[deg]   "a number"))]
+
+
+@bold{Description}
+
+Converts an angle in degrees to radians.
+
+Radians and degrees are two ways of measuring the same
+thing. There are 360 degrees in a circle and 2pi radians in a
+circle. 
+
+All trigonometric functions in Sketching require their parameters to be specified in radians.
+
+@;---------
+
+@subsubsection{@racket[degrees] - Convert Radians to Degrees}
+
+@bold{Name}
+
+@defidentifier[#'degrees]
+
+Converts an angle in radiands to degrees.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+(degrees   0)
+(degrees  (/ π 2))
+(degrees  pi)
+(degrees (* 2 π))]
+
+
+@bold{Usage}
+
+@racketusage[(degrees rad)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[rad]   "a number"))]
+
+
+@bold{Description}
+
+Converts an angle in radians to degrees.
+
+Radians and degrees are two ways of measuring the same
+thing. There are 360 degrees in a circle and 2pi radians in a
+circle. 
+
+All trigonometric functions in Sketching require their parameters to be specified in radians.
+
+
+@;---------
+@;---------
+@;---------
+
+@subsection{Constants}
+
+@;---------
+
+@subsubsection{Pi and friends}
+
+
+@bold{Name}
+
+@defidentifier[#'pi]   , @defidentifier[#'π],
+@defidentifier[#'pi/2] , @defidentifier[#'π/2],
+@defidentifier[#'pi/4] , @defidentifier[#'π/4],
+@defidentifier[#'2pi]  , @defidentifier[#'2π]
+
+
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+(list pi π)
+(list pi/2 π/2)
+(list pi/4 π/4)
+(list 2pi 2π)]
+
+
+@examples[#:hidden #:eval se
+(current-dc (new-bitmap-dc 100 100))
+(size 100 100) (reset-matrix)
+(color-mode 'rgb 255)
+(fill 196) (no-stroke) (rect 0 0 100 100)
+(stroke 0) (fill 255)]
+
+@examples[#:label #f #:eval se
+(size 100 100)
+(define x (/ width  2))
+(define y (/ height 2))
+(define d (* 0.8 width))
+(ellipse-mode 'center)
+(arc x y     d         d      0  π/4)
+(arc x y  (- d 20)  (- d 20)  0  π/2)
+(arc x y  (- d 40)  (- d 40)  0  π)
+(arc x y  (- d 60)  (- d 60)  0  2π)
+(eval:alts
+ (arc x y  (- d 60)  (- d 60)  0  2π) 
+ (begin
+   (arc x y  (- d 60)  (- d 60)  0  2π)
+   (send dc get-bitmap)))]
+
+
+@bold{Description}
+
+The mathematical constant @racket[π] is the number 3.1415927.
+It is the ratio of the circumference of a circle to its diameter. 
+It is useful in combination with the trigonometric functions @racket[sin] and @racket[cos].
+
 
 @index-section[]
+
+

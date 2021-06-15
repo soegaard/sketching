@@ -32,6 +32,7 @@
 (require (for-syntax syntax/parse racket/base syntax/strip-context racket/string
                      racket/syntax)
          (except-in racket/class class)
+         racket/format
          "class.rkt"          
          "color.rkt"
          "conversion.rkt"
@@ -56,8 +57,8 @@
 ;       enabling  (#%app foo.bar 1 2) -> (send foo bar 1 2 )
 ;       and       foo.bar             -> (get-field foo bar)
 ;     - default values for the event handlers:
-;          mouse-pressed, mouse-released, mouse-moved, mouse-dragged,
-;          key-pressed, key-released
+;          on-mouse-pressed, on-mouse-released, on-mouse-moved, on-mouse-dragged,
+;          on-key-pressed, on-key-released
 ;     - default values for  setup  and  draw
 
 ; Note: sketching-top is exported as #%top.
@@ -68,14 +69,14 @@
      (with-syntax ([default-setup (datum->syntax #'top 'default-setup)]
                    [default-draw  (datum->syntax #'top 'default-draw)])
        (case (syntax->datum #'top-id)
-         [(setup)          #'default-setup]
-         [(draw)           #'default-draw]
-         [(mouse-pressed)  #'#f]
-         [(mouse-released) #'#f]
-         [(mouse-moved)    #'#f]
-         [(mouse-dragged)  #'#f]
-         [(key-pressed)    #'#f]
-         [(key-released)   #'#f]
+         [(setup)             #'default-setup]
+         [(draw)              #'default-draw]
+         [(on-mouse-pressed)  #'#f]
+         [(on-mouse-released) #'#f]
+         [(on-mouse-moved)    #'#f]
+         [(on-mouse-dragged)  #'#f]
+         [(on-key-pressed)    #'#f]
+         [(on-key-released)   #'#f]
          [else
           (define str (symbol->string (syntax-e #'top-id)))
           (cond
@@ -134,17 +135,17 @@
   (syntax-parse stx
     [(_sketching-module-begin def/expr ...)
      (define ctx (car (syntax->list #'(def/expr ...))))
-     (with-syntax ([initialize     (datum->syntax ctx 'initialize)]
-                   [setup          (datum->syntax ctx 'setup)]
-                   [draw           (datum->syntax ctx 'draw)]
-                   [mouse-pressed  (datum->syntax ctx 'mouse-pressed)]
-                   [mouse-released (datum->syntax ctx 'mouse-released)]
-                   [mouse-moved    (datum->syntax ctx 'mouse-moved)]
-                   [mouse-dragged  (datum->syntax ctx 'mouse-dragged)]
-                   [key-pressed    (datum->syntax ctx 'key-pressed)]
-                   [key-released   (datum->syntax ctx 'key-released)]
-                   [default-setup (datum->syntax ctx 'default-setup)]
-                   [default-draw  (datum->syntax ctx 'default-draw)])
+     (with-syntax ([initialize        (datum->syntax ctx 'initialize)]
+                   [setup             (datum->syntax ctx 'setup)]
+                   [draw              (datum->syntax ctx 'draw)]
+                   [on-mouse-pressed  (datum->syntax ctx 'on-mouse-pressed)]
+                   [on-mouse-released (datum->syntax ctx 'on-mouse-released)]
+                   [on-mouse-moved    (datum->syntax ctx 'on-mouse-moved)]
+                   [on-mouse-dragged  (datum->syntax ctx 'on-mouse-dragged)]
+                   [on-key-pressed    (datum->syntax ctx 'on-key-pressed)]
+                   [on-key-released   (datum->syntax ctx 'on-key-released)]
+                   [default-setup     (datum->syntax ctx 'default-setup)]
+                   [default-draw      (datum->syntax ctx 'default-draw)])
      (syntax/loc stx
        (#%module-begin
         (initialize) ; setup frame, canvas and drawing context (pen, brush)
@@ -153,12 +154,12 @@
         (define (default-draw)  (void))        
         (setup)
         (current-draw draw)
-        (current-on-mouse-pressed  mouse-pressed)
-        (current-on-mouse-released mouse-released)
-        (current-on-mouse-moved    mouse-moved)
-        (current-on-mouse-dragged  mouse-dragged)
-        (current-on-key-pressed    key-pressed)
-        (current-on-key-released   key-released)
+        (current-on-mouse-pressed  on-mouse-pressed)
+        (current-on-mouse-released on-mouse-released)
+        (current-on-mouse-moved    on-mouse-moved)
+        (current-on-mouse-dragged  on-mouse-dragged)
+        (current-on-key-pressed    on-key-pressed)
+        (current-on-key-released   on-key-released)
         (start) ; start event loop
         )))]))
 
@@ -206,6 +207,7 @@
              #%top
              #%app
              struct)
+ (all-from-out racket/format)
  ;;; Our versions the following:
  (rename-out [sketching-module-begin #%module-begin])
  (rename-out [sketching-top          #%top])
@@ -245,14 +247,14 @@
  image-mode
  image-set
  key
- key-pressed
- key-released
+ key-pressed  
+ key-released 
  lerp-color
  line
  load-image
  mouse-x
  mouse-y
- mouse-button
+ mouse-button  
  mouse-pressed
  no-fill
  no-gui
@@ -289,6 +291,7 @@
  
  ;; Math
  abs
+ atan2
  ceil
  constrain
  degrees
@@ -301,6 +304,8 @@
  pow
  radians
  (rename-out [new-random random])
+ round
+ ; round-up
  sq
  sqr
  ;; Math Operators
@@ -310,11 +315,10 @@
  year month day hour minute second
  millis
  ;; Math Constants
- pi
- half-pi
- quarter-pi
- two-pi
- tau
+ pi   π
+ pi/2 π/2
+ pi/4 π/4
+ 2pi 2π
 
  ;; Transform
  rotate
@@ -322,6 +326,7 @@
  translate
  push-matrix
  pop-matrix
+ reset-matrix
 
  ;; Conversion
  binary

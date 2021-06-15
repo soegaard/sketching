@@ -9,14 +9,15 @@
          translate
          push-matrix
          pop-matrix
+         reset-matrix
          )
 
 (define (translate dx dy)
   (send dc translate dx dy))
 
 (define (rotate angle) ; radians
-  ; In P they rotate in clock wise direction... sigh.
-  (send dc rotate (- angle))) 
+  ; The - is due to ... is the Racket rotate going clockwise?
+  (send dc rotate (- angle)))
 
 (define scale
   (case-lambda
@@ -40,5 +41,9 @@
   (define m (pop!))
   (send dc set-transformation m))
 
+(define (reset-matrix)
+  ; (define initial (send dc get-initial-matrix))
+  (define initial (vector 1. 0. 0. 1. 0. 0.))
+  (send dc set-transformation (vector initial 0. 0. 1. 1. 0.)))
     
   

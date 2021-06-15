@@ -169,7 +169,7 @@
     [_                              (error who (~a "got: " args))]))
 
 (define (color . args)
-  (args->color args 'args))
+  (args->color args 'color))
 
 (define (red255   c) (send c red))
 (define (green255 c) (send c green))

@@ -102,7 +102,7 @@
         (current-mouse-released #f)
         (current-mouse-moved    #f)
         (current-mouse-dragged  #f)
-        (define on-pressed (current-on-mouse-pressed))        
+        (define on-pressed (current-on-mouse-pressed))
         (when on-pressed (on-pressed)))
       (when (moved? type)
         (current-mouse-moved    #t)

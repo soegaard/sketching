@@ -4,7 +4,7 @@
  ffi/unsafe/atomic)
 
 
-(define (dc-mixin extend-backend%)
+#;(define (dc-mixin extend-backend%)
   (defclass* dc% extend-backend% (dc<%>)
     (inherit flush-cr get-cr release-cr release-unchanged-cr end-cr
              init-cr-matrix init-effective-matrix

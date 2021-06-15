@@ -1,24 +1,23 @@
 #lang sketching
-; TODO: Implement dot methods
+42
+
+;; (define v (vector 00 11 22 33 44 55))
 
 
-(define v (vector 00 11 22 33 44 55))
+;; (struct blob (x y))
+
+;; (define-method blob blob?
+;;   (draw this [color "red"])
+;;   (circle (blob-x this) (blob-y this)))
 
 
-(struct blob (x y))
+;; (define b (blob 100 100))
 
-(define-method blob blob?
-  (draw this [color "red"])
-  (circle (blob-x this) (blob-y this)))
+;; (define (setup)
+;;   (size 640 360))
 
-
-(define b (blob 100 100))
-
-(define (setup)
-  (size 640 360))
-
-(define (draw)
-  42
-  (b.draw))
+;; (define (draw)
+;;   42
+;;   (b.draw))
 
 
