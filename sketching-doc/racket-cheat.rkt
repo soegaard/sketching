@@ -7,11 +7,11 @@
          scribble/html-properties)
 
 (struct *section (which label groups))
-(struct *group (label rows))
-(struct *row (label content))
+(struct *group   (label rows))
+(struct *row     (label content))
 
 (define how-many-sections (box 0))
-(define rsections (box empty))
+(define rsections         (box empty))
 
 (define (CSection #:which which label . groups)
   (set-box! rsections
@@ -30,11 +30,11 @@
   (style #f (list (html-defaults #"<!DOCTYPE html>" #"" '()))))
 
 (define (render-cheat-sheet)
-  (define left-col '())
+  (define left-col  '())
   (define right-col '())
   (for ([s (in-list (unbox rsections))])
     (if (eq? 'left (*section-which s))
-        (set! left-col (cons s left-col))
+        (set! left-col  (cons s left-col))
         (set! right-col (cons s right-col))))
 
   (element
@@ -42,7 +42,7 @@
                    (attributes '([class . "Csheet"]))
                    (css-style-addition racket-cheat.css-path)))
    (list
-    (render-column "Cleft" left-col)
+    (render-column "Cleft"  left-col)
     (render-column "Cright" right-col))))
 
 (define (render-column id secs)

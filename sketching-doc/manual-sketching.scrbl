@@ -5,7 +5,7 @@
 @(require (for-syntax racket/base syntax/parse))
 @(require (for-label ; (except-in racket/base #%app #%top)
            (except-in racket
-                      #%app #%top #%module-begin class delay
+                      #%app #%top #%module-begin class ; delay
                       second struct random round
                       )
            sketching))
@@ -40,6 +40,9 @@
    (define url (string-append "https://en.wikipedia.org/wiki/" name))
    @margin-note{@hyperlink[url (list* @bold{Wikipedia: } " " preflow)]})
 
+@(define license-link
+   @hyperlink["https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License."])
 
 
 
@@ -51,17 +54,22 @@ Sketching is a language/library for creative coding. The focus is to make
 graphical programs accessible for beginners, artists, educators and designers.
 Sketching is free to use and the source is available to read and improve.
 
-
 The main focus of Sketching is graphical programs. Running a program
-will display a canvas ready displaying static images or animation.
+will display a canvas ready to show static images or animation.
 
+The inspiration for Sketching came from the Processing project.
+Processing is a programming language built on top of Java.
+The Processing language was devised by Ben Fry and Casey Reas.
 
-The inspiration for Sketching came from the Processing project. Think
-of Sketching as what Processing would have looked like, if it used
-Racket as its programming language instead of Java.
+Think of Sketching as what Processing would have looked like, if
+it used Racket as its programming language instead of Java.
+Alternatively, think of Sketching as Racket with an easy to use graphics library.
 
-The documentation is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
-The documentation is based on the documentation for Processing (same documentation license).
+Although inspired by the Processing project, this project has no
+affiliation with the Processing Foundation.
+
+The reference documentation is licensed under @|license-link|.
+This is the same license as the reference documentation for Processing uses.
 
 
 @author[@author+email["Jens Axel Søgaard" "jensaxel@soegaard.net"]]
@@ -76,22 +84,24 @@ The documentation is based on the documentation for Processing (same documentati
   (CGroup
    #f
    (CRow "Setting"
-         @elem{@racket[background]
-               @racket[stroke]
-               @racket[fill]
+         @elem{
+               @racket[stroke] @racket[no-stroke] @LB
+               @racket[fill]   @racket[no-fill]   @LB
                @;racket[clear]
+               @racket[background]
                @racket[color-mode]               
-               @racket[no-stroke]
-               @racket[no-fill]})
+               })
    (CRow "Creating and Reading"
          @elem{@racket[color]
                @racket[red]
                @racket[green]
                @racket[blue]
                @racket[alpha]
+               @LB
                @racket[hue]               
                @racket[saturation]
                @racket[brightness]
+               @LB
                @racket[lerp-color]})))
 
 @(CSection
@@ -99,31 +109,27 @@ The documentation is based on the documentation for Processing (same documentati
   "Input"
   (CGroup
    #f
-   (CRow "Mouse"
+   (CRow "Coordinates"
          @elem{@racket[mouse-x]
                @racket[mouse-y]
                @racket[pmouse-x]
-               @racket[pmouse-y]
-               @racket[mouse-button]
+               @racket[pmouse-y]})
+   (CRow "Buttons"
+         @elem{@racket[mouse-button]
                @racket[mouse-pressed]
-               @racket[mouse-released]
-               @; racket[mouse-wheel]
-
-               @; racket[on-mouse-clicked] ; clicked is pressed+released (in the same component)
-               @racket[on-mouse-dragged]
-               @racket[on-mouse-moved]
+               @racket[mouse-released]})
+   (CRow "Events"
+         @elem{@racket[on-mouse-dragged]
+               @racket[on-mouse-moved] @LB
                @racket[on-mouse-pressed]
-               @racket[on-mouse-released]
-               @; racket[on-mouse-wheel]
-               })
+               @racket[on-mouse-released]})
 
-   (CRow "Keyboard"
-         @elem{@racket[key]
-               @racket[key-code]
-               @racket[key-pressed]
+   (CRow "Keys"
+         @elem{@racket[key] @racket[key-code]})
+   (CRow "Keyboard Events"
+         @elem{@racket[key-pressed]
                @racket[key-released]
                @racket[key-typed]})
-
    
    (CRow "Time and Date"
          @elem{@racket[year]
@@ -159,15 +165,16 @@ The documentation is based on the documentation for Processing (same documentati
    #f
    (CRow "Attributes"
          @elem{@racket[ellipse-mode]
-               @racket[rect-mode]
+                      @racket[rect-mode]
+                      @LB
                @racket[stroke-cap]
                @racket[stroke-join]
                @racket[stroke-weight]}))
   (CGroup
    #f
    (CRow "Vertex"
-         @elem{@racket[begin-shape]
-               @racket[vertex]
+         @elem{@racket[vertex]
+               @racket[begin-shape]               
                @racket[end-shape]})))
 
 @(CSection
@@ -179,6 +186,7 @@ The documentation is based on the documentation for Processing (same documentati
          @elem{@racket[rotate]
                @racket[scale]
                @racket[translate]
+               @LB
                @racket[push-matrix]
                @racket[pop-matrix]})))
 
@@ -191,6 +199,7 @@ The documentation is based on the documentation for Processing (same documentati
          @elem{@racket[modulo]
                @racket[remainder]
                @racket[quotient]
+               @LB
                @racket[+=] @racket[-=]
                @racket[*=] @racket[/=]
                @racket[++] @racket[--]})
@@ -220,6 +229,7 @@ The documentation is based on the documentation for Processing (same documentati
                @racket[asin]
                @racket[atan]
                @racket[atan2]
+               @LB
                @racket[radians]
                @racket[degrees]})
    (CRow "Constants"
@@ -232,6 +242,21 @@ The documentation is based on the documentation for Processing (same documentati
                @racket[2pi]
                @racket[2π]
                })))
+
+
+@(CSection
+  #:which 'left
+  "Environment"
+  (CGroup
+   #f
+   (CRow "Size"
+         @elem{@racket[size] @racket[width] @racket[height] @racket[fullscreen]})
+   (CRow "Frames"
+         @elem{@racket[frame-count] @racket[frame-rate] @racket[set-frame-rate!]})
+   (CRow "Mouse"
+         @elem{@racket[cursor] @racket[no-cursor] @racket[focused]})
+   (CRow "Other"
+         @elem{@racket[nap]})))
 
 @(render-cheat-sheet)
 
@@ -4657,6 +4682,484 @@ The mathematical constant @racket[π] is the number 3.1415927.
 It is the ratio of the circumference of a circle to its diameter. 
 It is useful in combination with the trigonometric functions @racket[sin] and @racket[cos].
 
+@;---------
+@;---------
+@;---------
+
+@subsection{Environment}
+
+@;---------
+
+@;---------
+
+@subsubsection{width}
+
+@bold{Name: } @defidentifier[#'width]
+
+System variable whose value is the width of the canvas.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0)]
+
+@examples[#:label #f #:eval se
+(no-stroke)
+(background 0)
+(rect 0 40    width    20)
+(eval:alts
+ (rect 0 60 (/ width 2) 20)
+ (begin (rect 0 60 (/ width 2) 20)
+        (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[width]            @linebreak[]
+
+
+@bold{Description}
+
+The system variable @racket[width] holds the width of the canvas.
+
+The variable is initially set by the @racket[size] function from within @racket[setup].
+If @racket[size] is not called by @racket[setup], the default width is 100.
+
+It is not possible to use @racket[set!] to change the width of the canvas.
+
+
+@;---------
+
+@subsubsection{height}
+
+@bold{Name: } @defidentifier[#'height]
+
+System variable whose value is the height of the canvas.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0)]
+
+@examples[#:label #f #:eval se
+(no-stroke)
+(background 0)
+(rect 40 0    height    20)
+(eval:alts
+ (rect 60 0 (/ height 2) 20)
+ (begin (rect 60 0 (/ height 2) 20)
+        (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[height]            @linebreak[]
+
+
+@bold{Description}
+
+The system variable @racket[height] holds the height of the canvas.
+
+The variable is initially set by the @racket[size] function from within @racket[setup].
+If @racket[size] is not called by @racket[setup], the default height is 100.
+
+It is not possible to use @racket[set!] to change the height of the canvas.
+
+
+@;---------
+
+@subsubsection{size}
+
+@bold{Name: } @defidentifier[#'size]
+
+Sets the size of the canvas (window).
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 200 100))
+          (fill 196) (no-stroke) (rect 0 0 200 100) (stroke 0)]
+
+
+@examples[#:label #f #:eval se
+(size 200 100)
+(background 153)
+(eval:alts
+ (line 0 0 width height)
+ (begin (line 0 0 width height)
+        (send dc get-bitmap)))]
+
+
+@examples[#:label #f #:eval se #:lang sketching
+(define (setup)
+  (size 320 240))
+
+(define (draw)
+  (background 153)
+  (line 0 0 width height))]
+
+
+@bold{Usage}
+
+@racketusage[(size w h)]            @linebreak[]
+
+@tabular[#:sep @hspace[1]
+(list (list @racketid[w]   "an integer width")
+      (list @racketid[h]   "an integer height"))]
+
+
+@bold{Description}
+
+Defines the dimension of the display window width and height in units
+of pixels. Use @racket[size] as the first expression in your
+@racket[setup] function.
+
+The built-in variables width and height are set by the values
+passed to this function. For example, running @racket[(size 640 480)] will
+assign 640 to the width variable and 480 to the height variable. If
+@racket[size] is not used, the window will be given a default size of
+100 × 100 pixels.
+
+The @racket[size] function can only be used once inside a sketch, and it
+cannot be used for resizing.
+
+If you need a full screen canvas, use @racket[full-screen].
+
+The maximum width and height is limited by your operating system, and
+is usually the width and height of your actual screen. On some
+machines it may simply be the number of pixels on your current screen.
+
+The minimum width and height is around 100 pixels in each direction.
+This is the smallest that is supported across Windows, macOS, and Linux
+
+
+@;---------
+
+@subsubsection{fullscreen}
+
+@bold{Name: } @defidentifier[#'fullscreen]
+
+Use the full screen for the canvas.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se #:lang sketching
+(define x 0)
+
+(define (setup)
+  (fullscreen)
+  (background 0)
+  (no-stroke)
+  (fill 102))
+
+(define (draw)
+  (rect x (* 0.2 height) 1 (* 0.6 height))
+  (:= x (+ x 2)))]
+
+
+@bold{Usage}
+
+@racketusage[(fullscreen)]            @linebreak[]
+
+
+@bold{Description}
+
+Use the full screen for the canvas.
+Call @racket[fullscreen] from @racket[setup].
+
+@;---------
+
+@subsubsection{cursor}
+
+@bold{Name: } @defidentifier[#'cursor]
+
+Sets the image used as the mouse cursor.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se #:lang sketching
+(define (setup)
+  (cursor 'arrow))]
+
+@examples[#:label #f #:eval se #:lang sketching
+(code:comment "Move the mouse pointer to see the different mouse cursors")
+(define cursors '(arrow bullseye cross hand ibeam watch blank
+                        size-n/s size-e/w size-ne/sw size-nw/se))
+
+(define (setup)
+  (size 500 100)
+  (cursor 'arrow))
+
+(define (draw)
+  (code:comment "draw vertical strips")
+  (define n (length cursors))
+  (define w (/ width n))
+  (stroke 255)
+  (for ([x (in-range 0 width w)])
+    (fill (floor (lerp 0 255 (/ x width))))
+    (rect x 0 w height))
+  (code:comment "change cursor")
+  (define index (constrain (floor (/ mouse-x w)) 0 (- n 1)))
+  (define c     (list-ref cursors index))
+  (code:comment "write chosen cursor")
+  (text-size 30)
+  (fill 255)
+  (text (~a c) 200 25)
+  (cursor c))]
+  
+  
+
+
+@bold{Usage}
+
+@racketusage[(cursor sym)]            @linebreak[]
+@racketusage[(cursor bm)]            @linebreak[]
+
+@tabular[#:sep @hspace[1]
+(list (list @racketid[sym] 
+            (~a "one of the symbols 'arrow "
+                "'bullseye 'cross 'hand 'ibeam 'watch 'blank "
+                "'size-n/s 'size-e/w 'size-ne/sw 'size-nw/se"))
+      (list @racketid[img]   "a bitmap"))]
+
+
+
+@bold{Description}
+
+Sets the image used as the mouse cursor.
+
+Use @racketusage[(cursor sym)] to choose one of the builtin mouse cursors.
+
+Use @racketusage[(cursor bm)] to use a bitmap as a custom mouse cursor.
+
+
+@;---------
+
+@subsubsection{no-cursor}
+
+@bold{Name: } @defidentifier[#'no-cursor]
+
+Hides the mouse cursor.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se #:lang sketching
+(code:comment "Press the mouse to hide the cursor")
+(define (draw)
+  (if mouse-pressed
+      (no-cursor)
+      (cursor 'hand)))]
+
+
+@bold{Usage}
+
+@racketusage[(no-cursor)]            @linebreak[]
+
+
+@bold{Description}
+
+Hides the mouse cursor.
+
+Note: Currently there is a problem with the example on macOS Big Sur.
+Mail me: does it work on Linux and Windows?
+
+
+@;---------
+
+@subsubsection{nap}
+
+@bold{Name: } @defidentifier[#'nap]
+
+Pauses the program (the current thread).
+
+
+@bold{Usage}
+
+@racketusage[(nap ms)]            @linebreak[]
+
+
+@tabular[#:sep @hspace[1]
+(list (list @racketid[ms]   "milliseconds to pause"))]
+
+
+@bold{Description}
+
+Pauses the program (the current thread) for the given number of milliseconds.
+
+Note: It's a bad practise to call @racket[nap] from @racket[draw] and 
+the event handlers. If you need to affect the speed of an animation,
+use @racket[frame-rate] instead.
+
+Note: In processing the @racket[nap] function is called @defidentifier[#'delay].
+In Racket @racket[delay] is used to make promisses instead.
+
+
+@;---------
+
+@subsubsection{focused}
+
+@bold{Name: } @defidentifier[#'focused]
+
+System variable holding whether the canvas has mouse and keyboard focus.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+(define (draw)
+  (cond
+    [focused (ellipse 25 25 50 50)]
+    [else    (line   0 0 100 100)
+             (line 100 0   0 100)]))]
+
+
+
+@bold{Usage}
+
+@racketusage[focused]        @linebreak[]
+
+@bold{Values}
+
+@tabular[#:sep @hspace[1]
+         (list (list @racket[#t] "the canvas has focus")
+               (list @racket[#f] "the canvas haven't got focus"))]
+
+
+
+@bold{Description}
+
+System variable holding whether the canvas has mouse and keyboard focus.
+
+When the canvas has focus, keyboard events mouse events are sent sent to the
+Sketching program. 
+
+
+@;---------
+
+@subsubsection{frame-count}
+
+@bold{Name: } @defidentifier[#'frame-count]
+
+The system variable @racket[frame-count] contains the number of frames
+displayed since the program started.
+
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se #:lang sketching
+(define (setup)
+  (set-frame-rate! 30))
+
+(define (draw)
+  (line 0 0 width height)
+  (text (~a frame-count) 40 50))]
+
+
+
+@bold{Usage}
+
+@racketusage[frame-count]            @linebreak[]
+
+
+@bold{Description}
+
+The system variable @racket[frame-count] contains the number of frames
+displayed since the program started. At the time @racket[setup]
+is called, the value is 0. After each call to draw, the variable
+is incremented.
+
+
+@;---------
+
+@subsubsection{frame-rate}
+
+@bold{Name: } @defidentifier[#'frame-rate]
+
+The system variable @racket[frame-rate] contains the approximate frame rate.
+
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se #:lang sketching
+(define (setup)
+  (set-frame-rate! 30))
+
+(define (draw)
+  (line 0 0 width height)
+  (text (~a frame-rate) 40 50))]
+
+
+
+@bold{Usage}
+
+@racketusage[frame-rate]            @linebreak[]
+
+
+@bold{Description}
+
+The system variable @racket[frame-rate] contains the approximate frame rate.
+The initial frame rate is 10 frames per second. The system variable is updated
+with each frame. The value is averaged over several frames, so the value is
+accurate only after the first 5-10 frames have been drawn.
+
+Use @racket[set-frame-rate!] to set the frame rate to another value.
+
+@;---------
+
+@subsubsection{set-frame-rate!}
+
+@bold{Name: } @defidentifier[#'set-frame-rate!]
+
+Sets the desired number of frames to be displayed per second.
+
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se #:lang sketching
+(define (setup)
+  (set-frame-rate! 30))
+
+(define (draw)
+  (line 0 0 width height)
+  (text (~a frame-rate) 40 50))]
+
+
+
+@bold{Usage}
+
+@racketusage[(set-frame-rate! fps)]            @linebreak[]
+
+@bold{Values}
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[fps] "number of desired frames per second"))]
+
+
+@bold{Description}
+
+Sets the desired number of frames to be displayed per second.
+
+The system will attempt to call @racket[draw] the desired number
+of times per second, but there is no guarantees. If @racket[draw] is slow,
+the desired number of frames per second might be achievable.
+
+
+@;-------------------
+@;-------------------
+@;-------------------
+
+
+@(void @~a{
+           Differences between Sketching and Processing.
+
+           - delay in P is called nap in S.
+             note: nap uses milliseconds and normal sleep in R uses seconds})
+           
 
 @index-section[]
 
