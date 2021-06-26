@@ -54,6 +54,20 @@
     (super-new)))
 
 ;;;
+;;; Keys
+;;;
+
+; The keyboard state is kept in a hash table. 
+; Use key-down? to find out, whether a key is pressed or not.
+(define the-keyboard  (make-hasheq))
+
+(define (key-down! k) (hash-set! the-keyboard k #t))
+(define (key-up!   k) (hash-set! the-keyboard k #f))
+(define (key-down? k) (hash-ref  the-keyboard k #f))
+(define (key-up?   k) (not (key-down? k)))
+
+
+;;;
 ;;; Canvas
 ;;;
 
@@ -92,9 +106,9 @@
       (send this suspend-flush)
       (when (released? type)
         (current-mouse-released #t)
-        (current-mouse-pressed  #f)        
+        (current-mouse-pressed  #f)
         (current-mouse-moved    #f)
-        (current-mouse-dragged  #f)                
+        (current-mouse-dragged  #f)
         (define on-released (current-on-mouse-released))
         (when on-released (on-released)))
       (when (pressed? type)
@@ -110,6 +124,7 @@
         (define on-moved (current-on-mouse-moved))
         (when on-moved (on-moved)))
       (when (dragged? type)
+        (displayln 'dragged)
         (current-mouse-moved    #f)
         (current-mouse-dragged  #t)
         (define on-dragged (current-on-mouse-dragged))
@@ -120,18 +135,27 @@
       (define key     (send e get-key-code))
       (define release (send e get-key-release-code))
       (send this suspend-flush)
-      (when (eq? release 'press)  ; key down?
-        (current-key-pressed  #t)
-        (current-key-released #f)
-        (current-key key)
-        (define on-pressed (current-on-key-pressed))        
-        (when on-pressed (on-pressed)))
-      (when (eq? key 'release)    ; key up?
-        (current-key-pressed  #f)
-        (current-key-released #t)
-        (current-key key)
-        (define on-released (current-on-key-released))        
-        (when on-released (on-released)))
+      (cond
+        ; key down?
+        [(eq? release 'press)  (displayln (list "press" key))
+                               (unless (key-down? key)   ; already down, i.e. this is a repetition
+                                 (displayln (list "press key wasn't down already" key))
+                                 (key-down! key)
+                                 (current-key-pressed  #t)
+                                 (current-key-released #f)
+                                 (current-key key)
+                                 (define on-pressed (current-on-key-pressed))
+                                 (when on-pressed (on-pressed)))]
+        ; key up?
+        [else                  (displayln (list "release" key release))
+                               (when (key-down? release)
+                                 (displayln (list "released key was down" release))
+                                 (key-up! release)
+                                 (current-key-pressed  #f)
+                                 (current-key-released #t)
+                                 (current-key release)
+                                 (define on-released (current-on-key-released))        
+                                 (when on-released (on-released)))])
       (send this resume-flush))
         
     (define/override (on-paint)   ; repaint (exposed or resized)
@@ -264,8 +288,16 @@
        (send top-frame set-cursor c))]
     [else (error 'cursor "todo: implement support for image cursors")]))
 
+(define the-blank-cursor (make-object cursor% 'blank))
+
+; TODO: neither solution works on Big Sur, so ... the problem might be elsewhere.
 (define (no-cursor)
   (send top-frame set-cursor #f))
+#;(define (no-cursor)
+  (define c (send top-frame get-cursor))
+  (unless (eq? c the-blank-cursor)
+    (send top-frame set-cursor the-blank-cursor)))
+
 
 (define (set-title s)
   (when (label-string? s)
@@ -273,7 +305,10 @@
 
 (define (fullscreen)
   (when top-frame
-    (send top-frame fullscreen #t)))
+    (send top-frame fullscreen #t)
+    (define-values (w h) (get-display-size))
+    (current-width w)
+    (current-height h)))
 
 
 (define (loop)

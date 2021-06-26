@@ -107,7 +107,7 @@
 
 ; Frames
 (define current-frame-count        (make-parameter  0 non-negative-integer?))
-(define current-frame-rate         (make-parameter 60 positive-integer?))
+(define current-frame-rate         (make-parameter 15 positive-integer?))
 (define current-actual-frame-rate  (make-parameter 10 positive-integer?))
 
 (define current-draw (make-parameter #f))

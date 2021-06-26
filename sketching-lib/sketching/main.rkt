@@ -336,11 +336,12 @@
 
  ;; Environment / Gui
  cursor
- delay
+ nap ; sleep in milliseconds
  display-density
  focused
  frame-count
  frame-rate
+ set-frame-rate!
  delta-time
  fullscreen
  height
@@ -393,6 +394,11 @@
     [(_frame-rate fps)            #'(set-frame-rate fps)]
     [id (identifier? #'id)        #'(actual-frame-rate)]
     [_ (error 'frame-rate "")]))
+
+(define-syntax (set-frame-rate! stx)
+  (syntax-case stx ()
+    [(_set-frame-rate fps)  #'(set-frame-rate fps)]
+    [_ (error 'set-frame-rate "")]))
 
 ;;;
 ;;; Initialization

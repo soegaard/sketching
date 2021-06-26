@@ -484,9 +484,18 @@
   ;   (? integer? start) (? integer? end) (? number? x) (? number? y)
   ;   (? number? x1) (? number? y1) (? number? x2) (? number? y2)
   ; so a keyword needs to be used.
+
+  (define mode (current-rect-mode)) ; sigh... 
   (match args
+    ; two arguments: (x,y)
     [(list (? string? s) (? number? x) (? number? y))
-     (do-text s x y)]
+     (case mode
+       [(corner corners radius)  (do-text s x y)]
+       [(center)                 (parameterize ([current-text-horizontal-align 'center]
+                                                [current-text-vertical-align   'center])
+                                   (do-text s x y))]
+       [else      (error 'text "internal error: unsupported rect mode, got: ~a" mode)])]
+                                 
     [(list (? string? s) (? integer? start) (? integer? end) (? number? x) (? number? y))
      (do-text (substring s start end) x y)]
     ; characters
@@ -505,9 +514,9 @@
 
 (define (do-text s x y)
   (define old-color (send dc get-text-foreground))
-  (define old-mode  (send dc get-text-mode))
+  (define old-mode  (send dc get-text-mode))       ; transparent or solid
   (define brush     (send dc get-brush))
-  (define color     (send brush get-color)) 
+  (define color     (send brush get-color))
   (send dc set-text-mode 'transparent)
   (send dc set-text-foreground color)
   ; w=width, h=height, b=dist from baseline to descender, e=extra vertical space

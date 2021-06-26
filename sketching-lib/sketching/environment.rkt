@@ -9,7 +9,7 @@
 
 (provide actual-frame-rate
          ; cursor ; see "gui.rkt"
-         delay
+         nap
          display-density
          set-frame-rate         
          pixel-density
@@ -28,7 +28,7 @@
   (current-height height))
 
 ; sleep for nap-time milliseconds
-(define (delay nap-time)
+(define (nap nap-time)
   (sleep (/ nap-time 1000.)))
 
 ; display density
