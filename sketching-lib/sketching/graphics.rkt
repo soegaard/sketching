@@ -55,7 +55,8 @@
          racket/format
          "color.rkt"
          "parameters.rkt"
-         "math.rkt")
+         "math.rkt"
+         "typography.rkt")
 
 ;;;
 ;;; Coordinates
@@ -185,6 +186,17 @@
   (send p curve-to x2 y2 x3 y3 x4 y4)
   (send dc draw-path p))
 
+
+(define (rect-mode-args->top-left+width+height mode x1 y1 x2 y2)
+  (case mode
+    [(corner)  (values x1 y1 x2 y2)]
+    [(corners) (values (min x1 x2) (min y1 y2) (max x1 x2) (max y1 y2))]
+    [(center)  (define-values (w h) (values x2 y2))
+               (values (- x1 (/ w 2.)) (- y1 (/ h 2.)) w h)]
+    [(radius)  (define-values (w h) (values (* 2 x2) (* 2 y2)))
+               (values (- x1 x2) (- y1 y2) w h)]
+    [else      (error rect-mode-args->top-left+width+height
+                      (~a "internal error, got: ~a" mode))]))
 
 
 
@@ -478,41 +490,62 @@
 ;;; Text
 ;;;
 
-(define (text . args)
-  ; todo: the draw inside rectangle case is not implement
-  ; In Racket there is no difference between
-  ;   (? integer? start) (? integer? end) (? number? x) (? number? y)
-  ;   (? number? x1) (? number? y1) (? number? x2) (? number? y2)
-  ; so a keyword needs to be used.
-
-  (define mode (current-rect-mode)) ; sigh... 
-  (match args
-    ; two arguments: (x,y)
-    [(list (? string? s) (? number? x) (? number? y))
-     (case mode
-       [(corner corners radius)  (do-text s x y)]
-       [(center)                 (parameterize ([current-text-horizontal-align 'center]
-                                                [current-text-vertical-align   'center])
-                                   (do-text s x y))]
-       [else      (error 'text "internal error: unsupported rect mode, got: ~a" mode)])]
-                                 
-    [(list (? string? s) (? integer? start) (? integer? end) (? number? x) (? number? y))
-     (do-text (substring s start end) x y)]
-    ; characters
-    [(list (? char? c) (? number? x) (? number? y))
-     (text (string c) x y)]
-    [(list (list (? string? cs) ...) (? number? x) (? number? y))
-     (text (list->string cs) x y)]
-    [(list (list (? string? cs) ...) (? integer? start) (? integer? end) (? number? x) (? number? y))
-     (text (substring (list->string cs) start end) x y)]
-    [_
-     (error 'text "got: ~a" (~a (map ~a args)))]))
-
 (define (text-align hor ver)
   (current-text-horizontal-align hor)
   (current-text-vertical-align   ver))
 
-(define (do-text s x y)
+
+(define (text . args)
+  ; There are basically three scenarios:
+  ;   1. Contents and (x,y) are given.
+  ;   2. Contents and (x,y) and width are given.
+  ;   3. Contents and (x,y) and width and height are given.
+
+  ; Scenario 3
+  ;   With string and four arguments, we can use rect-mode to interpret the arguments
+  ;   in order to get the width and height of the rectangle.
+  ;   The linewidth is present, so within in the text rectangle
+  ;   text can be aligned left, center and right.
+
+  ;   Note: The vertical alignment is ignored in scenario 3 (we take it as 'top).
+
+  ; Scenario 2 - TODO - Not in P.
+  ;   The line width is present, so text can be aligned left, center and right.
+  ;   Note: The vertical alignment is ignored in scenario 3 (we take it as 'top).
+
+  ; Scenario 1
+  ;   Both horizontal and vertical alignment is taken into consideration.
+  
+  (define mode (current-rect-mode)) ; sigh... 
+  (match args
+    ;; Scenario 1:  No width and height present.
+    ;              Single line.
+    [(list (? string? s) (? number? x) (? number? y))
+     (case mode
+       [(corner corners radius)  (do-text-line s x y)] 
+       [(center)                 (parameterize ([current-text-horizontal-align 'center]
+                                                [current-text-vertical-align   'center])
+                                   (do-text-line s x y))]
+       [else      (error 'text "internal error: unsupported rect mode, got: ~a" mode)])]
+    
+    ; characters
+    [(list (? char? c) (? number? x) (? number? y))
+     (text (string c) x y)]
+    
+    [(list (list (? string? cs) ...) (? number? x) (? number? y))
+     (text (list->string cs) x y)]
+
+    ;; Scenario  3
+    [(list contents (? number? x1) (? number? y1) (? number? x2) (? number? y2))
+     ; Calculate top-left (x,y) and the width and height according to rect-mode.
+     (define-values (x0 y0 w h) (rect-mode-args->top-left+width+height mode x1 y1 x2 y2))
+     (do-text contents x0 y0 w h)]
+    [_
+     (error 'text "got: ~a" (~a (map ~a args)))]))
+
+(define (do-text-line s x y)
+  ;; Scenario 1 - no given width or height
+  ;;   single line
   (define old-color (send dc get-text-foreground))
   (define old-mode  (send dc get-text-mode))       ; transparent or solid
   (define brush     (send dc get-brush))
@@ -520,7 +553,13 @@
   (send dc set-text-mode 'transparent)
   (send dc set-text-foreground color)
   ; w=width, h=height, b=dist from baseline to descender, e=extra vertical space
-  (define-values (w h b e) (send dc get-text-extent s))
+
+  ; Note: Use "x" with get-text-extent to get a correct value for b.
+  ;       If s contains newlines, an incorrect value is returned.
+  (define-values ( w  h _b _e) (send dc get-text-extent s))
+  (define-values (_w _h  b  e) (send dc get-text-extent "x"))
+  
+  (define a (- h b))
   (define x0
     (case (current-text-horizontal-align)
       [(left)      x]
@@ -531,8 +570,24 @@
       [(top)         y]
       [(bottom)   (- y    h)]
       [(center)   (- y (/ h 2.))]
-      [(baseline) (- y (- h b))]))
-  (send dc draw-text s x0 y0)
+      [(baseline) (- y a)]))
+  (send dc draw-text s x0 y0)  
+  (send dc set-text-mode old-mode))
+
+(define (do-text contents x y w h)
+  ;; Scenario 3 - width and height are given
+  ;;   multiple lines
+  (define old-color (send dc get-text-foreground))
+  (define old-mode  (send dc get-text-mode))       ; transparent or solid
+  (define brush     (send dc get-brush))
+  (define color     (send brush get-color))
+  (send dc set-text-mode 'transparent)
+  (send dc set-text-foreground color)
+
+  (define hor-alignment (current-text-horizontal-align))
+  (define leading       2)
+  (text/aligned contents dc x y w h hor-alignment leading)
+  
   (send dc set-text-mode old-mode))
 
 (define (create-font)
