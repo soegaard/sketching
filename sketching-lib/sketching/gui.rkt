@@ -124,7 +124,6 @@
         (define on-moved (current-on-mouse-moved))
         (when on-moved (on-moved)))
       (when (dragged? type)
-        (displayln 'dragged)
         (current-mouse-moved    #f)
         (current-mouse-dragged  #t)
         (define on-dragged (current-on-mouse-dragged))
@@ -191,7 +190,7 @@
   
   (set! top-canvas            canvas)
   (set! top-bitmap            (make-screen-bitmap 100 100))
-  (set! top-bitmap-dc         (new bitmap-dc% [bitmap top-bitmap]))  
+  (set! top-bitmap-dc         (new bitmap-dc% [bitmap top-bitmap]))
   ;; (set! top-bitmap-buffer     (make-screen-bitmap 100 100))
   ;; (set! top-bitmap-buffer-dc  (new bitmap-dc% [bitmap top-bitmap-buffer]))  
 
@@ -209,10 +208,13 @@
   ; store the time now, used by millis
   (send top-canvas min-width  (current-width))
   (send top-canvas min-height (current-height))
+  (define old-dc (send top-canvas get-dc))
   (unless (and (= (current-width)  (send top-bitmap get-width))
                (= (current-height) (send top-bitmap get-height)))
     (set! top-bitmap           (make-screen-bitmap (current-width) (current-height)))
-    (set! top-bitmap-dc        (new bitmap-dc% [bitmap top-bitmap])))
+    (set! top-bitmap-dc        (new bitmap-dc% [bitmap top-bitmap]))
+    (send top-bitmap-dc set-background (send old-dc get-background))
+    (send top-bitmap-dc clear))
                
   (send top-canvas set-canvas-background (send (current-dc) get-background))
 
