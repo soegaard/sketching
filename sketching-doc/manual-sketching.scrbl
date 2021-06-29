@@ -8,6 +8,7 @@
                       #%app #%top #%module-begin class ; delay
                       second struct random round
                       )
+           (only-in racket/gui font%)
            sketching))
 
 
@@ -78,6 +79,8 @@ This is the same license as the reference documentation for Processing uses.
 
 @(require "racket-cheat.rkt")
 
+@section[#:tag "overview"]{Overview}
+
 @(CSection
   #:which 'left
   "Color"
@@ -125,11 +128,12 @@ This is the same license as the reference documentation for Processing uses.
                @racket[on-mouse-released]})
 
    (CRow "Keys"
-         @elem{@racket[key] @racket[key-code]})
+         @elem{@racket[key] 
+               @racket[key-pressed]})
    (CRow "Keyboard Events"
-         @elem{@racket[key-pressed]
-               @racket[key-released]
-               @racket[key-typed]})
+         @elem{@racket[on-key-pressed]
+               @racket[on-key-released] @LB
+               @racket[on-key-typed]})
    
    (CRow "Time and Date"
          @elem{@racket[year]
@@ -163,11 +167,11 @@ This is the same license as the reference documentation for Processing uses.
          @elem{@racket[bezier]}))
   (CGroup
    #f
-   (CRow "Attributes"
+   (CRow "Modes"
          @elem{@racket[ellipse-mode]
-                      @racket[rect-mode]
-                      @LB
-               @racket[stroke-cap]
+               @racket[rect-mode]})
+   (CRow "Stroke"
+         @elem{@racket[stroke-cap]
                @racket[stroke-join]
                @racket[stroke-weight]}))
   (CGroup
@@ -179,6 +183,27 @@ This is the same license as the reference documentation for Processing uses.
 
 @(CSection
   #:which 'right
+  "Typography"
+  (CGroup
+   #f
+   (CRow "Displaying"
+         @elem{@racket[text]})
+   (CRow "Attributes"
+         @elem{@racket[text-align]
+               @racket[text-size]
+               @racket[text-face] 
+               @LB
+               @racket[text-family]
+               @racket[text-weight]
+               @racket[text-underlined?]
+               @LB
+               @racket[text-smoothing]
+               @racket[text-size-in-pixels?]
+               @racket[text-hinting]})))
+
+
+@(CSection
+  #:which 'right
   "Transform"
   (CGroup
    #f
@@ -186,6 +211,9 @@ This is the same license as the reference documentation for Processing uses.
          @elem{@racket[rotate]
                @racket[scale]
                @racket[translate]
+               @LB
+               @racket[shear-x]
+               @racket[shear-y]
                @LB
                @racket[push-matrix]
                @racket[pop-matrix]})))
@@ -1301,7 +1329,7 @@ The default interpretation of the arguments is:
                (list @racketid[c]   "width of the arc's ellipse by default")
                (list @racketid[d]   "height of the arc's ellipse by default"))]
 
-The interpretation of the arguments are affected by @racket[ellipse-mode].
+The interpretation of the arguments is affected by @racket[ellipse-mode].
 
 
 @bold{Description}
@@ -1568,7 +1596,7 @@ The default interpretation of the arguments is:
                #;(list @racketid[br]   "radius for bottom-right corner")
                #;(list @racketid[bl]   "radius for bottom-left corner"))]
 
-The interpretation of the arguments are affected by @racket[rect-mode].
+The interpretation of the arguments is affected by @racket[rect-mode].
 
 
 @bold{Description}
@@ -1626,7 +1654,7 @@ The default interpretation of the arguments is:
                (list @racketid[y]      "y-coordinate of corner")
                (list @racketid[extent] "length of side"))]
 
-The interpretation of the arguments are affected by @racket[rect-mode].
+The interpretation of the arguments is affected by @racket[rect-mode].
 
 
 @bold{Description}
@@ -2297,6 +2325,538 @@ Add a point to the current shape.
 Add the point (x,y) to the current shape.
 The @racket[vertex] functions must be called between @racket[begin-shape]
 and @racket[end-shape].
+
+@;---------
+@;---------
+@;---------
+
+@subsection{Typography}
+
+@;---------
+
+@subsubsection{text}
+
+@bold{Name: } @defidentifier[#'text]
+
+Draws text to the screen.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (rect-mode 'corner) (text-align 'left 'baseline)]
+
+
+@examples[#:label #f #:eval se
+          (text-size 32)
+          (fill 255)
+          (text "word" 10 30)
+          (fill 0 102 153)
+          (text "word" 10 60)
+          (fill 0 102 153 51)
+          (eval:alts        (text "word" 10 90)
+                     (begin (text "word" 10 90)
+                            (send dc get-bitmap)))]
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (text-size 11)
+          (rect-mode 'corner) (text-align 'left 'baseline)]
+
+
+@examples[#:label #f #:eval se
+          (code:comment "Pass width and height in order to draw multi line text.")
+          (text-size 11)
+          (fill 0)
+          (define s "The quick brown fox jumps over the lazy dog.")
+          (eval:alts        (text s 10 10 70 80)
+                     (begin (text s 10 10 70 80)
+                            (send dc get-bitmap)))]
+
+
+
+@bold{Usage}
+
+@racketusage[(text s x y)]          @linebreak[]
+@racketusage[(text s x1 y1 x2 y2)]  @linebreak[]
+
+
+@bold{Arguments}
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[s]  "a string")
+               (list @racketid[x]  "x-coordinate")
+               (list @racketid[y]  "y-coordinate")
+               (list @racketid[x1] "x-coordinate")
+               (list @racketid[y1] "y-coordinate")
+               (list @racketid[x2] "number")
+               (list @racketid[y2] "number"))]
+
+The interpretation of the arguments is affected by @racket[rect-mode].
+
+
+@bold{Description}
+
+Draws text to the screen.
+
+If @racket[text] is used as @racketusage[(text s x y)] then
+the point @racketid[(x,y)] determines the position of the text.
+How the text is placed relative to this point is determined by
+the alignment settings made by @racket[text-align].
+
+If @racket[text] is used as @racketusage[(text s x1 y1 x2 y2)] then
+the point @racketid[(x1,y1)] and the numbers @racketusage[x2] and
+@racketusage[y2] are interpreted according to the mode
+set by @racket[rect-mode]. In the default mode, @racketusage[x2]
+and @racketusage[y2] are width and height.
+
+Only the text that fits completely inside the rectangular area
+is drawn to screen.
+
+Use @racket[fill] to change the color of the text.
+
+
+@;---------
+
+@subsubsection{text-align}
+
+@bold{Name: } @defidentifier[#'text-align]
+
+Sets the horizontal and vertical alignment for drawing text. 
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (rect-mode 'corner) (text-align 'left 'baseline)]
+
+
+@examples[#:label #f #:eval se
+          (background 0)
+          (fill 255)          
+          (text-size 16)
+          (text-align 'right)
+          (text "ABCD" 50 30)
+          (text-align 'center)
+          (text "EFGH" 50 50)
+          (text-align 'left)
+          (eval:alts        (text "IJKL" 50 70)
+                     (begin (text "IJKL" 50 70)
+                            (send dc get-bitmap)))]
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (text-size 11)
+          (rect-mode 'corner) (text-align 'left 'baseline)]
+
+
+@examples[#:label #f #:eval se
+          (background 0)
+          (stroke 153)
+          (fill 255)
+          (text-size 11)
+          
+          (text-align 'center 'bottom)
+          (line 0 20 width 20)
+          (text "center, bottom" 50 20)
+
+          (text-align 'center 'center)
+          (line 0 40 width 40)
+          (text "center, center" 50 40)
+
+          (text-align 'center 'top)
+          (line 0 60 width 60)
+          (text "center, top" 50 60)
+
+          (text-align 'center 'baseline)
+          (line 0 90 width 90)                   
+          (eval:alts        (text "center, baseline" 50 90)
+                     (begin (text "center, baseline" 50 90)
+                            (send dc get-bitmap)))]
+
+
+
+@bold{Usage}
+
+@racketusage[(text-align x-alignment)]              @linebreak[]
+@racketusage[(text-align x-alignment y-alignment)]  @linebreak[]
+
+
+@bold{Arguments}
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x-alignment]  "one of 'left 'center 'right")
+               (list @racketid[y-alignment]  "one of 'top  'center 'bottom 'baseline"))]
+
+
+@bold{Description}
+
+Sets the horizontal and vertical alignment for drawing text.
+
+The @racketid[x-alignment] can be one of the symbols @racket['left],
+@racket['center] and @racket['right]. The setting affects how
+@racket[text] draws the text relative to the position given to
+@racket[text]. 
+
+The optional second argument @racketid[y-alignment] is used to vertically
+align the text. If the second argument isn't used, then the
+vertical alignment will be set to the default value @racket['baseline].
+
+The settings @racket['top], @racket['center], @racket['bottom] and
+@racket['baseline] will put the position given to @racket[text]
+such that the position is at the top of, center of, bottom of, or,
+at the baseline of the text respectively. This applies when @racket[text]
+is used to draw a single text line with @racketusage[(text s x y)].
+
+For multiple line text drawn with @racketusage[(text s x1 y1 x2 y2)]
+the alignment applies to the individual lines inside the rectangular
+area given by the arguments. When used for multiple lines of text
+the vertical alignment @racket['baseline] is not available.
+
+The vertical alignment is based on the value on the ascent specified
+in the font. Some fonts do not specify this correctly, so sometime
+you will need to adjust the y-coordinate with a few pixels manually.
+
+
+@;---------
+
+@subsubsection{text-size}
+
+@bold{Name: } @defidentifier[#'text-size]
+
+Sets the font size. 
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (rect-mode 'corner) (text-align 'left 'baseline)]
+
+
+@examples[#:label #f #:eval se
+          (background 0)
+          (fill 255)          
+          (text-size 26)
+          (text "WORD" 10 50)
+          (text-size 14)                    
+          (eval:alts        (text "WORD" 10 70)
+                     (begin (text "WORD" 10 70)
+                            (send dc get-bitmap)))]
+
+
+
+
+@bold{Usage}
+
+@racketusage[(text-size size)]              @linebreak[]
+
+
+@bold{Arguments}
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[size]  "the size (measured in pixels as default)"))]
+
+
+@bold{Description}
+
+Sets the font size. 
+
+
+@;---------
+
+@subsubsection{text-face}
+
+@bold{Name: } @defidentifier[#'text-face]
+
+Sets the font face. Examples of font faces: "Courier", "Arial".
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (rect-mode 'corner) (text-align 'left 'baseline)]
+
+
+@examples[#:label #f #:eval se
+          (background 0)
+          (fill 255)          
+          (text-size 30)
+          (text-align 'center 'center)
+          (text-face "Times")                          
+          (eval:alts        (text "Word" 50 50)
+                     (begin (text "Word" 50 50)
+                            (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(text-face face)]              @linebreak[]
+
+
+@bold{Arguments}
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[face]  "string: a font face"))]
+
+
+@bold{Description}
+
+Sets the font face. Some well-known font faces are "Courier" and "Arial".
+The format and meaning of the font faces are platform- and device-specific.
+
+@;---------
+
+@subsubsection{text-family}
+
+@bold{Name: } @defidentifier[#'text-family]
+
+Sets the font family.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (rect-mode 'corner) (text-align 'left 'baseline)]
+
+
+@examples[#:label #f #:eval se
+          (background 0)
+          (fill 255)          
+          (text-size 30)
+          (text-align 'center 'center)
+          (text-face #f)
+          (text-family 'roman)
+          (text "word" 50 20)
+          (text-family 'decorative)
+          (text "word" 50 50)
+          (text-family 'modern)
+          (eval:alts        (text "word" 50 80)
+                     (begin (text "word" 50 80)
+                            (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(text-family family)]              @linebreak[]
+
+
+@bold{Arguments}
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[family]  "string: a font family"))]
+
+
+@bold{Description}
+
+Sets the font family. The available families are:
+@racket['default], @racket['decorative],  @racket['roman], @racket['script],
+@racket['swiss], @racket['modern],  @racket['symbol], @racket['system].
+
+If the font face is @racket[#f] then the font appearance is determined
+solely by the font family.
+
+@;---------
+
+@subsubsection{text-weight}
+
+@bold{Name: } @defidentifier[#'text-weight]
+
+Sets the font weight.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (rect-mode 'corner) (text-align 'left 'baseline) (text-weight 'thin)]
+
+
+@examples[#:label #f #:eval se
+          (background 0)
+          (fill 255)          
+          (text-size 30)
+          (text-align 'center 'center)
+          (text-weight 'normal)
+          (text "word" 50 30)
+          (text-weight 'bold)
+          (eval:alts        (text "word" 50 70)
+                     (begin (text "word" 50 70)
+                            (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(text-weight weight)]              @linebreak[]
+
+@bold{Arguments}
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[weight]  "a number between 100 and 1000, or")
+               (list ""                 "one of the weight symbols"))]
+
+
+@bold{Description}
+
+Sets the font weight. The available font weights are listed
+in the document for @racket[font%].
+
+@;---------
+
+@subsubsection{text-underlined?}
+
+@bold{Name: } @defidentifier[#'text-underlined?]
+
+Sets whether the text is underlined or not.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (rect-mode 'corner) (text-align 'left 'baseline) (text-weight 'thin)]
+
+
+@examples[#:label #f #:eval se
+          (background 0)
+          (fill 255)          
+          (text-size 30)
+          (text-align 'center 'center)
+          (text-underlined? #t)
+          (text "word" 50 30)
+          (text-underlined? #f)
+          (eval:alts        (text "word" 50 70)
+                     (begin (text "word" 50 70)
+                            (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(text-underlined? underlined?)]              @linebreak[]
+
+@bold{Arguments}
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[underlined?]  "boolean: #t or #f"))]
+
+
+@bold{Description}
+
+Sets whether the text is underlined or not.
+
+@;---------
+
+@subsubsection{text-underlined?}
+
+@bold{Name: } @defidentifier[#'text-smoothing]
+
+Sets the amount of smoothing.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (rect-mode 'corner) (text-align 'left 'baseline) (text-weight 'thin)]
+
+
+@examples[#:label #f #:eval se
+          (background 0)
+          (fill 255)          
+          (text-size 30)
+          (text-align 'center 'center)
+          (text-smoothing 'unsmoothed)
+          (text "word" 50 30)
+          (text-smoothing 'smoothed)
+          (eval:alts        (text "word" 50 70)
+                     (begin (text "word" 50 70)
+                            (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(text-smoothing smoothing)]              @linebreak[]
+
+@bold{Arguments}
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[smoothing]  "one of: 'default 'partly-smoothed 'smoothed 'unsmoothed"))]
+
+
+@bold{Description}
+
+Sets the amount of smoothing.
+
+
+@;---------
+
+@subsubsection{text-size-in-pixels?}
+
+@bold{Name: } @defidentifier[#'text-size-in-pixels?]
+
+Sets whether the font size is specified in pixels or in logical
+drawing units. For non-high-resolution screens this is the same.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (rect-mode 'corner) (text-align 'left 'baseline) (text-weight 'thin)]
+
+
+@examples[#:label #f #:eval se
+          (background 0)
+          (fill 255)
+          (text-size-in-pixels? #t)
+          (text-size 30)
+          (text-align 'center 'center)
+          (text "word" 50 30)
+          (text-size-in-pixels? #f)
+          (text-size 30)
+          (eval:alts        (text "word" 50 70)
+                     (begin (text "word" 50 70)
+                            (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(text-size-in-pixels? pixels?)]              @linebreak[]
+
+@bold{Arguments}
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[pixels?]  "boolean: one of #f or #f"))]
+
+
+@bold{Description}
+
+Sets whether @racket[text-size] uses pixels or logical drawing
+units.
+
+
+@;---------
+
+@subsubsection{text-hinting}
+
+@bold{Name: } @defidentifier[#'text-hinting]
+
+Sets whether the font metrics should be rounded to integers.
+
+
+
+@bold{Usage}
+
+@racketusage[(text-hinting hint)]              @linebreak[]
+
+@bold{Arguments}
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[hint]  "one of: 'aligned 'unaligned"))]
+
+
+@bold{Description}
+
+Sets whether the font metrics should be rounded to integers.
+The default is @racket['unaligned] which improves the consistency
+of letter spacing for pixel-based targets, but at the expense
+of making metrics unscalable.
 
 @;---------
 @;---------
@@ -3207,6 +3767,171 @@ is called each time the mouse is dragged.
 If defined in your program, the event handler @racket[on-mouse-dragged]
 is called each time the mouse is dragged. A mouse is dragged, when
 it is moved while while a mouse button is pressed.
+
+
+@;---------
+@;---------
+@;---------
+
+
+@subsection{Keyboard}
+
+@;---------
+
+@subsubsection{key}
+
+@bold{Name: } @defidentifier[#'key]
+
+System variable holding the currently pressed key.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Click the sketch to give it focus.")
+          (code:comment "Press b to change the color.")
+
+          (define (draw)
+            (cond
+              [(and key-pressed (or (equal? key #\b) (equal? key #\B)))
+               (fill 0)]
+              [else
+               (fill 255)])
+            (rect 25 25 50 50))]
+
+
+
+@bold{Usage}
+
+@racketusage[key]        @linebreak[]
+
+
+
+@bold{Description}
+
+System variable holding the currently pressed key.
+
+The value of @racket[key] is only valid if @racket[key-pressed] is true.
+
+
+@;---------
+
+@subsubsection{key-pressed}
+
+@bold{Name: } @defidentifier[#'key-pressed]
+
+System variable, true if some key is pressed.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Press any key.")
+          (define (draw)
+            (if key-pressed
+                (fill 0)
+                (fill 255))
+            (rect 25 25 50 50))]
+
+
+@bold{Usage}
+
+@racketusage[key-pressed]        @linebreak[]
+
+
+@bold{Description}
+
+System variable, true if some key is pressed.
+
+Use @racket[key] to find out, which key is pressed.
+
+
+@;---------
+
+@subsubsection{on-key-pressed}
+
+@bold{Name: } @defidentifier[#'on-key-pressed]
+
+If defined in your program, the event handler @racket[on-key-pressed]
+is called each time a key is pressed.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Press a key to toggle the  ")
+          (code:comment "the color of the rectangle between black and white.")
+
+          (define col 0)
+
+          (define (draw)
+            (fill col)            
+            (rect 25 25 50 50))
+          
+          (define (on-key-pressed)
+            (:= col (- 255 col)))]
+
+
+@bold{Usage}
+
+@racketusage[(define (on-key-pressed) <body>)]        @linebreak[]
+
+
+@bold{Description}
+
+
+If defined in your program, the event handler @racket[on-key-pressed]
+is called each time some key is pressed.
+
+
+@;---------
+
+@subsubsection{on-key-released}
+
+@bold{Name: } @defidentifier[#'on-key-released]
+
+If defined in your program, the event handler @racket[on-key-released]
+is called each time a is released.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se #:lang sketching
+          (code:comment "Press and release a key to toggle the  ")
+          (code:comment "the color of the rectangle between black and white.")
+
+          (define col 0)
+
+          (define (draw)
+            (fill col)            
+            (rect 25 25 50 50))
+          
+          (define (on-kyy-released)
+            (:= col (- 255 col)))]
+
+
+@bold{Usage}
+
+@racketusage[(define (on-key-released) <body>)]        @linebreak[]
+
+
+@bold{Description}
+
+
+If defined in your program, the event handler @racket[on-key-released]
+is called each time a key is released.
 
 
 @;---------
@@ -5053,11 +5778,13 @@ displayed since the program started.
 
 @examples[#:label #f #:eval se #:lang sketching
 (define (setup)
-  (set-frame-rate! 30))
+  (set-frame-rate! 30)
+  (rect-mode 'center))
 
 (define (draw)
-  (line 0 0 width height)
-  (text (~a frame-count) 40 50))]
+  (background 0)
+  (fill 255)
+  (text (~a frame-count) 50 50))]
 
 
 
@@ -5147,6 +5874,20 @@ Sets the desired number of frames to be displayed per second.
 The system will attempt to call @racket[draw] the desired number
 of times per second, but there is no guarantees. If @racket[draw] is slow,
 the desired number of frames per second might be achievable.
+
+
+@;-------------------
+@;-------------------
+@;-------------------
+
+@section{Examples}
+
+
+
+
+
+
+
 
 
 @;-------------------
