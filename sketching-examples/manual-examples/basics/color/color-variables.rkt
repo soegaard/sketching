@@ -1,5 +1,4 @@
 #lang sketching
-; Original:
 ;   https://github.com/processing/processing-docs/blob/master/content/examples/Basics/Color/ColorVariables/ColorVariables.pde
 
 ;; Color Variables (Homage to Albers).

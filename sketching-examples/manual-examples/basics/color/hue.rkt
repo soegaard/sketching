@@ -6,7 +6,6 @@
 ; and is typically referred to as the name of the color (red, blue, yellow, etc.) 
 ; Move the cursor vertically over each bar to alter its hue. 
 
-
 (define bar-width 20)
 (define last-bar  -1)
 
