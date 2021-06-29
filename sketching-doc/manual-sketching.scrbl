@@ -1,7 +1,8 @@
 #lang scribble/manual
+@; The following command will build the manual and open it in a browser.
 @; raco scribble +m --dest html --redirect-main http://docs.racket-lang.org manual-sketching.scrbl && open html/manual-sketching.html
 @(require scribble/example)
-@(require racket/format)
+@(require racket/format racket/file racket/runtime-path racket/string racket/list)
 @(require (for-syntax racket/base syntax/parse))
 @(require (for-label ; (except-in racket/base #%app #%top)
            (except-in racket
@@ -37,13 +38,53 @@
 @(define (wikipedia/section url . preflow)
    @margin-note{@hyperlink[url (list* @bold{Wikipedia: } " " preflow)]})
 
-@(define (cblas-docs name . preflow)
-   (define url (string-append "https://en.wikipedia.org/wiki/" name))
-   @margin-note{@hyperlink[url (list* @bold{Wikipedia: } " " preflow)]})
-
 @(define license-link
    @hyperlink["https://creativecommons.org/licenses/by-nc-sa/4.0/"
               "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License."])
+
+@(define sketching-github
+   @hyperlink["https://github.com/soegaard/sketching/" "https://github.com/soegaard/sketching/"])
+
+@(define sketching-manual-examples-github
+   @hyperlink["https://github.com/soegaard/sketching/tree/main/sketching-examples/manual-examples/"
+              "https://github.com/soegaard/sketching/tree/main/sketching-examples/manual-examples/"])
+
+
+@(begin
+   (define-runtime-path example-folder "../sketching-examples/manual-examples/")
+   (define (example->path example) (build-path example-folder example))
+   (define (example->string path) (file->string (example->path path)))
+   ;; The examples urls to processing are so long, that it breaks printing
+   ;; the web-page. We are therefore filtering out the links from the examples,
+   ;; and use them instead in the text above.
+   (define p-url "(https://github.com/processing/processing-docs/[^ \n]*)")
+   (define r-url "(https://raw.githubusercontent.com/processing/processing-docs/[^ \n]*)")
+   (define s-url "https://github.com/soegaard/sketching/tree/main/sketching-examples/manual-examples/")
+   (define url-found #f)
+   (define (contains-long-url? s)
+     (define result (or (regexp-match p-url s) (regexp-match r-url s)))
+     (when result (set! url-found (first result)))
+     (and result #t))
+   (define (original-name url)
+     (define result (regexp-match "([^/]*[.]pde)" url))
+     (and result (first result)))
+   (define (example-from-file example)
+     (define gh-url (string-append s-url example))
+     (set! url-found #f)
+     (define in (open-input-file (example->path example)))     
+     (define code (codeblock
+                   (string-append*
+                    (add-between
+                     (for/list ([line (in-lines in)] #:unless (contains-long-url? line))
+                       line)
+                     "\n"))))
+     @(list code
+            @hyperlink[gh-url (list @bold{Github: } " " example)]
+            @linebreak[]
+            (if (and url-found (original-name url-found))
+                @hyperlink[url-found (list @bold{Original: } " " (original-name url-found))]
+                '()))))
+                
 
 
 
@@ -80,6 +121,12 @@ This is the same license as the reference documentation for Processing uses.
 @(require "racket-cheat.rkt")
 
 @section[#:tag "overview"]{Overview}
+
+This manual consist of 3 sections. This first section contains a "cheat sheet"
+that makes it easy to find where a function is documented. The second section
+is the reference manual, where each function is described in details. The reference
+section contains small examples. The third section contains more elaborate examples.
+
 
 @(CSection
   #:which 'left
@@ -183,6 +230,25 @@ This is the same license as the reference documentation for Processing uses.
 
 @(CSection
   #:which 'right
+  "Image"
+  (CGroup
+   #f
+   (CRow "Image"
+         @elem{@racket[image] 
+               @LB
+               @racket[create-image]
+               @racket[load-image]
+               @racket[save-image]
+               @LB
+               @racket[image-mode]
+               @LB
+               @racket[load-pixels]
+               @racket[set-pixel]
+               @racket[update-pixels]               
+               })))
+
+@(CSection
+  #:which 'right
   "Typography"
   (CGroup
    #f
@@ -238,6 +304,7 @@ This is the same license as the reference documentation for Processing uses.
                @racket[dist]
                @racket[exp]
                @racket[floor]
+               @racket[int]
                @racket[lerp]
                @racket[log]
                @racket[mag]
@@ -279,6 +346,8 @@ This is the same license as the reference documentation for Processing uses.
    #f
    (CRow "Size"
          @elem{@racket[size] @racket[width] @racket[height] @racket[fullscreen]})
+   (CRow "Smoothing"
+         @elem{@racket[smoothing] @racket[no-smooth]})
    (CRow "Frames"
          @elem{@racket[frame-count] @racket[frame-rate] @racket[set-frame-rate!]})
    (CRow "Mouse"
@@ -286,14 +355,43 @@ This is the same license as the reference documentation for Processing uses.
    (CRow "Other"
          @elem{@racket[nap]})))
 
+
+@(CSection
+  #:which 'left
+  "Other"
+  (CGroup
+   #f
+   (CRow "Loop"
+         @elem{@racket[loop] @racket[no-loop]})
+   (CRow "Assignment"
+         @elem{@racket[:=]})
+   (CRow "Structures"
+         @elem{@racket[struct]})
+   (CRow "Classes and objects"
+         @elem{@racket[class] @racket[make-object] @racket[new]})
+   (CRow "Dot Notation"
+         @elem{. (dot notation)})))
+
+
+
+
 @(render-cheat-sheet)
 
 
 @section{Reference}
 
+This section is the reference manual of the Sketching programming language.
+It contains a description of all available functions illustrated with plenty
+small examples. Note that the function names in the source examples
+are clickable. For more elaborate examples see the examples in the last
+section of this manual.
+
+If you find any mistakes in either the text or the examples, please
+make an Github issue at @|sketching-github|.
+
+
+
 @local-table-of-contents[#:style 'immediate-only]
-
-
 
 @subsection{Color}
 
@@ -1917,7 +2015,7 @@ Modifies the location from which rectangles and squares are drawn by changing th
 way in which arguments given to @racket[rect] and @racket[square] are intepreted.
 
 The default mode is @racket[(rect-mode 'corner)], which interprets the first two
-arguments of rect() as the upper-left corner of the shape, while the
+arguments of @racket[rect] as the upper-left corner of the shape, while the
 third and fourth arguments are its width and height.
 
 @racket[(rect-mode 'corners)] interprets the first two arguments of @racket[rect] as the
@@ -2857,6 +2955,138 @@ Sets whether the font metrics should be rounded to integers.
 The default is @racket['unaligned] which improves the consistency
 of letter spacing for pixel-based targets, but at the expense
 of making metrics unscalable.
+
+
+@;---------
+@;---------
+@;---------
+
+@subsection{Image}
+
+@;---------
+
+@subsubsection{image}
+
+@bold{Name: } @defidentifier[#'image]
+
+Draws an image on the canvas.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (rect-mode 'corner) (text-align 'left 'baseline)]
+
+
+@examples[#:label #f #:eval se
+          (define img (load-image "laDefense.jpg"))
+          (eval:alts        (image img 0 0)
+                     (begin (image img 0 0)
+                            (send dc get-bitmap)))]
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (text-size 11)
+          (rect-mode 'corner) (text-align 'left 'baseline)]
+
+
+@; TODO implement the five argument version of image first...
+@;examples[#:label #f #:eval se
+@;          (define img (load-image "laDefense.jpg"))
+@;          (image img 0 0)
+@;          (eval:alts        (image img 0 0 (/ width 2) (/ height 2))
+@;                     (begin (image img 0 0 (/ width 2) (/ height 2))
+@;                            (send dc get-bitmap)))]
+
+
+
+@bold{Usage}
+
+@racketusage[(image img x y)]          @linebreak[]
+@;(racketusage[(image img x1 y1 x2 y2)]  @linebreak[])
+
+
+@bold{Arguments}
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[img] "a bitmap image")
+               (list @racketid[x]  "x-coordinate")
+               (list @racketid[y]  "y-coordinate")
+               #;(list @racketid[x1] "x-coordinate")
+               #;(list @racketid[y1] "y-coordinate")
+               #;(list @racketid[x2] "number")
+               #;(list @racketid[y2] "number"))]
+
+The interpretation of the arguments is affected by @racket[image-mode].
+
+
+@bold{Description}
+
+Draws an image on the canvas.
+
+The function @racket[image] draws an image on the canvas.
+You can use image formats such as gif, jpeg and png.
+
+The @racketid[img] argument specifies the image to display
+and by default the @racketid[x1] and @racketid[y1]
+arguments define the location of its upper-left corner.
+The function @racket[image-mode] can be used to
+change the way these arguments are interpreted.
+
+The color of an image may be modified with the function @racket[tint].
+This function will maintain transparency for gif and png images.
+
+
+@;---------
+
+@subsubsection{image-mode}
+
+@bold{Name: } @defidentifier[#'image-mode]
+
+Modifies the location from which images (bitmaps) are drawn.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@;examples[#:label #f #:eval se
+@;          (define img (load-image "laDefense.jpg"))
+@;          (image-mode 'corner)
+@;          (eval:alts        (image img 10 10 50 50)
+@;                     (begin (image img 10 10 50 50)
+@;                            (send dc get-bitmap)))]
+@;
+@examples[#:hidden #:eval se (image-mode 'corner)]
+
+@bold{Usage}
+
+@racketusage[(image-mode mode)]        @linebreak[]
+
+@bold{Arguments}
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[mode] "one of: 'center 'corner 'corners"))]
+
+@bold{Description}
+
+Modifies the location from which images (bitmaps) are drawn by changing the
+way in which arguments given to @racket[image] are intepreted.
+
+The default mode is @racket[(image-mode 'corner)], which interprets the first two
+arguments of @racket[image] as the upper-left corner of the shape, while the
+third and fourth arguments are its width and height.
+
+@racket[(image-mode 'corners)] interprets the first two arguments of @racket[image] as the
+location of one corner, and the third and fourth arguments as the
+location of the opposite corner.
+
+@racket[(image-mode 'center)] interprets the first two arguments of @racket[image] as the
+shape's center point, while the third and fourth arguments are its
+width and height.
+
 
 @;---------
 @;---------
@@ -5877,17 +6107,112 @@ the desired number of frames per second might be achievable.
 
 
 @;-------------------
-@;-------------------
+@;- EXAMPLES
 @;-------------------
 
 @section{Examples}
 
+This section contains more elaborate examples of how to use Sketching.
+
+All examples are available at @|sketching-manual-examples-github|.
+
+If you find any mistakes in the examples, please make an Github issue at @|sketching-github|.
+
+I encourage you to submit your own examples.
+
+If you lack inspiration, I'd love some help porting the examples on
+@hyperlink["https://processing.org/examples/"]{Processing Examples}.
+The source for these examples can be found at
+@hyperlink["https://github.com/processing/processing-docs/tree/master/content/examples"]{
+Processing examples at Github}.
+
+The examples are divided into topics:
+
+@local-table-of-contents[#:style 'immediate-only]
 
 
+@subsection{Color}
+
+The color examples are:
+
+@local-table-of-contents[#:style 'immediate-only]
+
+@subsubsection{Hue}
+
+In color theory the concepts hue, saturation and brightness
+are used characterize the color. A hue such as red, yellow, etc.
+is what we in everyday language think of, when we hear the word "color".
+
+Move the cursor vertically over each bar to alter its hue.
+
+@(example-from-file "basics/color/hue.rkt")
+
+@subsubsection{Saturation}
+
+Saturation is the strength or purity of the color.
+One can think of saturation as the amount of gray in proportion to the hue.
+A "saturated" color is pure and an "unsaturated" color has a large component of gray.
+
+Move the cursor vertically over each bar to alter its saturation.
+
+@(example-from-file "basics/color/saturation.rkt")
+
+@subsubsection{Brightness}
+
+This program adjusts the brightness of a part of the image by
+calculating the distance of each pixel to the mouse.
+
+@(example-from-file "basics/color/brightness.rkt")
+
+@subsubsection{Color Variables}
+@(example-from-file "basics/color/color-variables.rkt")
+
+@subsubsection{Relativity}
+@(example-from-file "basics/color/relativity.rkt")
+
+@subsubsection{Linear Gradient}
+@(example-from-file "basics/color/linear-gradient.rkt")
+
+@subsubsection{Radial Gradient}
+@(example-from-file "basics/color/radial-gradient.rkt")
+
+@subsubsection{Wave Gradient}
+@(example-from-file "basics/color/wave-gradient.rkt")
 
 
+@subsection{Objects}
 
+@subsubsection{Objects}
+@(example-from-file "basics/objects/objects.rkt")
 
+@subsubsection{Multiple Constructors}
+@(example-from-file "basics/objects/multiple-constructors.rkt")
+
+@subsubsection{Composite Objects}
+@(example-from-file "basics/objects/composite-objects.rkt")
+
+@subsubsection{Inheritance}
+@(example-from-file "basics/objects/inheritance.rkt")
+
+@subsection{Input}
+
+@subsubsection{Mouse 1D}
+@(example-from-file "basics/input/mouse-1d.rkt")
+
+@subsubsection{Mouse 2D}
+@(example-from-file "basics/input/mouse-2d.rkt")
+
+@subsubsection{Mouse Press}
+@(example-from-file "basics/input/mouse-press.rkt")
+
+@subsubsection{Mouse Signals}
+@(example-from-file "basics/input/mouse-signals.rkt")
+
+@subsubsection{Easing}
+@(example-from-file "basics/input/easing.rkt")
+
+@subsubsection{Constrain}
+@(example-from-file "basics/input/constrain.rkt")
 
 
 @;-------------------
