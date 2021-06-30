@@ -304,7 +304,6 @@ section contains small examples. The third section contains more elaborate examp
                @racket[dist]
                @racket[exp]
                @racket[floor]
-               @racket[int]
                @racket[lerp]
                @racket[log]
                @racket[mag]
@@ -327,6 +326,8 @@ section contains small examples. The third section contains more elaborate examp
                @LB
                @racket[radians]
                @racket[degrees]})
+   (CRow "Conversion"
+         @elem{@racket[int]})
    (CRow "Constants"
          @elem{@racket[pi]
                @racket[π]
@@ -393,7 +394,7 @@ make an Github issue at @|sketching-github|.
 
 @local-table-of-contents[#:style 'immediate-only]
 
-@subsection{Color}
+@subsection[#:tag "ref:color"]{Color}
 
 @(define draw-namespace
    (let ([ns (make-base-namespace)])
@@ -6180,7 +6181,12 @@ calculating the distance of each pixel to the mouse.
 @(example-from-file "basics/color/wave-gradient.rkt")
 
 
-@subsection{Objects}
+@subsection{Classes and Objects}
+
+The examples are:
+
+@local-table-of-contents[#:style 'immediate-only]
+
 
 @subsubsection{Objects}
 @(example-from-file "basics/objects/objects.rkt")
@@ -6195,6 +6201,11 @@ calculating the distance of each pixel to the mouse.
 @(example-from-file "basics/objects/inheritance.rkt")
 
 @subsection{Input}
+
+The input examples are:
+
+@local-table-of-contents[#:style 'immediate-only]
+
 
 @subsubsection{Mouse 1D}
 @(example-from-file "basics/input/mouse-1d.rkt")
@@ -6213,6 +6224,20 @@ calculating the distance of each pixel to the mouse.
 
 @subsubsection{Constrain}
 @(example-from-file "basics/input/constrain.rkt")
+
+@subsubsection{Storing Input}
+@(example-from-file "basics/input/storing-input.rkt")
+
+@subsubsection{Mouse Functions}
+@(example-from-file "basics/input/mouse-functions.rkt")
+
+@subsubsection[#:tag "ex:keyboard"]{Keyboard}
+@(example-from-file "basics/input/keyboard.rkt")
+
+@subsubsection[#:tag "ex:keyboard"]{Keyboard Functions}
+@(example-from-file "basics/input/keyboard-functions.rkt")
+
+
 
 
 @;-------------------
