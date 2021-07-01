@@ -10,15 +10,13 @@
 
 (define (setup)
   (size 640 360)
-  (frame-rate 1)
+  (frame-rate 30)
   (:= scale (/ width 20)))
 
 (define (draw)
   (no-stroke)
   (for ([i (in-range scale)])
-    (displayln (millis))
-    (color-mode 'rgb       (* (+ i 1) scale 10))
-    (fill (modulo (millis) (* (+ i 1) scale 10)))
-    (rect (* i scale) 0 scale height))
-  (newline))
-
+    (define n (* (+ i 1) scale 10))
+    (color-mode 'rgb n)
+    (fill (modulo (millis) n))
+    (rect (* i scale) 0 scale height)))
