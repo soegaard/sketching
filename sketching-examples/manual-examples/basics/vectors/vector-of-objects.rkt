@@ -5,26 +5,17 @@
 ; Demonstrates how to create a vector of objects.
 
 (class Blob Object
-  (field [x-offset 0]
-         [y-offset 0]
-         [x        0]
-         [y        0]
-         [unit     1]
-         [x-dir    1]
-         [y-dir    1]
-         [speed    1])
-
   ; "Constructor"  
-  (init x-offset-temp y-offset-temp x-temp y-temp speed-temp temp-unit)
-  
+  (init-field [x-offset 0] 
+              [y-offset 0]
+              [x        0]
+              [y        0]
+              [unit     1]
+              [x-dir    1]
+              [y-dir    1]
+              [speed    1])
   (super-new)    ; super class initialization
-  (:= x-offset x-offset-temp)
-  (:= y-offset y-offset-temp)
-  (:= x        x-temp)
-  (:= y        y-temp)
-  (:= speed    speed-temp)
-  (:= unit     temp-unit)
-  
+  ; 
   
   ; Methods
   (define/public (update)
@@ -56,12 +47,12 @@
                  ([x (/ width  unit)]
                   [y (/ height unit)])
                (new Blob
-                    [x-offset-temp (* x   unit)]
-                    [y-offset-temp (* y   unit)]
-                    [x-temp        (* 1/2 unit)]
-                    [y-temp        (* 1/2 unit)]
-                    [speed-temp    (random 0.05 0.8)]
-                    [temp-unit     unit]))))
+                    [x-offset (* x   unit)]
+                    [y-offset (* y   unit)]
+                    [x        (* 1/2 unit)]
+                    [y        (* 1/2 unit)]
+                    [speed    (random 0.05 0.8)]
+                    [unit     unit]))))
 
 (define (draw)
   (background 0)

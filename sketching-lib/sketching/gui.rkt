@@ -211,12 +211,17 @@
   (define old-dc (send top-canvas get-dc))
   (unless (and (= (current-width)  (send top-bitmap get-width))
                (= (current-height) (send top-bitmap get-height)))
-    (set! top-bitmap           (make-screen-bitmap (current-width) (current-height)))
-    (set! top-bitmap-dc        (new bitmap-dc% [bitmap top-bitmap]))
+    (set! top-bitmap    (make-screen-bitmap (current-width) (current-height)))
+    (set! top-bitmap-dc (new bitmap-dc% [bitmap top-bitmap]))
+    ; now transfer any settings already made
     (send top-bitmap-dc set-background (send old-dc get-background))
-    (send top-bitmap-dc clear))
+    (send top-bitmap-dc clear)
+    (send top-bitmap-dc set-pen   (send old-dc get-pen))
+    (send top-bitmap-dc set-brush (send old-dc get-brush))
+    (send top-bitmap-dc set-font  (send old-dc get-font)))
                
   (send top-canvas set-canvas-background (send (current-dc) get-background))
+  
 
   (define timer (new timer%
                      [notify-callback handle-on-timer]

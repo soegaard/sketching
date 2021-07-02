@@ -467,8 +467,6 @@
 
 
 
-
-
 (define (image-mode mode)
   (unless (member mode '(center radius corner corners))
     (error 'image-mode "expected one of 'center 'radius 'corner or 'corners, got: ~a" mode))
@@ -490,7 +488,7 @@
 ;;; Text
 ;;;
 
-(define (text-align hor ver)
+(define (text-align hor [ver 'baseline])
   (current-text-horizontal-align hor)
   (current-text-vertical-align   ver))
 

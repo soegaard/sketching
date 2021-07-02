@@ -117,8 +117,10 @@
                  (make-object color% r g b))]
       [else (error 'args->color "internal error: unsupported color mode, got: ~a"
                    (current-color-mode))]))
-  (define (make-gray x [a #f])    
-    (define x1 (exact-floor (min 255 (max 0 x))))    
+  (define (make-gray x [a #f])
+    (define (n1 x) (inexact->exact (round (* 255. (/ (min (max 0. x) max1) max1)))))
+    ; (define x1 (exact-floor (min 255 (max 0 x))))
+    (define x1 (n1 x))
     (if a
         (make-object color% x1 x1 x1 (nA a))
         (make-object color% x1 x1 x1)))
@@ -159,7 +161,7 @@
   
   (match args
     [(list (? color? c))            c]                                   ; color
-    [(list (? integer? x))          (make-gray x)]                       ; gray
+    [(list (? real? x))             (make-gray x)]                       ; gray
     [(list (? integer? x) a)        (make-gray x a)]                     ; gray + α
     [(list r g b)                   (make r g b)]                        ; rgb 
     [(list r g b a)                 (make r g b a)]                      ; rgb + alpha

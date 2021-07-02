@@ -405,7 +405,7 @@
 ;;;
 
 (define (initialize)
-  (displayln 'initialize)
+  ; (displayln 'initialize)
   (current-density (display-density))
   (initialize-gui)
   (void))
@@ -415,6 +415,6 @@
 ;;;
 
 (define (start)
-  (displayln 'start)
+  ; (displayln 'start)
   (start-gui)
   (void))

@@ -6132,13 +6132,13 @@ The examples are divided into topics:
 @local-table-of-contents[#:style 'immediate-only]
 
 
-@subsection{Color}
+@subsection[#:tag "examples_color"]{Color}
 
 The color examples are:
 
 @local-table-of-contents[#:style 'immediate-only]
 
-@subsubsection{Hue}
+@subsubsection[#:tag "example_hue"]{Hue}
 
 In color theory the concepts hue, saturation and brightness
 are used characterize the color. A hue such as red, yellow, etc.
@@ -6148,7 +6148,7 @@ Move the cursor vertically over each bar to alter its hue.
 
 @(example-from-file "basics/color/hue.rkt")
 
-@subsubsection{Saturation}
+@subsubsection[#:tag "example_saturation"]{Saturation}
 
 Saturation is the strength or purity of the color.
 One can think of saturation as the amount of gray in proportion to the hue.
@@ -6158,84 +6158,145 @@ Move the cursor vertically over each bar to alter its saturation.
 
 @(example-from-file "basics/color/saturation.rkt")
 
-@subsubsection{Brightness}
+@subsubsection[#:tag "example_brightness"]{Brightness}
 
 This program adjusts the brightness of a part of the image by
 calculating the distance of each pixel to the mouse.
 
 @(example-from-file "basics/color/brightness.rkt")
 
-@subsubsection{Color Variables}
+@subsubsection[#:tag "example_color_variables"]{Color Variables}
 @(example-from-file "basics/color/color-variables.rkt")
 
-@subsubsection{Relativity}
+@subsubsection[#:tag "example_relativity"]{Relativity}
 @(example-from-file "basics/color/relativity.rkt")
 
-@subsubsection{Linear Gradient}
+@subsubsection[#:tag "example_linear_gradient"]{Linear Gradient}
 @(example-from-file "basics/color/linear-gradient.rkt")
 
-@subsubsection{Radial Gradient}
+@subsubsection[#:tag "example_radial_gradient"]{Radial Gradient}
 @(example-from-file "basics/color/radial-gradient.rkt")
 
-@subsubsection{Wave Gradient}
+@subsubsection[#:tag "example_wave_gradient"]{Wave Gradient}
 @(example-from-file "basics/color/wave-gradient.rkt")
 
 
-@subsection{Classes and Objects}
+@subsection[#:tag "examples_classes_and_objects"]{Classes and Objects}
 
 The examples are:
 
 @local-table-of-contents[#:style 'immediate-only]
 
 
-@subsubsection{Objects}
+@subsubsection[#:tag "example_objects"]{Objects}
 @(example-from-file "basics/objects/objects.rkt")
 
-@subsubsection{Multiple Constructors}
+@subsubsection[#:tag "example_multiple_constructors"]{Multiple Constructors}
 @(example-from-file "basics/objects/multiple-constructors.rkt")
 
-@subsubsection{Composite Objects}
+@subsubsection[#:tag "example_composite_objects"]{Composite Objects}
 @(example-from-file "basics/objects/composite-objects.rkt")
 
-@subsubsection{Inheritance}
+@subsubsection[#:tag "example_inheritance"]{Inheritance}
 @(example-from-file "basics/objects/inheritance.rkt")
 
-@subsection{Input}
+
+@subsection[#:tag "examples_input"]{Input}
 
 The input examples are:
 
 @local-table-of-contents[#:style 'immediate-only]
 
 
-@subsubsection{Mouse 1D}
+@subsubsection[#:tag "example_mouse_1d"]{Mouse 1D}
 @(example-from-file "basics/input/mouse-1d.rkt")
 
-@subsubsection{Mouse 2D}
+@subsubsection[#:tag "example_mouse_2d"]{Mouse 2D}
 @(example-from-file "basics/input/mouse-2d.rkt")
 
-@subsubsection{Mouse Press}
+@subsubsection[#:tag "example_mouse_press"]{Mouse Press}
 @(example-from-file "basics/input/mouse-press.rkt")
 
-@subsubsection{Mouse Signals}
+@subsubsection[#:tag "example_mouse_signals"]{Mouse Signals}
 @(example-from-file "basics/input/mouse-signals.rkt")
 
-@subsubsection{Easing}
+@subsubsection[#:tag "example_easing"]{Easing}
 @(example-from-file "basics/input/easing.rkt")
 
-@subsubsection{Constrain}
+@subsubsection[#:tag "example_constrain"]{Constrain}
 @(example-from-file "basics/input/constrain.rkt")
 
-@subsubsection{Storing Input}
+@subsubsection[#:tag "example_storing_inputs"]{Storing Input}
 @(example-from-file "basics/input/storing-input.rkt")
 
-@subsubsection{Mouse Functions}
+@subsubsection[#:tag "example_mouse_functions"]{Mouse Functions}
 @(example-from-file "basics/input/mouse-functions.rkt")
 
-@subsubsection[#:tag "ex:keyboard"]{Keyboard}
+@subsubsection[#:tag "example_keyboard"]{Keyboard}
 @(example-from-file "basics/input/keyboard.rkt")
 
-@subsubsection[#:tag "ex:keyboard"]{Keyboard Functions}
+@subsubsection[#:tag "example_keyboard"]{Keyboard Functions}
 @(example-from-file "basics/input/keyboard-functions.rkt")
+
+@subsubsection[#:tag "example_keyboard"]{Milliseconds}
+@(example-from-file "basics/input/milliseconds.rkt")
+
+@subsubsection[#:tag "example_keyboard"]{Clock}
+@(example-from-file "basics/input/clock.rkt")
+
+
+
+@subsection[#:tag "examples_transform"]{Transform}
+
+The examples using transformations are:
+
+@local-table-of-contents[#:style 'immediate-only]
+
+
+@subsubsection[#:tag "example_translate"]{Translate}
+@(example-from-file "basics/transform/translate.rkt")
+
+@subsubsection[#:tag "example_scale"]{Scale}
+@(example-from-file "basics/transform/scale.rkt")
+
+@subsubsection[#:tag "example_rotate"]{Rotate}
+@(example-from-file "basics/transform/rotate.rkt")
+
+@subsubsection[#:tag "example_arm"]{Arm}
+@(example-from-file "basics/transform/arm.rkt")
+
+
+
+@subsection[#:tag "examples_typography"]{Typography}
+
+The typography examples are:
+
+@local-table-of-contents[#:style 'immediate-only]
+
+@subsubsection[#:tag "example_letters"]{Letters}
+@(example-from-file "basics/typography/letters.rkt")
+
+@subsubsection[#:tag "example_words"]{Words}
+@(example-from-file "basics/typography/words.rkt")
+
+@subsubsection[#:tag "example_text_rotation"]{Text Rotation}
+@(example-from-file "basics/typography/text-rotation.rkt")
+
+
+@subsection[#:tag "examples_vectors"]{Vectors}
+
+The examples using vectors are:
+
+@local-table-of-contents[#:style 'immediate-only]
+
+@subsubsection[#:tag "example_vectors"]{Vectors}
+@(example-from-file "basics/vectors/vector.rkt")
+
+@subsubsection[#:tag "example_vector_2d"]{Vector 2d}
+@(example-from-file "basics/vectors/vector-2d.rkt")
+
+@subsubsection[#:tag "example_vector_of_objects"]{Vector of objects}
+@(example-from-file "basics/vectors/vector-of-objects.rkt")
 
 
 

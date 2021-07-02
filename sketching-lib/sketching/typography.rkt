@@ -166,7 +166,7 @@
       [(and (empty? words) (empty? line))
        (reverse lines)]
       [(empty? words)
-       (reverse (cons line lines))]
+       (reverse (cons (reverse line) lines))]
       [else
        (define word (first words))
        (define dim  (first dims))
