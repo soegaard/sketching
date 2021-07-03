@@ -158,9 +158,16 @@
       [else          0]))
   (define (hex x y)
     (+ (* 16 (hex1 x)) (hex1 y)))
+
+  (define (make-color/alpha c a)
+    (define r (send c red))
+    (define g (send c green))
+    (define b (send c blue))    
+    (make-object color% r g b (nA a)))
   
   (match args
     [(list (? color? c))            c]                                   ; color
+    [(list (? color? c) a)          (make-color/alpha c a)]              ; color + α
     [(list (? real? x))             (make-gray x)]                       ; gray
     [(list (? integer? x) a)        (make-gray x a)]                     ; gray + α
     [(list r g b)                   (make r g b)]                        ; rgb 

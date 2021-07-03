@@ -246,6 +246,9 @@
  image
  image-mode
  image-set
+ image-get
+ image-width
+ image-height
  key
  key-pressed  
  key-released 

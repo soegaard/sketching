@@ -15,7 +15,10 @@
          green
          image
          image-mode
+         image-get
          image-set
+         image-width
+         image-height         
          lerp-color
          line
          load-image
@@ -489,6 +492,23 @@
   (define pixels (bytes 255 (red255 c) (green255 c) (blue255 c)))
   (when (and (>= x 0) (>= y 0))
     (send bm set-argb-pixels x y 1 1 pixels)))
+
+(define (image-get bm x y)
+  (define pixels (bytes 0 0 0 0))  
+  (send bm get-argb-pixels x y 1 1 pixels)
+  (color (bytes-ref pixels 1)
+         (bytes-ref pixels 2)
+         (bytes-ref pixels 3)
+         (bytes-ref pixels 0)))
+
+(define (image-width bm)
+  (send bm get-width))
+
+(define (image-height bm)
+  (send bm get-height))
+    
+
+
 
 ;;;
 ;;; Text
