@@ -6443,6 +6443,30 @@ The form examples are:
 @subsubsection[#:tag "example_pie_chart"]{Pie Chart}
 @(example-from-file "basics/form/pie-chart.rkt")
 
+@subsubsection[#:tag "example_regular_polygons"]{Regular Polygons}
+@(example-from-file "basics/form/regular-polygons.rkt")
+
+@subsubsection[#:tag "example_start"]{Star}
+@(example-from-file "basics/form/star.rkt")
+
+@subsubsection[#:tag "example_triangle_strip"]{Triangle Strip}
+@(example-from-file "basics/form/triangle-strip.rkt")
+
+@subsubsection[#:tag "example_bezier"]{Bezier}
+@(example-from-file "basics/form/bezier.rkt")
+
+
+
+
+@subsection[#:tag "examples_image"]{Image}
+
+The image examples are:
+
+@local-table-of-contents[#:style 'immediate-only]
+
+@subsubsection[#:tag "example_pointilism"]{Pointilism}
+@(example-from-file "basics/image/pointilism.rkt")
+
 
 @;-------------------
 @;-------------------

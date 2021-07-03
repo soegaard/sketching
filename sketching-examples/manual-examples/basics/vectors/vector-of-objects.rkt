@@ -15,7 +15,6 @@
               [y-dir    1]
               [speed    1])
   (super-new)    ; super class initialization
-  ; 
   
   ; Methods
   (define/public (update)
