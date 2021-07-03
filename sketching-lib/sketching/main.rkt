@@ -83,7 +83,7 @@
             [(string-contains? str ".")
              (define ids (map string->symbol (string-split str ".")))
              (with-syntax ([(id ...) (for/list ([id ids])
-                                       (datum->syntax #'top-id id))])
+                                       (datum->syntax #'top id))])
                #'(dot-field id ...))]
             [else
              #'(#%top . top-id)])]))]))

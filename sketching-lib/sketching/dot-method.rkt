@@ -382,13 +382,22 @@
 (add-predicate! 'list   list?)
 (add-predicate! 'string string?)
 
+(define vector-ref*
+  (case-lambda
+    [(this i1)       (vector-ref this i1)]
+    [(this i1 i2)    (vector-ref (vector-ref this i1) i2 )]
+    [(this i1 i2 i3) (vector-ref (vector-ref (vector-ref this i1) i2) i3)]
+    [else (error 'vector-ref* "only 3 indices supported")]))
+
 ;;; Builtin fields for builtin "classes"
-(add-fields! 'vector '(ref x y z)
-             (list (λ (this) (λ (index) (vector-ref this index)))
+(add-fields! 'vector '(ref length x y z)             
+             (list vector-ref*
+                   vector-length
                    (λ (v) (vector-ref v 0))
                    (λ (v) (vector-ref v 1))
                    (λ (v) (vector-ref v 2)))
              (list #f
+                   #f
                    (λ (v e) (vector-set! v 0 e))
                    (λ (v e) (vector-set! v 1 e))
                    (λ (v e) (vector-set! v 2 e))))
@@ -397,8 +406,10 @@
              (list first second third)
              (list #f    #f     #f))
 
+
+
 (add-method! 'vector 'length vector-length)
-(add-method! 'vector 'ref    vector-ref)
+(add-method! 'vector 'ref    vector-ref*)
 (add-method! 'vector 'list   vector->list)
 (add-method! 'vector 'fill!  vector-fill!)
 (add-method! 'vector 'values vector->values)

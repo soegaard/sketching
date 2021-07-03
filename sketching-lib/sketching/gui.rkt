@@ -159,14 +159,13 @@
         
     (define/override (on-paint)   ; repaint (exposed or resized)
       ; 1. Draw off screen to the top-bitmap
-      ; (define top-bitmap-dc (new bitmap-dc% [bitmap top-bitmap]))
       (handle-on-paint top-bitmap-dc)
       ; 2. Now copy the bitmap to the screen
       (define dc (send this get-dc))
       (send this suspend-flush)
-      (send dc draw-bitmap top-bitmap 0 0) 
-      (send this resume-flush))
-    ))
+      (send dc set-transformation (vector (vector 1 0 0 1 0 0) 0 0 1 1 0))
+      (send dc draw-bitmap top-bitmap 0 0)
+      (send this resume-flush))))
 
 (define (initialize-gui)
   ; Initialize gui before calling `setup`.
@@ -191,8 +190,6 @@
   (set! top-canvas            canvas)
   (set! top-bitmap            (make-screen-bitmap 100 100))
   (set! top-bitmap-dc         (new bitmap-dc% [bitmap top-bitmap]))
-  ;; (set! top-bitmap-buffer     (make-screen-bitmap 100 100))
-  ;; (set! top-bitmap-buffer-dc  (new bitmap-dc% [bitmap top-bitmap-buffer]))  
 
   (define b  (new brush% [color "white"])) ; solid white
   (define dc (send canvas get-dc))
@@ -213,14 +210,20 @@
                (= (current-height) (send top-bitmap get-height)))
     (set! top-bitmap    (make-screen-bitmap (current-width) (current-height)))
     (set! top-bitmap-dc (new bitmap-dc% [bitmap top-bitmap]))
-    ; now transfer any settings already made
+    ; Now transfer any settings already made.
+    ;   - first we transfer the background
+    ;(define old (send top-bitmap-dc get-transformation))
+    ;(send top-bitmap-dc set-transformation (vector (vector 1 0 0 1 0 0) 0 0 1 1 0))
     (send top-bitmap-dc set-background (send old-dc get-background))
     (send top-bitmap-dc clear)
+    ;(send top-bitmap-dc set-transformation old)
+
     (send top-bitmap-dc set-pen   (send old-dc get-pen))
     (send top-bitmap-dc set-brush (send old-dc get-brush))
     (send top-bitmap-dc set-font  (send old-dc get-font)))
                
   (send top-canvas set-canvas-background (send (current-dc) get-background))
+  (send (send top-canvas get-dc) clear)
   
 
   (define timer (new timer%
@@ -239,7 +242,7 @@
 (define (focused?)
   (and (send top-frame get-focus-window) #t))
 
-(define (handle-on-paint dc) ; receives top-bitmap-buffer-dc
+(define (handle-on-paint dc) ; receives top-bitmap-dc
   ; call draw here
   (current-dc dc)
   (define draw (current-draw))
@@ -260,15 +263,11 @@
     (define old (send dc get-transformation))
     (send dc set-transformation
           (vector (vector 1 0 0 1 0 0) 0 0 1 1 0))
-    ; (displayln (list 'old (current-pmouse-x) (current-pmouse-y)))
-
     (draw)
     (send dc set-transformation old)
-      ; store previous mouse position
+    ; store previous mouse position
     (current-pmouse-x old-mouse-x)
     (current-pmouse-y old-mouse-y))
-    ; (current-pmouse-x (current-mouse-x))
-    ; (current-pmouse-y (current-mouse-y)))
   ; increment frame counter
   (current-frame-count (+ 1 (current-frame-count)))
   (void))

@@ -1,8 +1,8 @@
 #lang sketching
 42
 
-;; (define v (vector 00 11 22 33 44 55))
-
+(define v (vector 00 11 22 33 44 55))
+(v.length)
 
 ;; (struct blob (x y))
 
@@ -21,3 +21,8 @@
 ;;   (b.draw))
 
 
+(define xss (vector (vector 1 2)
+                    (vector 'a 'b)))
+
+(for*/list ([i 2] [j 2])
+  (xss.ref i j))

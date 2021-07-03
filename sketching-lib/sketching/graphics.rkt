@@ -53,6 +53,7 @@
          racket/class
          racket/match
          racket/format
+         racket/list
          "color.rkt"
          "parameters.rkt"
          "math.rkt"
@@ -395,8 +396,14 @@
   ; https://processing.org/reference/background_.html
   ; todo: allow image as background
   (define col (args->color args 'background))
+  (define reg (send dc get-clipping-region))
+  (send dc set-clipping-region #f)
+  ;(define old (send dc get-transformation))
+  ;(send dc set-transformation (vector (vector 1 0 0 1 0 0) 0 0 1 1 0))
   (send dc set-background col)
-  (send dc clear))
+  (send dc clear)
+  ; (send dc set-transformation old)
+  (send dc set-clipping-region reg))
 
 (define (smoothing mode)
   (send dc set-smoothing mode))
@@ -430,13 +437,13 @@
        ; 2. Make a copy of our original bitmap
        (send tmp-dc draw-bitmap bitmap 0 0
              'solid the-black-color ; ignored
-             bitmap)            ; mask (i.e. respect transparency)
+             bitmap) ; mask (i.e. respect transparency)
 
        ; 3. Tint the temporary copy
        (define target  (new ImageSurface [bitmap tmp-bitmap]))
        (define context (new Context      [target target]))
        ; TODO TODO:  use actual tint color here
-       (send context set-source-rgba 0. 0. 1. 0.5) ; red green blue alpha) ; in the range 0.0 to 1.0
+       (send context set-source-rgba 0. 0. 0. 0.5) ; red green blue alpha) ; in the range 0.0 to 1.0
        (send context set-operator 'atop)
        (send context paint)
 
@@ -448,8 +455,7 @@
        ;; (when tint-brush
        ;;   (send tmp-dc set-brush tint-brush)
        ;;   (send tmp-dc set-pen   the-transparent-pen)
-       ;;   (send tmp-dc draw-rectangle 0 0 w h))
-       ;; (send dc draw-bitmap tmp-bitmap x y)]
+       ;;   (send tmp-dc draw-rectangle 0 0 w h))       ;; (send dc draw-bitmap tmp-bitmap x y)]
        ]
       [else
        (send dc draw-bitmap bitmap x y 'solid the-black-color bitmap)]))
@@ -647,37 +653,196 @@
 
 ; A shape is represented as a dc-path% and the number of points
 ; added to the shape.
-(struct shape (path n) #:mutable) 
+(struct shape (kind rev-points draw) #:mutable)
+; kind in default, points, lines, triangles, triangle-fan, triangle-strip, quads, quad_strip
+; rev-points are points added one at a time by vertex in reverse order.
+; When end-shape is called, it will create a draw function, which can be used
+; by draw-shape.
+; Until end-shape is called, draw will be #f.
 
-(define (new-shape)
-  (shape (new dc-path%) 0))
+(define (new-shape [kind 'default])
+  (shape kind '() #f))
 
-(define (close-shape shape)
-  (send (shape-path shape) close)
-  shape)
+(define (make-shape kind rev-points draw)
+  (shape kind rev-points draw))
+
+(define (finish-shape shape who [close? #f])
+  (define kind       (shape-kind shape))
+  (define rev-points (shape-rev-points shape))
+  (define points     (reverse rev-points))
+  (define x car)
+  (define y cdr)
+  (if (empty? points)
+      (make-shape kind rev-points void)
+      (case kind
+        [(default)
+         (define path (new dc-path%))
+         (define p1   (first points))
+         (send path move-to (x p1) (y p1))
+         (for ([p (rest points)])
+           (send path line-to (x p) (y p)))
+         (when close?
+           (send path close))
+         (define (draw dc) (send dc draw-path path))
+         (make-shape kind #f draw)]
+        [(points)
+         (define (draw dc)
+           (for ([p points])
+             (send dc draw-point (x p) (y p))))
+         (make-shape kind #f draw)]
+        [(lines)
+         (define n (length points))
+         ; skip the last point, if there is an odd number of points
+         (set! points (if (even? n) points (reverse (rest rev-points))))
+         (define (draw dc)
+           (let loop ([ps points])
+             (unless (empty? ps)
+               (define p (first ps))
+               (define q (second ps))
+               (send dc draw-line (x p) (y p) (x q) (y q))
+               (loop (rest (rest ps))))))
+         (make-shape kind #f draw)]
+        [(triangles)
+         (define n (length points))
+         (define r (remainder n 3))
+         ; skip the r points, if 3 doesn't divide n.         
+         (set! points (if (zero? r) points (reverse (drop rev-points r))))
+         (define paths
+           (let loop ([ps points])
+             (if (empty? ps)
+                 '()
+                 (let ()
+                   (define p (first ps))
+                   (define q (second ps))
+                   (define s (third ps))
+                   (define path (new dc-path%))
+                   (send path move-to (x p) (y p))               
+                   (send path line-to (x q) (y q))
+                   (send path line-to (x s) (y s))
+                   (send path close)
+                   (cons path (loop (rest (rest (rest ps)))))))))           
+         (define (draw dc)
+           (for ([path paths])
+             (send dc draw-path path)))
+         (make-shape kind #f draw)]
+        [(triangle-strip)
+         (define n (length points))
+         (define paths 
+           (unless (< n 3)
+             (let loop ([p  (first points)]
+                        [q  (second points)]
+                        [ps (rest (rest points))])
+               (cond
+                 [(empty? ps) '()]
+                 [else
+                  (define s (first ps))
+                  (define path (new dc-path%))
+                  (send path move-to (x p) (y p))               
+                  (send path line-to (x s) (y s))
+                  (send path line-to (x q) (y q))
+                  (send path close)
+                  (cons path
+                        (loop q s (rest ps)))]))))
+         (define (draw dc)
+           (unless (< n 3)
+             (for ([path paths])
+               (send dc draw-path path))))
+         (make-shape kind #f draw)]
+        [(triangle-fan)
+         (define n (length points))
+         (define paths 
+           (unless (< n 3)
+             (let loop ([p  (first points)]
+                        [q  (second points)]
+                        [ps (rest (rest points))])
+               (cond
+                 [(empty? ps) '()]
+                 [else
+                  (define s (first ps))
+                  (define path (new dc-path%))
+                  (send path move-to (x p) (y p))               
+                  (send path line-to (x s) (y s))
+                  (send path line-to (x q) (y q))
+                  (send path close)
+                  (cons path
+                        (loop p s (rest ps)))]))))
+         (define (draw dc)
+           (unless (< n 3)
+             (for ([path paths])
+               (send dc draw-path path))))
+         (make-shape kind #f draw)]
+        [(quads)
+         (define n (length points))
+         (define d (remainder n 4))
+         ; drop the d points, if 4 doesn't divide n.         
+         (set! points (if (zero? d) points (reverse (drop rev-points d))))
+         (define paths
+           (let loop ([ps points])
+             (if (empty? ps)
+                 '()
+                 (let ()
+                   (define p (first ps))
+                   (define q (second ps))
+                   (define r (third ps))
+                   (define s (fourth ps))
+                   (define path (new dc-path%))
+                   (send path move-to (x p) (y p))               
+                   (send path line-to (x q) (y q))
+                   (send path line-to (x r) (y r))
+                   (send path line-to (x s) (y s))
+                   (send path close)
+                   (cons path (loop (rest (rest (rest (rest ps))))))))))
+         (define (draw dc)
+           (for ([path paths])
+             (send dc draw-path path)))
+         (make-shape kind #f draw)]
+        [(quad-strip)
+         (define n (length points))
+         (define paths 
+           (unless (< n 4)
+             (let loop ([p  (first points)]
+                        [q  (second points)]
+                        [ps (rest (rest points))])
+               (cond
+                 [(empty? ps) '()]
+                 [else
+                  (define r (first ps))
+                  (define s (second ps))
+                  (define path (new dc-path%))
+                  (send path move-to (x p) (y p))
+                  (send path line-to (x s) (y s))                  
+                  (send path line-to (x r) (y r))
+                  (send path line-to (x q) (y q))
+                  (send path close)
+                  (cons path
+                        (loop r s (rest (rest ps))))]))))
+         (define (draw dc)
+           (unless (< n 4)
+             (for ([path paths])
+               (send dc draw-path path))))
+         (make-shape kind #f draw)]
+        [else
+         (error who (~a "internal error: got the kind " kind))])))
 
 (define (draw-shape shape)
-  (send dc draw-path (shape-path shape)))
+  (define draw (shape-draw shape))
+  (when draw (draw dc)))
 
-(define (begin-shape)
+(define (begin-shape [kind 'default])
   (define old-shapes (current-shapes))
-  (current-shapes (cons (new-shape) old-shapes)))
+  (current-shapes (cons (new-shape kind) old-shapes)))
 
 (define (end-shape [mode #f])
   (define shape (car (current-shapes)))
-  (current-shapes (cdr (current-shapes)))
+  (current-shapes (cdr (current-shapes)))  
   (case mode
-    [(close) (draw-shape (close-shape shape))]
-    [else    (draw-shape shape)]))
+    [(close) (draw-shape (finish-shape shape 'end-shape #t))]
+    [else    (draw-shape (finish-shape shape 'end-shape #f))]))
 
 (define (vertex x y)
-  (define shape (car (current-shapes)))
-  (define n (shape-n shape))
-  (define p (shape-path shape))
-  (cond
-    [(= n 0) (send p move-to x y)]
-    [else    (send p line-to x y)])
-  (set-shape-n! shape (+ n 1)))
+  (define shape      (car (current-shapes)))
+  (define rev-points (shape-rev-points shape))
+  (set-shape-rev-points! shape (cons (cons x y) rev-points)))
 
 
    

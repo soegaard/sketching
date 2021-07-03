@@ -2262,6 +2262,137 @@ Starts recording points used to draw a complex shape.
                             (send dc get-bitmap)))]
 
 
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se
+          (begin-shape 'points)
+            (vertex 30 20)
+            (vertex 85 20)
+            (vertex 85 75)
+            (vertex 30 75)
+          (eval:alts        (end-shape)
+                     (begin (end-shape)
+                            (send dc get-bitmap)))]
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se
+          (begin-shape 'lines)
+            (vertex 30 20)
+            (vertex 85 20)
+            (vertex 85 75)
+            (vertex 30 75)
+          (eval:alts        (end-shape)
+                     (begin (end-shape)
+                            (send dc get-bitmap)))]
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (begin-shape 'triangles)
+            (vertex 30 75)
+            (vertex 40 20)
+            (vertex 50 75)
+            (vertex 60 20)
+            (vertex 70 75)
+            (vertex 80 20)
+          (eval:alts        (end-shape)
+                     (begin (end-shape)
+                            (send dc get-bitmap)))]
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (begin-shape 'triangle-strip)
+            (vertex 30 75)
+            (vertex 40 20)
+            (vertex 50 75)
+            (vertex 60 20)
+            (vertex 70 75)
+            (vertex 80 20)
+          (eval:alts        (end-shape)
+                     (begin (end-shape)
+                            (send dc get-bitmap)))]
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (begin-shape 'triangle-fan)
+            (vertex 50 50)
+            (vertex 50 15)
+            (vertex 85 50)
+            (vertex 50 85)
+            (vertex 15 50)
+            (vertex 50 15)
+          (eval:alts        (end-shape)
+                     (begin (end-shape)
+                            (send dc get-bitmap)))]
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (begin-shape 'quads)
+          (vertex 30 20)
+          (vertex 30 75)
+          (vertex 50 75)
+          (vertex 50 20)
+          
+          (vertex 65 20)
+          (vertex 65 75)
+          (vertex 85 75)
+          (vertex 85 20)
+          (eval:alts        (end-shape)
+                     (begin (end-shape)
+                            (send dc get-bitmap)))]
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (begin-shape 'quad-strip)
+          (vertex 30 20)
+          (vertex 30 75)
+          (vertex 50 75)
+          (vertex 50 20)
+          (vertex 65 20)
+          (vertex 65 75)
+          (vertex 85 75)
+          (vertex 85 20)
+          (eval:alts        (end-shape)
+                     (begin (end-shape)
+                            (send dc get-bitmap)))]
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (begin-shape)
+          (vertex 20 20)
+          (vertex 40 20)
+          (vertex 40 40)
+          (vertex 60 40)
+          (vertex 60 60)
+          (vertex 20 60)
+          (eval:alts        (end-shape 'close)
+                     (begin (end-shape 'close)
+                            (send dc get-bitmap)))]
+
 @bold{Usage}
 
 @racketusage[(begin-shape)]        @linebreak[]
@@ -6299,6 +6430,18 @@ The examples using vectors are:
 @(example-from-file "basics/vectors/vector-of-objects.rkt")
 
 
+
+@subsection[#:tag "examples_form"]{Form}
+
+The form examples are:
+
+@local-table-of-contents[#:style 'immediate-only]
+
+@subsubsection[#:tag "example_points_and_lines"]{Points and Lines}
+@(example-from-file "basics/form/point-and-lines.rkt")
+
+@subsubsection[#:tag "example_pie_chart"]{Pie Chart}
+@(example-from-file "basics/form/pie-chart.rkt")
 
 
 @;-------------------
