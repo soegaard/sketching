@@ -2,7 +2,7 @@
 
 (define deps '("base"
                "cairo-lib"
-               "cairo"
+               ; "cairo"
                "draw-lib"
                "gui-lib"
                "sketching-lib"
