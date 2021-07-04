@@ -13,5 +13,10 @@ jobs:
           architecture: 'x64'
           distribution: 'full'
           version: '8.1'
-      - name: Install Package and its Dependencies
-        run: raco pkg install --auto --batch sketching/
+	  local_catalogs: $GITHUB_WORKSPACE
+      - name: Register local packages
+        run: |
+          raco pkg install -i --auto --no-setup --skip-installed sketching
+          raco pkg update --auto --no-setup sketching-lib sketching-doc sketching-examples
+      - name: Setup Packages
+        run: raco setup --check-pkg-deps sketching sketching-lib sketching-doc sketching-examples
