@@ -1,8 +1,6 @@
 #lang info
 
-(define collection 'single)
-
-(define build-deps '("sketching-lib"))
+(define collection "sketching-examples")
 
 (define update-implies '("sketching-lib"))
 
