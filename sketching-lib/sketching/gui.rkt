@@ -136,9 +136,7 @@
       (send this suspend-flush)
       (cond
         ; key down?
-        [(eq? release 'press)  (displayln (list "press" key))
-                               (unless (key-down? key)   ; already down, i.e. this is a repetition
-                                 (displayln (list "press key wasn't down already" key))
+        [(eq? release 'press)  (unless (key-down? key)   ; already down, i.e. this is a repetition                                 
                                  (key-down! key)
                                  (current-key-pressed  #t)
                                  (current-key-released #f)
@@ -146,9 +144,7 @@
                                  (define on-pressed (current-on-key-pressed))
                                  (when on-pressed (on-pressed)))]
         ; key up?
-        [else                  (displayln (list "release" key release))
-                               (when (key-down? release)
-                                 (displayln (list "released key was down" release))
+        [else                  (when (key-down? release)
                                  (key-up! release)
                                  (current-key-pressed  #f)
                                  (current-key-released #t)
