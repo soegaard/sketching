@@ -2,8 +2,8 @@
 
 (define collection 'multi)
 
-(define deps    '("sketching-lib" "sketching-examples" "sketching-doc"))
-(define implies '("sketching-lib" "sketching-examples" "sketching-doc"))
+(define deps    '("sketching-lib" "sketching-doc"))
+(define implies '("sketching-lib" "sketching-doc"))
 
 (define pkg-desc "Drawing and animation library inspried by Processing.")
 

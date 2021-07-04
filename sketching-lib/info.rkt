@@ -5,11 +5,13 @@
 (define deps '("base"
                "draw-lib"
                "pict-lib"
-               "math-lib"))
+               "math-lib"
+               "gui-lib"
+               "cairo-lib"))
 
 (define build-deps '())
 
-(define pkg-desc "Drawing and animation library inspired by Processing.")
+(define pkg-desc "Drawing and animation library inspired by the Processing language.")
 
 (define pkg-authors '(soegaard))
 

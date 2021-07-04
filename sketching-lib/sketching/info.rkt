@@ -1,5 +1,9 @@
 #lang info
 
-(define deps '("sketching-lib"
+(define deps '("base"
+               "cairo-lib"
+               "draw-lib"
+               "gui-lib"
+               "sketching-lib"
                "sketching-doc"))
 
