@@ -18,7 +18,7 @@ jobs:
           sudo: never
       - name: Register local packages
         run: |
-          raco pkg install -i --auto --no-setup --skip-installed sketching
-          raco pkg update  --auto --no-setup sketching
+          raco pkg install -i --auto --no-setup --skip-installed sketching sketching-lib
+          raco pkg update  --auto --no-setup sketching sketching-lib
       - name: Setup Packages
-        run: raco setup --check-pkg-deps sketching 
+        run: raco setup --check-pkg-deps sketching sketching-lib
