@@ -2,7 +2,7 @@
 
 (define collection "sketching-examples")
 
-(define build-deps '("scribble-lib"))
+(define build-deps '("sketching-lib"))
 
 (define update-implies '("sketching-lib"))
 
