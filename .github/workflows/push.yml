@@ -19,6 +19,6 @@ jobs:
       - name: Register local packages
         run: |
           raco pkg install -i --auto --no-setup --skip-installed sketching
-          raco pkg update --auto --no-setup sketching-lib sketching-doc sketching-examples sketching
+          raco pkg update  -i --auto --no-setup --skip-uninstalled sketching-lib sketching-doc sketching-examples sketching
       - name: Setup Packages
         run: raco setup --check-pkg-deps sketching sketching-lib sketching-doc sketching-examples
