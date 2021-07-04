@@ -10,7 +10,8 @@
                      "pict-lib"
                      "scribble-lib"
                      "sketching-lib"
-                     "racket-doc"))
+                     "racket-doc"
+                     "cairo-lib"))
 
 (define update-implies '("sketching-lib"))
 
