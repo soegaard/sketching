@@ -13,7 +13,7 @@ jobs:
           architecture: 'x64'
           distribution: 'full'
           version: '8.1'
-	  local_catalogs: $GITHUB_WORKSPACE
+          local_catalogs: $GITHUB_WORKSPACE
       - name: Register local packages
         run: |
           raco pkg install -i --auto --no-setup --skip-installed sketching
