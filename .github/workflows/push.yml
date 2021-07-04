@@ -13,7 +13,7 @@ jobs:
           architecture: 'x64'
           distribution: 'full'
           version: '8.1'
-	  dest: '"${HOME}/racketdist"'
+          dest: '"${HOME}/racketdist"'
           local_catalogs: $GITHUB_WORKSPACE
       - name: Register local packages
         run: |
