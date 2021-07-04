@@ -15,6 +15,7 @@ jobs:
           version: '8.1'
           dest: '"${HOME}/racketdist"'
           local_catalogs: $GITHUB_WORKSPACE
+          sudo: never
       - name: Register local packages
         run: |
           raco pkg install -i --auto --no-setup --skip-installed sketching
