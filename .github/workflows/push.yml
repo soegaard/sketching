@@ -13,7 +13,7 @@ jobs:
         with:
           architecture: 'x64'
           distribution: 'full'
-          version: '7.5'
+          version: '8.1'
           dest: '"${HOME}/racketdist"'
           local_catalogs: $GITHUB_WORKSPACE
           sudo: never
@@ -23,5 +23,5 @@ jobs:
           raco pkg update  --auto --no-setup sketching sketching-lib sketching-doc
       - name: Setup Collections
         run: raco setup --check-pkg-deps sketching
-      - name: Build Documentation
-        run: xvfb-run -a raco setup --jobs 1 sketching-doc
+#      - name: Build Documentation
+#        run: xvfb-run -a raco setup --jobs 1 sketching-doc
