@@ -51,7 +51,7 @@
 
 
 @(begin
-   (define-runtime-path example-folder "../sketching-examples/manual-examples/")
+   (define-runtime-path example-folder "../../sketching-examples/manual-examples/")
    (define (example->path example) (build-path example-folder example))
    (define (example->string path) (file->string (example->path path)))
    ;; The examples urls to processing are so long, that it breaks printing
