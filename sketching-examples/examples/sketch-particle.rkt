@@ -1,7 +1,7 @@
 #lang sketching
 (require racket/match)
 
-(struct particle (x y vx vy ax ay α) #:transparent)
+(struct particle (x y vx vy ax ay α))
 
 (define (not-black? p)
   (> (particle-α p) 0))
