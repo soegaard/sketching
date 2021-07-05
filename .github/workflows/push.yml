@@ -24,4 +24,4 @@ jobs:
       - name: Setup Collections
         run: raco setup --check-pkg-deps sketching
       - name: Build Documentation
-        run: xvfb-run -a raco scribble +m --htmls --dest htmls --redirect-main http://docs.racket-lang.org manual-sketching.scrbl
+        run: xvfb-run -a raco setup sketching-doc
