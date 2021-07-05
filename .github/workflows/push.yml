@@ -1,5 +1,6 @@
 on:
   - push
+  - pull_request
 
 jobs:
   test:
@@ -21,4 +22,6 @@ jobs:
           raco pkg install -i --auto --no-setup --skip-installed sketching sketching-lib sketching-doc
           raco pkg update  --auto --no-setup sketching sketching-lib sketching-doc
       - name: Setup Collections
-        run: raco setup --check-pkg-deps sketching sketching-doc
+        run: raco setup --check-pkg-deps sketching
+      - name: Build Documentation
+        run: xvfb-run -a raco scribble +m --htmls --dest htmls --redirect-main http://docs.racket-lang.org manual-sketching.scrbl
