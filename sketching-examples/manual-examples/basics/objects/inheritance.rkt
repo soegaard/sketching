@@ -9,16 +9,20 @@
 ;; An object that inherits from another is called a subclass,
 ;; and the object it inherits from is called a superclass. A subclass extends the superclass.
 
-(class Spin (x y speed angle)
+(class Spin Object
+  (init-field x y speed)
+  (field [angle #f])
   ; Constructor
+  (super-new)
   (:= angle 0.0)
   ; Methods  
   (define/public (update)
     (+= angle speed)))
 
-(class SpinArm Spin ()
+(class SpinArm Spin 
   (inherit-field x y speed angle) ; bring variables into scope
   ; Constructor
+  (super-new)
   ; (super-make-object x y speed) ; invoke super class initialization
   ; Methods
   (define/public (display)
@@ -31,9 +35,11 @@
     (line 0 0 165 0)
     (pop-matrix)))
 
-(class SpinSpots Spin (dim)
+(class SpinSpots Spin
+  (init-field dim)
   (inherit-field x y speed angle)
   ; Constructor
+  (super-new)
   ; (super-make-object x y speed)
   ; Methods
   (define/public (display)
@@ -51,6 +57,7 @@
 
 (define (setup)
   (size 640 360)
+  (frame-rate 60)
   (:= arm   (make-object SpinArm  (/ width 2) (/ height 2)  0.01 ))
   (:= spots (make-object SpinSpots
                          90.0                               ; new field

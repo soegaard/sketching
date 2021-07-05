@@ -9,8 +9,8 @@
 ;; Move the cursor across the image to change the speed and positions
 ;; of the geometry. The class MRect defines a group of lines.
 
-(class MRect
-       (w xpos h ypos d t)
+(class MRect Object
+  (init-field w xpos h ypos d t)
        ; w     single bar width
        ; xpos  rect xposition
        ; h     rect height
@@ -19,7 +19,8 @@
        ; t      number of bars
 
   ;; Constructor
-  ; Nothing to do - values are used as is        
+  ; Nothing to do - values are used as is
+  (super-new)
   
   ;; Methods
   (define/public (move pos-x pos-y damping)
@@ -46,6 +47,7 @@
 (define (setup)
   (size 640 360)
   (fill 255 204)
+  (frame-rate 60)
   (no-stroke))
 
 (define (draw)
