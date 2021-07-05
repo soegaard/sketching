@@ -24,4 +24,4 @@ jobs:
       - name: Setup Collections
         run: raco setup --check-pkg-deps sketching
       - name: Build Documentation
-        run: xvfb-run -a raco setup -j1 sketching-doc
+        run: xvfb-run -a raco setup --jobs 1 sketching-doc
