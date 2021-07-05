@@ -144,11 +144,11 @@
 ;;; CONTROLLER
 ;;;
 
-(define (mouse-pressed)
+(define (on-mouse-pressed)
   (displayln "MOUSE")
   (man.jump))
 
-(define (key-pressed)
+(define (on-key-pressed)
   ; (display "KEY: ") (write key) (newline)
   (case key
     [(#\space) (man.jump)]

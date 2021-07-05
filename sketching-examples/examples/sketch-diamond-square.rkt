@@ -119,12 +119,12 @@
   
 
 (define (draw)
-  (time
-   (begin
-     ; A black stroke around each cell looks nice
-     ;   (stroke-weight 1) (stroke 0)
-     ; but it's slower than no borders.
-     (no-stroke)
-     (for* ([i H] [j W])
-       (fill (palette (ref i j)))
-       (rect (* s j) (* s i) s s)))))
+  ; A black stroke around each cell looks nice
+  ;   (stroke-weight 1) (stroke 0)
+  ; but it's slower than no borders.
+  (no-stroke)
+  (for* ([i H] [j W])
+    (fill (palette (ref i j)))
+    (rect (* s j) (* s i) s s)))
+
+

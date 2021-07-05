@@ -2,8 +2,7 @@
 ; https://thecodingtrain.com/CodingChallenges/033-poisson-disc.html
 ; https://www.cct.lsu.edu/~fharhad/ganbatte/siggraph2007/CD2/content/sketches/0250.pdf
 
-(require racket/math
-         data/gvector) ; growable vector
+(require racket/math data/gvector) ; growable vector
 (require (only-in metapict
                   pt vec vec+ pt+ pt-x pt-y dist))
 
@@ -102,7 +101,7 @@
         ; we did not find any new points, so we remove it from active points
         (remove-active! rand-index))))
   (stroke-weight (/ r 2))
-  (stroke 255)
+  (stroke 0 0 255 0)
   (for ([i (count ordered)])
     ; (stroke (remainder i 360) 100 100)
     (define p (get ordered i))
