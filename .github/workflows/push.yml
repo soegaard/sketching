@@ -13,7 +13,7 @@ jobs:
         with:
           architecture: 'x64'
           distribution: 'full'
-          version: '8.1'
+          version: '7.5'
           dest: '"${HOME}/racketdist"'
           local_catalogs: $GITHUB_WORKSPACE
           sudo: never
