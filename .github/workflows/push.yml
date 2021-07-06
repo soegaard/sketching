@@ -26,5 +26,5 @@ jobs:
       - name: Build Documentation
         run: |
           ls         
-          xvfb-run -a raco scribble ../sketching-doc/sketching-doc/manual-sketching.scrbl
+          xvfb-run -a raco scribble sketching-doc/sketching-doc/manual-sketching.scrbl
 #        run: xvfb-run -a raco setup --jobs 1 sketching-doc
