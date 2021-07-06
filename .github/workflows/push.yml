@@ -24,5 +24,6 @@ jobs:
       - name: Setup Collections
         run: raco setup --check-pkg-deps sketching
       - name: Build Documentation
+         run: ls         
 #        run: xvfb-run -a raco setup --jobs 1 sketching-doc
         run: xvfb-run -a raco scribble ../sketching-doc/sketching-doc/manual-sketching.scrbl
