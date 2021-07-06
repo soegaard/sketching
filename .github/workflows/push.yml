@@ -23,5 +23,5 @@ jobs:
           raco pkg update  --auto --no-setup sketching sketching-lib sketching-doc
       - name: Setup Collections
         run: raco setup --check-pkg-deps sketching
-#      - name: Build Documentation
-#        run: xvfb-run -a raco setup --jobs 1 sketching-doc
+      - name: Build Documentation
+        run: xvfb-run -a raco setup --jobs 1 sketching-doc
