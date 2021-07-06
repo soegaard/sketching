@@ -402,7 +402,7 @@ make an Github issue at @|sketching-github|.
      ns
      #;(namespace-require ''racket/draw ns)))
 
-@(define factory (make-base-eval-factory (list 'racket/gui/base)))
+@(define factory (make-base-eval-factory (list 'racket/gui/base 'racket/draw)))
 @(define (make-sketching-eval)   
    (let ([e ; (make-base-eval)
           #;(make-evaluator 'racket/base
