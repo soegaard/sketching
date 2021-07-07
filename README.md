@@ -1,6 +1,6 @@
 # sketching
 
-The full reference manual and elaborate examples are available her:
+The full reference manual and elaborate examples are available here:
 
 https://soegaard.github.io/sketching/
 
