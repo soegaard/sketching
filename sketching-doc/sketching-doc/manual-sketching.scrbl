@@ -70,6 +70,8 @@
      (define result (regexp-match "([^/]*[.]pde)" url))
      (and result (first result)))
    (define (example-from-file example)
+     (list))
+   #;(define (example-from-file example)
      (define gh-url (string-append s-url example))
      (set! url-found #f)
      (define in (open-input-file (example->path example)))     

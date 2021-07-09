@@ -1,4 +1,9 @@
 #lang racket/base
+;;;
+;;; GUI
+;;;
+
+; This file and environment.rkt are the only files that depend on racket/gui.
 
 (provide
  cursor no-cursor
@@ -198,6 +203,7 @@
   (inexact->exact (floor (/ 1000 fps ))))
   
 (define (start-gui)
+  ; todo  (current-density (display-density))
   ; store the time now, used by millis
   (send top-canvas min-width  (current-width))
   (send top-canvas min-height (current-height))
