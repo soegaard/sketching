@@ -1,7 +1,8 @@
 #lang scribble/manual
+@;(require racket/gui/base)
 @; The following command will build the manual and open it in a browser.
 @; raco scribble +m --dest html --redirect-main http://docs.racket-lang.org manual-sketching.scrbl && open html/manual-sketching.html
-@(require racket/sandbox racket/gui/base) 
+@(require racket/sandbox) 
 @(require scribble/example)
 @(require racket/format racket/file racket/runtime-path racket/string racket/list)
 @(require (for-syntax racket/base syntax/parse))
@@ -10,7 +11,7 @@
                       #%app #%top #%module-begin class ; delay
                       second struct random round
                       )
-           (only-in racket/gui font%)
+           ; (only-in racket/gui font%)
            sketching))
 
 
@@ -404,7 +405,7 @@ make an Github issue at @|sketching-github|.
      ns
      #;(namespace-require ''racket/draw ns)))
 
-@(define factory (make-base-eval-factory (list 'racket/gui/base 'racket/draw)))
+@(define factory (make-base-eval-factory (list #;'racket/gui/base 'racket/draw)))
 @(define (make-sketching-eval)   
    (let ([e ; (make-base-eval)
           #;(make-evaluator 'racket/base
