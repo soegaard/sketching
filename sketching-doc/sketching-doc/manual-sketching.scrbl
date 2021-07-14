@@ -12,7 +12,8 @@
                       second struct random round
                       )
            ; (only-in racket/gui font%)
-           sketching))
+           sketching/exports-no-gui ; was sketching
+           ))
 
 
 @; Used to reference other manuals.
@@ -71,8 +72,6 @@
      (define result (regexp-match "([^/]*[.]pde)" url))
      (and result (first result)))
    (define (example-from-file example)
-     (list))
-   #;(define (example-from-file example)
      (define gh-url (string-append s-url example))
      (set! url-found #f)
      (define in (open-input-file (example->path example)))     
@@ -94,7 +93,19 @@
 
 @title[#:tag "sketching"]{Sketching @linebreak[] A Language for Creative Coding}
 
-@defmodule[sketching]
+@defmodule[sketching #:use-sources (sketching/exports-no-gui)]
+
+@(void "Scribble follows require chains and uses the first
+(re-)providing module it finds that documents a binding.  
+
+On the documenting-bindings side, the defmodule form has a
+#:use-sources option to list preferred modules to counts as ones
+providing a binding (in cases where those modules are in the providing
+chain). When documenting the sketching module, you may need to specify
+the exports-no-gui module as the preferred source in that sense. Then,
+a traversal from sketching-no-gui will hit the provider
+exports-no-gui. (Or something like that.)")
+
 
 Sketching is a language/library for creative coding. The focus is to make
 graphical programs accessible for beginners, artists, educators and designers.
@@ -2983,7 +2994,7 @@ Sets whether the text is underlined or not.
 
 @;---------
 
-@subsubsection{text-underlined?}
+@subsubsection{text-smoothing}
 
 @bold{Name: } @defidentifier[#'text-smoothing]
 
@@ -3703,6 +3714,92 @@ when @racket[draw] begins again.
 
 Technically, @racket[translate] changes the current transformation matrix.
 This function can be further controlled by @racket[push-matrix] and @racket[pop-matrix].
+
+@;---------
+
+@subsubsection{push-matrix}
+
+@bold{Name: } @defidentifier[#'push-matrix]
+
+Stores the current transformation matrix.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (code:comment "White rectangle")
+          (fill 255)
+          (rect 0 0 50 50)
+
+          (code:comment "Black rectangle")
+          (push-matrix)
+          (translate 30 20)
+          (fill 0)
+          (rect 0 0 50 50)
+          (pop-matrix)
+
+          (code:comment "Gray rectangle")
+          (fill 100)
+          (eval:alts        (rect 15 10 50 50)
+                     (begin (rect 15 10 50 50)
+                            (send dc get-bitmap)))]
+
+
+
+@bold{Description}
+
+Stores the current transformation matrix.
+The pushed transformation can be brought back using @racket[pop-matrix].
+The transformation matrix is stored in a stack - hence the names @racket[push-matrix] and @racket[pop-matrix].
+
+Use @racket[push-matrix] when you need temporarily to change the coordinate system. Use @racket[push-matrix]
+before your changes, then use @racket[pop-matrix] afterwards to bring back the old setting.
+
+
+@;---------
+
+@subsubsection{pop-matrix}
+
+@bold{Name: } @defidentifier[#'pop-matrix]
+
+Restores a transformation matrix.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (code:comment "White rectangle")
+          (fill 255)
+          (rect 0 0 50 50)
+
+          (code:comment "Black rectangle")
+          (push-matrix)
+          (translate 30 20)
+          (fill 0)
+          (rect 0 0 50 50)
+          (pop-matrix)
+
+          (code:comment "Gray rectangle")
+          (fill 100)
+          (eval:alts        (rect 15 10 50 50)
+                     (begin (rect 15 10 50 50)
+                            (send dc get-bitmap)))]
+
+
+
+@bold{Description}
+
+Restores a current transformation matrix.
+Brings back a transformation formerly pushed to the stack by @racket[push-matrix].
+
+Use the pair @racket[push-matrix] and @racket[pop-matrix] when you need temporarily to change the coordinate system.
+Use @racket[push-matrix] before your changes, then use @racket[pop-matrix] afterwards to bring back the old setting.
 
 
 @;---------
@@ -6060,6 +6157,84 @@ Hides the mouse cursor.
 Note: Currently there is a problem with the example on macOS Big Sur.
 Mail me: does it work on Linux and Windows?
 
+@;---------
+
+@subsubsection{smoothing}
+
+@bold{Name: } @defidentifier[#'smoothing]
+
+Enables or disables anti-aliased smoothing for drawing.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0)]
+
+@examples[#:label #f #:eval se
+  (smoothing 'smoothed)
+  (line 0 0 100 100)
+  (smoothing 'unsmoothed)
+  (eval:alts
+   (line 100 100 0 0)
+   (begin (line 100 0 0 100)
+          (send dc get-bitmap)))]
+
+
+
+@bold{Usage}
+
+@racketusage[(smoothing sym)]            @linebreak[]
+
+@tabular[#:sep @hspace[1]
+(list (list @racketid[sym] 
+            (~a "one of the symbols 'unsmoothed 'smoothed 'aligned ")))]
+
+
+
+@bold{Description}
+
+Enables or disables anti-aliased smoothing for drawing.
+Text smoothing is not affected by this setting.
+
+Use @racketusage[(smoothing 'unsmoothed)] to disable both anti-alias and pixel alignment.
+
+Use @racketusage[(smoothing 'smoothed)]   to enable both anti-alias and pixel alignment.
+
+Use @racketusage[(smoothing 'aligned)]    to disable anti-alias and enable pixel alignment.
+
+See the Racket documentation for more on pixel alignment.
+
+
+@subsubsection{no-smooth}
+
+@bold{Name: } @defidentifier[#'no-smooth]
+
+Disables anti-aliased smoothing for drawing.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255)]
+
+@examples[#:label #f #:eval se
+          (fill 255)
+          (no-smooth)
+          (eval:alts        (line 0 0 100 100)
+                     (begin (line 0 0 100 100) (send dc get-bitmap)))]
+
+@bold{Usage}
+
+@racketusage[(no-smooth)]            @linebreak[]
+
+
+@bold{Description}
+
+Enables or disables anti-aliased smoothing for drawing.
+Text smoothing is not affected by this setting.
+
+
 
 @;---------
 
@@ -6244,6 +6419,116 @@ Sets the desired number of frames to be displayed per second.
 The system will attempt to call @racket[draw] the desired number
 of times per second, but there is no guarantees. If @racket[draw] is slow,
 the desired number of frames per second might be achievable.
+
+
+@;-------------------
+@;- OTHER
+@;-------------------
+
+@subsection{Other}
+
+@;---------
+
+@subsubsection{loop}
+
+@bold{Name: } @defidentifier[#'loop]
+
+Start the draw loop.
+
+@bold{Examples}
+
+In this example, @racketusage[draw] is only called in the animation loop if
+the mouse is pressed.
+
+@codeblock{
+#lang sketching
+
+(define (setup)
+  (size 200 200)
+  (no-loop))
+
+(define x 0)
+
+(define (draw)
+  (background 204)
+  (+= x 1)
+  (when (> x width)
+    (:= x 0))
+  (line x 0 x height))
+
+(define (on-mouse-pressed)
+  (loop))
+
+(define (on-mouse-released)
+  (no-loop))}
+  
+
+@bold{Usage}
+
+@racketusage[(loop)]            @linebreak[]
+
+
+@bold{Description}
+
+Running a Sketching program will start an animation loop that
+for each frame calls @racket[draw] which is expected to draw the next
+frame (image) of the animation. For programs that display only
+static images or react only to key and mouse events, there are no
+reason to call @racket[draw] for every frame. The pair @racket[no-loop]
+and @racket[loop] respectively disables and enables calling @racket[draw]
+each frame.
+
+
+@;---------
+
+@subsubsection{no-loop}
+
+@bold{Name: } @defidentifier[#'no-loop]
+
+Makes the animation loop stop calling @racket[draw].
+
+@bold{Examples}
+
+In this example, @racketusage[draw] is only called in the animation loop if
+the mouse is pressed.
+
+@codeblock{
+#lang sketching
+
+(define (setup)
+  (size 200 200)
+  (no-loop))
+
+(define x 0)
+
+(define (draw)
+  (background 204)
+  (+= x 1)
+  (when (> x width)
+    (:= x 0))
+  (line x 0 x height))
+
+(define (on-mouse-pressed)
+  (loop))
+
+(define (on-mouse-released)
+  (no-loop))}
+  
+
+@bold{Usage}
+
+@racketusage[(no-loop)]            @linebreak[]
+
+
+@bold{Description}
+
+Running a Sketching program will start an animation loop that
+for each frame calls @racket[draw] which is expected to draw the next
+frame (image) of the animation. For programs that display only
+static images or react only to key and mouse events, there are no
+reason to call @racket[draw] for every frame. The pair @racket[no-loop]
+and @racket[loop] respectively disables and enables calling @racket[draw]
+each frame.
 
 
 @;-------------------

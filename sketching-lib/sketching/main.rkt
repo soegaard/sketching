@@ -1,6 +1,5 @@
 #lang racket/base
 (require "exports-all.rkt")    (provide (all-from-out "exports-all.rkt"))
-
 ;(require               "exports-no-gui.rkt" "exports-only-for-docs.rkt")
 ;(provide (all-from-out "exports-no-gui.rkt" "exports-only-for-docs.rkt"))
 

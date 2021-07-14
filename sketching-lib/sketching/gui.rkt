@@ -222,7 +222,10 @@
 
     (send top-bitmap-dc set-pen   (send old-dc get-pen))
     (send top-bitmap-dc set-brush (send old-dc get-brush))
-    (send top-bitmap-dc set-font  (send old-dc get-font)))
+    (send top-bitmap-dc set-font  (send old-dc get-font))
+
+    (send top-bitmap-dc set-smoothing  (send old-dc get-smoothing))
+    )
                
   (send top-canvas set-canvas-background (send (current-dc) get-background))
   (send (send top-canvas get-dc) clear)
