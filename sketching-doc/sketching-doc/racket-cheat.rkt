@@ -56,6 +56,11 @@
   (element (style #f (list (alt-tag "div")
                            (attributes '([class . "Csection"]))))
            (cons
+            (element (style #f (list (alt-tag "h1"))) label
+                     #;`(section ,(content->string label)))
+            (map render-group gs))
+           
+           #;(cons
             (toc-target-element (style #f (list (alt-tag "h1"))) label
                                 `(section ,(content->string label)))
             (map render-group gs))))
