@@ -2,16 +2,13 @@
 @;(require racket/gui/base)
 @; The following command will build the manual and open it in a browser.
 @; raco scribble +m --dest html --redirect-main http://docs.racket-lang.org manual-sketching.scrbl && open html/manual-sketching.html
-@(require racket/sandbox) 
+@(require racket/sandbox racket/format racket/file racket/runtime-path racket/string racket/list) 
 @(require scribble/example)
-@(require racket/format racket/file racket/runtime-path racket/string racket/list)
 @(require (for-syntax racket/base syntax/parse))
 @(require (for-label ; (except-in racket/base #%app #%top)
            (except-in racket
                       #%app #%top #%module-begin class ; delay
-                      second struct random round
-                      )
-           ; (only-in racket/gui font%)
+                      second struct random round)
            sketching/exports-no-gui ; was sketching
            ))
 
@@ -23,7 +20,6 @@
 @; only id is linked with @racket[] the arguments are not
 
 @(define-syntax (racketusage stx)
-   ; (displayln stx)
    (syntax-parse stx
      [(_ (id arg ...))
       (syntax/loc stx
@@ -388,10 +384,11 @@ section contains small examples. The third section contains more elaborate examp
    (CRow "Dot Notation"
          @elem{. (dot notation)})))
 
-
-
-
 @(render-cheat-sheet)
+
+@;-------------------
+@;-   REFERENCE
+@;-------------------
 
 
 @section{Reference}
@@ -406,32 +403,27 @@ If you find any mistakes in either the text or the examples, please
 make an Github issue at @|sketching-github|.
 
 
-
 @local-table-of-contents[#:style 'immediate-only]
+
+
+@(render-cheat-sheet)
 
 @subsection[#:tag "ref:color"]{Color}
 
-@(define draw-namespace
-   (let ([ns (make-base-namespace)])
-     ns
-     #;(namespace-require ''racket/draw ns)))
-
-@(define factory (make-base-eval-factory (list #;'racket/gui/base 'racket/draw)))
+@; Note: The documentation won't build on the package server if racket/gui is instantiated.
+@;       This means we need to use racket/draw and sketching/exports-no-gui
+@;       instead of racket/gui and sketching.
+@(define draw-namespace (make-base-namespace))
+@(define factory        (make-base-eval-factory (list 'racket/draw)))
 @(define (make-sketching-eval)   
-   (let ([e ; (make-base-eval)
-          #;(make-evaluator 'racket/base
-                            #:requires '(racket/gui/base))
-          (factory)])
-     (e '(require sketching/exports-no-gui ; was sketching
-                  sketching/parameters racket/draw))
-     ; (e '(dynamic-require 'racket/draw #f))
+   (let ([e (factory)])
+     (e '(require sketching/exports-no-gui sketching/parameters racket/draw))
      (e '(define (new-bitmap-dc w h)
            (define dc (new bitmap-dc% [bitmap (make-bitmap w h)]))
            (send dc set-smoothing 'aligned)
            dc))
      (e '(current-dc (new-bitmap-dc 100 100)))
      e))
-
 @(define se (make-sketching-eval))
 
 @;---------
