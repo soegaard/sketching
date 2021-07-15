@@ -56,7 +56,7 @@
   (element (style #f (list (alt-tag "div")
                            (attributes '([class . "Csection"]))))
            (cons
-            (element (style #f (list (alt-tag "h1"))) label
+            (element (style #f (list (alt-tag "div"))) label
                      #;`(section ,(content->string label)))
             (map render-group gs))
            
