@@ -425,7 +425,8 @@ make an Github issue at @|sketching-github|.
           #;(make-evaluator 'racket/base
                             #:requires '(racket/gui/base))
           (factory)])
-     (e '(require sketching sketching/parameters racket/draw))
+     (e '(require sketching/exports-no-gui ; was sketching
+                  sketching/parameters racket/draw))
      ; (e '(dynamic-require 'racket/draw #f))
      (e '(define (new-bitmap-dc w h)
            (define dc (new bitmap-dc% [bitmap (make-bitmap w h)]))
