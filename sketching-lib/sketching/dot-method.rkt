@@ -1,7 +1,8 @@
 #lang racket/base
 (require racket/match racket/list racket/class
          (for-syntax racket/base syntax/parse racket/syntax
-                     racket/string))
+                     racket/string
+                     "syntax-utils.rkt"))
 
 (provide
  dot-field
@@ -158,42 +159,61 @@
 
 (define-syntax (dot-field stx)
   (syntax-parse stx
-    [(_dot-field object:id field:id)
+    [(_dot-field object:id field-or-index)
+     (define index-used? (number? (syntax-e #'field-or-index)))
      (with-syntax
        ([cached-accessor  (syntax-local-lift-expression #'#f)] ; think: (define cached-accessor #f) 
         [cached-predicate (syntax-local-lift-expression #'#f)] ;        is added at the top-level
-        [stx stx])
+        [stx stx]
+        [field       (if index-used? #'number-used-as-field #'field-or-index)]
+        [index       (if index-used? #'field-or-index       #'name-used-as-index)]
+        [index-used? index-used?])
        #'(let ()            
            (define accessor
              (cond
                [(and cached-predicate (cached-predicate object)) cached-accessor]
                [(object? object)
                 (set! cached-accessor  (λ (obj) (get-field field obj)))
-                ; (class-field-accessor class-expr field-id) ; todo !!
                 (set! cached-predicate object?)
                 cached-accessor]
+               [(and index-used? (vector? object))
+                (set! cached-accessor  (λ (obj) (vector-ref obj index)))
+                (set! cached-predicate vector?)
+                cached-accessor]               
                [else
                 (define-values (class-symbol predicate) (find-class-symbol+predicate object))
                 (define fields+infos                    (get-fields+infos class-symbol))
                 (define a                               (find-accessor fields+infos 'field))
                 (set! cached-accessor  a)
                 (set! cached-predicate predicate)
-                (unless a
-                  (raise-syntax-error 'dot-field "object does not have this field" #'stx))
-                a]))
+                (cond
+                  [a                  a]
+                  [(vector? object)   (define a (λ (obj) (vector-ref obj field)))
+                                      (set! cached-accessor  a)
+                                      (set! cached-predicate vector?)
+                                      a]
+                  [else
+                   (raise-syntax-error 'dot-field "object does not have this field" #'stx)])]))
            (accessor object)))]
-  [(_dot-field object:id field:id ... last-field:id)
+  [(_dot-field object:id field-or-index ... last-field)
    (syntax/loc stx
-     (let ([t (dot-field object field ...)])
+     (let ([t (dot-field object field-or-index ...)])
        (dot-field t last-field)))]))
+
 
 
 (define-syntax (dot-assign-field stx)
   (syntax-parse stx
-    [(_dot-assign-field object:id field:id e:expr)
+    [(_dot-assign-field object:id field-or-index e:expr)
      (with-syntax ([cached-mutator   (syntax-local-lift-expression #'#f)]
                    [cached-predicate (syntax-local-lift-expression #'#f)]
-                   [stx stx])
+                   [stx stx]
+                   [field (if (number? (syntax-e #'field-or-index))
+                              #'|number-used-as-field|
+                              #'field-or-index)]
+                   [index (if (number? (syntax-e #'field-or-index))
+                              #'field-or-index
+                              #'|name-used-as-index|)])                   
        #'(let ()
            (define mutator
              (cond
@@ -201,6 +221,10 @@
                [(object? object)
                 (set! cached-mutator  (λ (obj v) (set-field! field obj v)))
                 (set! cached-predicate object?)
+                cached-mutator]
+               [(vector? object)
+                (set! cached-mutator  (λ (obj v) (vector-set! obj index v)))
+                (set! cached-predicate vector?)
                 cached-mutator]
                [else
                 (define-values (class-symbol predicate) (find-class-symbol+predicate object))
@@ -210,9 +234,9 @@
                 (set! cached-predicate predicate)
                 m]))
            (mutator object e)))]
-    [(_dot-field object:id field:id ... last-field:id e:expr)
+    [(_dot-field object:id field-or-index ... last-field e:expr)
      (syntax/loc stx
-       (let ([w e] [t (dot-field object field ...)])
+       (let ([w e] [t (dot-field object field-or-index ...)])
          (dot-assign-field t last-field w)))]))
 
 ;;;
@@ -261,18 +285,40 @@
 ; (:= v.i.j 42)
 ; (vector-set! (vector-ref v i) j 42)
 
+#;(begin-for-syntax
+  (define (stringify x #:mode [mode 'convert])
+    (cond
+      [(string? x)     x]
+      [(char? x)       (string x)]
+      [(symbol? x)     (symbol->string x)]
+      [(number? x)     (number->string x)]      
+      [(identifier? x) (symbol->string (syntax-e x))]
+      [else            #f]))
+
+  (define (id-contains? id needle)
+    (string-contains? (stringify id) (stringify needle)))
+
+  (define (split-id id sep [context id] [prop #f])
+    ; note: context is either #f or a syntax object
+    ;       prop    is either #f or a syntax object
+    (cond
+      [(not (id-contains? id sep)) id]
+      [else                        
+       (define strs (string-split (stringify id) (stringify sep)))
+       (define srcloc id)
+       (for/list ([str strs])
+         (define sym (string->symbol str))
+         (datum->syntax context sym srcloc prop))])))
 
 (define-syntax (:= stx)
   (syntax-parse stx
-    [(_ x:id e)
-     (define str (symbol->string (syntax-e #'x)))
+    [(_ x:id e)     
      (cond
-       [(string-contains? str ".")
-        (define ids (map string->symbol (string-split str ".")))
-        (with-syntax ([(x ...) (for/list ([id ids])
-                                 (datum->syntax #'x id))])
-            (syntax/loc stx                                 
-              (dot-assign-field x ... e)))]
+       [(id-contains? #'x ".")
+        (define xs (map number-id->number (split-id #'x ".")))
+        (with-syntax ([(x ...) xs])
+          (syntax/loc stx
+            (dot-assign-field x ... e)))]
        [else
         (syntax/loc stx
           (set! x e))])]
@@ -283,6 +329,29 @@
            (define i e1)
            (when (and (integer? i) (not (negative? i)))
              (vector-set! v i e2)))))]))
+
+
+;; (define-syntax (:= stx)
+;;   (syntax-parse stx
+;;     [(_ x:id e)
+;;      (define str (symbol->string (syntax-e #'x)))
+;;      (cond
+;;        [(string-contains? str ".")
+;;         (define ids (map string->symbol (string-split str ".")))
+;;         (with-syntax ([(x ...) (for/list ([id ids])
+;;                                  (datum->syntax #'x id))])
+;;             (syntax/loc stx                                 
+;;               (dot-assign-field x ... e)))]
+;;        [else
+;;         (syntax/loc stx
+;;           (set! x e))])]
+;;     [(_ v:id e1 e2)
+;;      (syntax/loc stx
+;;        (let ()
+;;          (when (vector? v)
+;;            (define i e1)
+;;            (when (and (integer? i) (not (negative? i)))
+;;              (vector-set! v i e2)))))]))
 
 
 

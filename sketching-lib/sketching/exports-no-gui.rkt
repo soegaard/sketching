@@ -37,7 +37,8 @@
 ;;;
 
 (require (for-syntax syntax/parse racket/base syntax/strip-context racket/string
-                     racket/syntax)
+                     racket/syntax
+                     "syntax-utils.rkt")
          (except-in racket/class class)
          racket/format
          "class.rkt"          
@@ -89,12 +90,9 @@
          [(on-key-pressed)    #'#f]
          [(on-key-released)   #'#f]
          [else
-          (define str (symbol->string (syntax-e #'top-id)))
           (cond
-            [(string-contains? str ".")
-             (define ids (map string->symbol (string-split str ".")))
-             (with-syntax ([(id ...) (for/list ([id ids])
-                                       (datum->syntax #'top id))])
+            [(id-contains? #'top-id ".")
+             (with-syntax ([(id ...) (map number-id->number (split-id #'top-id "."))])
                #'(dot-field id ...))]
             [else
              #'(#%top . top-id)])]))]))
