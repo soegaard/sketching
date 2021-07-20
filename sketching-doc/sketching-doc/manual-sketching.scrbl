@@ -3184,6 +3184,83 @@ This function will maintain transparency for gif and png images.
 
 @;---------
 
+@subsubsection{image-width}
+
+@bold{Name: } @defidentifier[#'image-width]
+
+Returns the width of an image.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (rect-mode 'corner) (text-align 'left 'baseline)]
+
+
+@examples[#:label #f #:eval se
+          (define img (load-image "moonwalk.jpg"))
+          (eval:alts        (image img 0 0)
+                     (begin (image img 0 0)
+                            (send dc get-bitmap)))
+          (image-width img)]
+
+
+@bold{Usage}
+
+@racketusage[(image-width img)]          @linebreak[]
+
+
+@bold{Arguments}
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[img] "a bitmap image"))]
+
+
+@bold{Description}
+
+Returns the width of an image (bitmap).
+
+@;---------
+
+@subsubsection{image-height}
+
+@bold{Name: } @defidentifier[#'image-height]
+
+Returns the height of an image.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)
+          (rect-mode 'corner) (text-align 'left 'baseline)]
+
+
+@examples[#:label #f #:eval se
+          (define img (load-image "moonwalk.jpg"))
+          (eval:alts        (image img 0 0)
+                     (begin (image img 0 0)
+                            (send dc get-bitmap)))
+          (image-height img)]
+
+
+@bold{Usage}
+
+@racketusage[(image-height img)]          @linebreak[]
+
+
+@bold{Arguments}
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[img] "a bitmap image"))]
+
+
+@bold{Description}
+
+Returns the height of an image (bitmap).
+
+
+@;---------
+
 @subsubsection{image-mode}
 
 @bold{Name: } @defidentifier[#'image-mode]
@@ -6652,13 +6729,13 @@ The input examples are:
 @subsubsection[#:tag "example_keyboard"]{Keyboard}
 @(example-from-file "basics/input/keyboard.rkt")
 
-@subsubsection[#:tag "example_keyboard"]{Keyboard Functions}
+@subsubsection[#:tag "example_keyboard_functions"]{Keyboard Functions}
 @(example-from-file "basics/input/keyboard-functions.rkt")
 
-@subsubsection[#:tag "example_keyboard"]{Milliseconds}
+@subsubsection[#:tag "example_milliseconds"]{Milliseconds}
 @(example-from-file "basics/input/milliseconds.rkt")
 
-@subsubsection[#:tag "example_keyboard"]{Clock}
+@subsubsection[#:tag "example_clock"]{Clock}
 @(example-from-file "basics/input/clock.rkt")
 
 
