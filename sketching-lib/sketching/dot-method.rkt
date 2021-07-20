@@ -156,6 +156,7 @@
 ; the next time. The predicate is used to check that we got a value of the
 ; same time as last - if not, then we need to look for the new class.
 
+(define name-used-as-index 0)
 
 (define-syntax (dot-field stx)
   (syntax-parse stx
