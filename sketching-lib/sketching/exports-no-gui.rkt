@@ -92,7 +92,7 @@
          [else
           (cond
             [(id-contains? #'top-id ".")
-             (with-syntax ([(id ...) (map number-id->number (split-id #'top-id "." stx))])
+             (with-syntax ([(id ...) (map number-id->number (split-id #'top-id "."))])
                #'(dot-field id ...))]
             [else
              #'(#%top . top-id)])]))]))
@@ -304,8 +304,10 @@
  ;; Conversion
  binary
  char
+ hex
  int
- unbinary
+ unbinary 
+ unhex
 
  ;; Environment / Gui
  ; gui cursor

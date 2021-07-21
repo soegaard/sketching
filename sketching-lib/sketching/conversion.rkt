@@ -1,5 +1,5 @@
 #lang racket
-(provide binary unbinary int char)
+(provide binary unbinary int char hex unhex) 
 
 (require racket/math
          "color.rkt")

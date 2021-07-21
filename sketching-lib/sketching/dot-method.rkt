@@ -166,10 +166,12 @@
      (with-syntax
        ([cached-accessor  (syntax-local-lift-expression #'#f)] ; think: (define cached-accessor #f) 
         [cached-predicate (syntax-local-lift-expression #'#f)] ;        is added at the top-level
-        [stx stx]
+        [stx         stx]
         [field       (if index-used? #'number-used-as-field #'field-or-index)]
         [index       (if index-used? #'field-or-index       #'name-used-as-index)]
         [index-used? index-used?])
+       ; TODO: Efficiency can be improved by special casing field and index use
+       ;       (since an index can't be used with an object)
        #'(let ()            
            (define accessor
              (cond

@@ -338,7 +338,12 @@ section contains small examples. The third section contains more elaborate examp
                @racket[radians]
                @racket[degrees]})
    (CRow "Conversion"
-         @elem{@racket[int]})
+         @elem{@racket[int]
+               @racket[char]
+               @racket[binary]
+               @racket[unbinary]
+               @racket[hex]
+               @racket[unhex]})
    (CRow "Constants"
          @elem{@racket[pi]
                @racket[π]
@@ -5883,6 +5888,214 @@ thing. There are 360 degrees in a circle and 2pi radians in a
 circle. 
 
 All trigonometric functions in Sketching require their parameters to be specified in radians.
+
+
+@;----------------------
+@;-- Math Conversion  --
+@;----------------------
+
+@subsection{Math Conversion}
+
+@;---------
+
+@subsubsection{int}
+
+@bold{Name: } @defidentifier[#'int]
+
+Converts a value to an integer.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (int 1)
+          (int 1.4)
+          (int 1.5)
+          (int 3/2)
+          (int #\a)
+          (int #f)
+          (int #t)]
+
+@bold{Usage}
+
+@racketusage[(int expr)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[expr]    "an expression"))]
+
+
+
+@bold{Description}
+
+Converts numbers, characters and booleans into an exact integer.
+Non-integer numbers are floored before they are converted.
+
+
+@;---------
+
+@subsubsection{char}
+
+@bold{Name: } @defidentifier[#'char]
+
+Converts an integer to a character.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (char 97)
+          (int #\a)]
+
+@bold{Usage}
+
+@racketusage[(char expr)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[expr]    "an expression"))]
+
+
+
+@bold{Description}
+
+Converts an integer to a character.
+
+@;---------
+
+@subsubsection{binary}
+
+@bold{Name: } @defidentifier[#'binary]
+
+Converts a value to string with the equivalent binary notation.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (binary 97)
+          (binary #\a)
+          (binary (color 0 255 0))]
+          
+
+
+@bold{Usage}
+
+@racketusage[(binary expr)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[expr]    "an expression"))]
+
+
+
+@bold{Description}
+
+Converts an integer, a character or a color to a string containing 
+the equivalent binary notation.
+
+
+@;---------
+
+@subsubsection{unbinary}
+
+@bold{Name: } @defidentifier[#'unbinary]
+
+Converts a string containing a binary number into the corresponding integer.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (binary 13)
+          (unbinary "1101")]
+
+
+@bold{Usage}
+
+@racketusage[(unbinary expr)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[expr]    "an expression"))]
+
+
+
+@bold{Description}
+
+Converts a string containing a binary number into the corresponding integer.
+
+
+@;---------
+
+@subsubsection{hex}
+
+@bold{Name: } @defidentifier[#'hex]
+
+Converts integers, characters and colors to a hexadecimal string.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (hex 97)
+          (hex #\a)
+          (hex (color 0 255 0))]
+
+@bold{Usage}
+
+@racketusage[(hex expr)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[expr]    "an expression"))]
+
+
+
+@bold{Description}
+
+Converts integers, characters and colors to a hexadecimal string.
+
+@;---------
+
+@subsubsection{unhex}
+
+@bold{Name: } @defidentifier[#'unhex]
+
+Converts a hexadecimal string to an integer.
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+@examples[#:label #f #:eval se
+          (hex 97)
+          (unhex "61")]
+
+@bold{Usage}
+
+@racketusage[(unhex expr)]        @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[expr]    "an expression"))]
+
+
+
+@bold{Description}
+
+Converts a hexadecimal string to an integer.
 
 
 @;---------
