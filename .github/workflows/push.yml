@@ -33,5 +33,5 @@ jobs:
       - name: Push to Github Pages
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
-          folder: sketching-doc/sketching-doc/htmls/
+          folder: ../sketching-doc/sketching-doc/htmls/
           branch: gh-pages
