@@ -156,7 +156,8 @@
 ; the next time. The predicate is used to check that we got a value of the
 ; same time as last - if not, then we need to look for the new class.
 
-(define name-used-as-index 0)
+(define name-used-as-index   0)
+(define number-used-as-field 0)
 
 (define-syntax (dot-field stx)
   (syntax-parse stx
@@ -172,7 +173,8 @@
        #'(let ()            
            (define accessor
              (cond
-               [(and cached-predicate (cached-predicate object)) cached-accessor]
+               [(and cached-predicate (cached-predicate object))
+                cached-accessor]
                [(object? object)
                 (set! cached-accessor  (λ (obj) (get-field field obj)))
                 (set! cached-predicate object?)
@@ -189,7 +191,7 @@
                 (set! cached-predicate predicate)
                 (cond
                   [a                  a]
-                  [(vector? object)   (define a (λ (obj) (vector-ref obj field)))
+                  [(vector? object)   (define a (λ (obj) (vector-ref obj index)))
                                       (set! cached-accessor  a)
                                       (set! cached-predicate vector?)
                                       a]

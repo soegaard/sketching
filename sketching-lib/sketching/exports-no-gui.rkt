@@ -92,7 +92,7 @@
          [else
           (cond
             [(id-contains? #'top-id ".")
-             (with-syntax ([(id ...) (map number-id->number (split-id #'top-id "."))])
+             (with-syntax ([(id ...) (map number-id->number (split-id #'top-id "." stx))])
                #'(dot-field id ...))]
             [else
              #'(#%top . top-id)])]))]))
