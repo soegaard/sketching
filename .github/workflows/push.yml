@@ -3,7 +3,7 @@ on:
   - pull_request
 
 jobs:
-  test:
+  build_and_publish_docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,11 +23,15 @@ jobs:
           raco pkg update  --auto --no-setup sketching sketching-lib sketching-doc
       - name: Setup Collections
         run: raco setup --check-pkg-deps sketching
-      - name: Build Documentation with raco scribble
+      - name: Build documentation using raco setup
+        run: |
+          xvfb-run -a raco setup --jobs 1 sketching-doc
+      - name: Build documentation with raco scribble
         run: |
           ls         
           xvfb-run -a raco scribble sketching-doc/sketching-doc/manual-sketching.scrbl
-#        run: xvfb-run -a raco setup --jobs 1 sketching-doc
-      - name: Build Documentation using raco setup
-        run: |
-          xvfb-run -a raco setup --jobs 1 sketching-doc
+      - name: Push to Github Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          folder: sketching-doc/sketching-doc/htmls/
+          branch: gh-pages
