@@ -6814,6 +6814,68 @@ and @racket[loop] respectively disables and enables calling @racket[draw]
 each frame.
 
 
+@;---------
+
+@subsubsection{:= (Assignment)}
+
+@bold{Name: } @defidentifier[#':=]
+
+A simple assignment, like @racket[(:= id expr)] evaluates the expression
+and stores the result in the location bound to @racketusage[id].
+
+The assignment operator can also be used to set fields in objects
+or to store values in vectors.
+
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255)]
+
+@examples[#:label #f #:eval se
+          (define a 1)
+          (define b (vector 1 2 3))
+          (class Horse Object (field [legs 4]) (super-new))
+          (define h (new Horse))
+
+          (:= a 11)
+          (:= b.1 22)
+          (:= b 2 33)
+          (:= h.legs 3)
+
+          (list a b.1 b.2 h.legs)]
+
+Nested assignments are possible too:
+
+@examples[#:label #f #:eval se
+          (define table (vector (vector 'a0 'a1)
+                                (vector 'b0 'b1)))
+
+          (for ([i 2])
+            (for ([j 2])
+              (:= table.i.j (list i j))))
+
+          table]
+
+@bold{Usage}
+
+@racketusage[(:= id expr)]            @linebreak[]
+
+Note: The identifier @racketusage[id] can be of the form @racketusage[id.fn1], @racketusage[id.fn1.fn2], etc.
+Here @racket[fn] stands for a field name or an index (integer).
+
+
+@bold{Description}
+
+A simple assignment, like @racketusage[(:= id expr)] evaluates the expression
+and stores the result in the location bound to @racketusage[id].
+
+The assignment operator can also be used to set fields in objects
+or to store values in vectors.
+
+
+
 @;-------------------
 @;- EXAMPLES
 @;-------------------
