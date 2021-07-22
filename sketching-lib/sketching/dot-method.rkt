@@ -156,13 +156,17 @@
 ; the next time. The predicate is used to check that we got a value of the
 ; same time as last - if not, then we need to look for the new class.
 
-(define name-used-as-index   0)
-(define number-used-as-field 0)
+(define name-used-as-index   142)
+(define number-used-as-field 242)
+(define field-is-unbound     343)
 
 (define-syntax (dot-field stx)
   (syntax-parse stx
     [(_dot-field object:id field-or-index)
      (define index-used? (number? (syntax-e #'field-or-index)))
+     (define field-is-bound?
+       (and (identifier? #'field-or-index) ; #f means index  
+            (identifier-binding #'field-or-index 0)))
      (with-syntax
        ([cached-accessor  (syntax-local-lift-expression #'#f)] ; think: (define cached-accessor #f) 
         [cached-predicate (syntax-local-lift-expression #'#f)] ;        is added at the top-level
@@ -172,6 +176,8 @@
         [index-used? index-used?])
        ; TODO: Efficiency can be improved by special casing field and index use
        ;       (since an index can't be used with an object)
+       (with-syntax ([field-as-index (if field-is-bound? #'field #'field-is-unbound)])
+
        #'(let ()            
            (define accessor
              (cond
@@ -184,7 +190,7 @@
                [(and index-used? (vector? object))
                 (set! cached-accessor  (λ (obj) (vector-ref obj index)))
                 (set! cached-predicate vector?)
-                cached-accessor]               
+                cached-accessor]
                [else
                 (define-values (class-symbol predicate) (find-class-symbol+predicate object))
                 (define fields+infos                    (get-fields+infos class-symbol))
@@ -193,13 +199,13 @@
                 (set! cached-predicate predicate)
                 (cond
                   [a                  a]
-                  [(vector? object)   (define a (λ (obj) (vector-ref obj index)))
-                                      (set! cached-accessor  a)
-                                      (set! cached-predicate vector?)
+                  [(vector? object)   (define a (λ (obj) (vector-ref obj field-as-index)))
+                                      (set! cached-accessor  #f) ; can't cache the index can change
+                                      (set! cached-predicate #f)
                                       a]
                   [else
                    (raise-syntax-error 'dot-field "object does not have this field" #'stx)])]))
-           (accessor object)))]
+           (accessor object))))]
   [(_dot-field object:id field-or-index ... last-field)
    (syntax/loc stx
      (let ([t (dot-field object field-or-index ...)])
@@ -210,24 +216,32 @@
 (define-syntax (dot-assign-field stx)
   (syntax-parse stx
     [(_dot-assign-field object:id field-or-index e:expr)
+     (define index-used? (number? (syntax-e #'field-or-index)))
+     (define field-is-bound?
+       (and (identifier? #'field-or-index) ; #f means index  
+            (identifier-binding #'field-or-index 0)))
+     ; If info is #f, we will treat field-or-index as an unbound identifier.
+     ; If unbound we know that the identifier is not an index - and we
+     ; must make sure we don't reference it in the vector fall back.
+     ; If unbound field-as-index refers to a dummy identifier.
+     
      (with-syntax ([cached-mutator   (syntax-local-lift-expression #'#f)]
                    [cached-predicate (syntax-local-lift-expression #'#f)]
                    [stx stx]
-                   [field (if (number? (syntax-e #'field-or-index))
-                              #'|number-used-as-field|
-                              #'field-or-index)]
-                   [index (if (number? (syntax-e #'field-or-index))
-                              #'field-or-index
-                              #'|name-used-as-index|)])                   
+                   [field       (if index-used? #'number-used-as-field #'field-or-index)]
+                   [index       (if index-used? #'field-or-index       #'name-used-as-index)]
+                   [index-used? index-used?])
+       (with-syntax ([field-as-index (if field-is-bound? #'field #'field-is-unbound)])
        #'(let ()
            (define mutator
              (cond
-               [(and cached-predicate (cached-predicate object)) cached-mutator]
-               [(object? object)
+               [(and cached-predicate (cached-predicate object))
+                cached-mutator]
+               [(object? object)  
                 (set! cached-mutator  (λ (obj v) (set-field! field obj v)))
                 (set! cached-predicate object?)
                 cached-mutator]
-               [(vector? object)
+               [(and index-used? (vector? object))
                 (set! cached-mutator  (λ (obj v) (vector-set! obj index v)))
                 (set! cached-predicate vector?)
                 cached-mutator]
@@ -237,8 +251,15 @@
                 (define m                               (find-mutator fields+infos 'field))
                 (set! cached-mutator  m)
                 (set! cached-predicate predicate)
-                m]))
-           (mutator object e)))]
+                (cond
+                  [m                  m]
+                  [(vector? object)   (define m (λ (obj v) (vector-set! obj field-as-index v)))
+                                      (set! cached-mutator   #f) ; can't cache the index can change
+                                      (set! cached-predicate #f)
+                                      m]
+                  [else
+                   (raise-syntax-error 'dot-field "object does not have this field" #'stx)])]))
+           (mutator object e))))]
     [(_dot-field object:id field-or-index ... last-field e:expr)
      (syntax/loc stx
        (let ([w e] [t (dot-field object field-or-index ...)])
