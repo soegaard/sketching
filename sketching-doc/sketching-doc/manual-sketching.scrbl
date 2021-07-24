@@ -6823,7 +6823,7 @@ each frame.
 A simple assignment, like @racket[(:= id expr)] evaluates the expression
 and stores the result in the location bound to @racketusage[id].
 
-The assignment operator can also be used to set fields in objects
+The assignment operator can also be used to set fields in structures or objects
 or to store values in vectors.
 
 
@@ -6835,16 +6835,28 @@ or to store values in vectors.
 
 @examples[#:label #f #:eval se
           (define a 1)
-          (define b (vector 1 2 3))
-          (class Horse Object (field [legs 4]) (super-new))
-          (define h (new Horse))
-
           (:= a 11)
+          a]
+
+@examples[#:label #f #:eval se
+          (define b (vector 1 2 3))
           (:= b.1 22)
           (:= b 2 33)
-          (:= h.legs 3)
+          b
+          b.1
+          b.2]
 
-          (list a b.1 b.2 h.legs)]
+@examples[#:label #f #:eval se
+          (class Horse Object (field [legs 4]) (super-new))
+          (define h (new Horse))
+          (:= h.legs 3) 
+          h.legs]
+
+@examples[#:label #f #:eval se
+          (struct horse (breed height color))
+          (define bella (horse "Danish Warmblood" 170 "brown"))
+          (:= bella.height 171)
+          bella]
 
 Nested assignments are possible too:
 
@@ -6874,6 +6886,46 @@ and stores the result in the location bound to @racketusage[id].
 The assignment operator can also be used to set fields in objects
 or to store values in vectors.
 
+
+@;---------
+
+@subsubsection{struct}
+
+@bold{Name: } @defidentifier[#'struct]
+
+Declares a structure type. An instance of the type is called a structure.
+A structure contains a value for each field.
+
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255)]
+
+@examples[#:label #f #:eval se
+          (struct horse (breed height color))
+          (define bella (horse "Danish Warmblood" 170 "brown"))
+          (code:comment "All fields are transparent.")
+          bella
+          (code:comment "Dot notation can be used to reference fields.")
+          bella.height
+          (code:comment "All fields are mutable. Dot notation works with assignment.")
+          (:= bella.height 171)
+          bella]
+
+@bold{Usage}
+
+@racketusage[(struct name (field ...))]            @linebreak[]
+
+@bold{Description}
+
+Declares a structure type named @racketid[name] with fields @racketid[field]... .
+
+Note: The construct @racket[struct] is the same as the Racket construct struct,
+except that all fields are mutable and transparent by default. Also, @racket[struct]
+works together with the assignment operator @racket[:=] which the standard
+Racket struct doesn't.
 
 
 @;-------------------
