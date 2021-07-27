@@ -6879,10 +6879,10 @@ Nested assignments are possible too:
 A simple assignment, like @racketusage[(:= id expr)] evaluates the expression
 and stores the result in the location bound to @racketusage[id].
 
-The identifier @racketusage[id] can contain @racketusage[.f] or @racketusage[_i]
+The identifier @racketusage[id] can contain @racketusage[.f] or @racketusage[__i]
 where @racketusage[f] is a field name and @racketusage[i] is an index (an identifier
 or a natural number_. Here @racketusage[.f] denotes fields in objects or structures
-and @racketusage[_i] denotes reference to a vector slot.
+and @racketusage[__i] denotes reference to a vector slot.
 
 
 @;---------
