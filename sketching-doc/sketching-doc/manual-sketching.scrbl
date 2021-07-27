@@ -385,7 +385,7 @@ section contains small examples. The third section contains more elaborate examp
    (CRow "Structures"
          @elem{@racket[struct]})
    (CRow "Classes and objects"
-         @elem{@racket[class] @racket[make-object] @racket[new]})
+         @elem{@racket[class] @racket[Object] @racket[make-object] @racket[new]})
    (CRow "Dot Notation"
          @elem{. (dot notation)})))
 
@@ -6909,7 +6909,7 @@ A structure contains a value for each field.
           (code:comment "Dot notation can be used to reference fields.")
           bella.height
           (code:comment "All fields are mutable. Dot notation works with assignment.")
-          (:= bella.height 171)
+          (:= bella.height 172)
           bella]
 
 @bold{Usage}
@@ -6945,14 +6945,15 @@ By convention class have capitalized names.
 
 @examples[#:label #f #:eval se
           (class Horse Object 
-            (fields breed height color))
-          (define bella (horse "Danish Warmblood" 172 "brown"))
+            (init-field breed height color)
+            (super-new))
+          (define bella (make-object Horse "Danish Warmblood" 172 "brown"))
           (code:comment "All fields are transparent.")
           bella
           (code:comment "Dot notation can be used to reference fields.")
           bella.height
           (code:comment "All fields are mutable. Dot notation works with assignment.")
-          (:= bella.height 171)
+          (:= bella.height 173)
           bella]
 
 @bold{Usage}
@@ -6967,6 +6968,38 @@ Note: The construct @racket[struct] is the same as the Racket construct struct,
 except that all fields are mutable and transparent by default. Also, @racket[struct]
 works together with the assignment operator @racket[:=] which the standard
 Racket struct doesn't.
+
+
+@;---------
+
+@subsubsection{Object}
+
+@bold{Name: } @defidentifier[#'Object]
+
+A builtin class with no methods or fields. 
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255)]
+
+@examples[#:label #f #:eval se
+          (class Horse Object 
+            (init-field breed height color)
+            (super-new))
+          (define bella (make-object Horse "Danish Warmblood" 174 "brown"))
+          (display bella)
+          (write bella)
+          (print bella)]
+
+
+@bold{Description}
+
+A builtin class with no methods or fields.
+
+Subclasses of @racket[Object] work with @racket[display], @racket[write]
+and @racket[print] to display its fields and field values.
 
 
 @;-------------------
