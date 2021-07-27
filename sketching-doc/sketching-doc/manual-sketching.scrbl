@@ -6881,7 +6881,7 @@ and stores the result in the location bound to @racketusage[id].
 
 The identifier @racketusage[id] can contain @racketusage[.f] or @racketusage[__i]
 where @racketusage[f] is a field name and @racketusage[i] is an index (an identifier
-or a natural number_. Here @racketusage[.f] denotes fields in objects or structures
+or a natural number). Here @racketusage[.f] denotes fields in objects or structures
 and @racketusage[__i] denotes reference to a vector slot.
 
 
