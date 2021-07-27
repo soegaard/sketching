@@ -6840,11 +6840,11 @@ or to store values in vectors.
 
 @examples[#:label #f #:eval se
           (define b (vector 1 2 3))
-          (:= b.1 22)
+          (:= b_1 22)
           (:= b 2 33)
           b
-          b.1
-          b.2]
+          b_1
+          b_2]
 
 @examples[#:label #f #:eval se
           (class Horse Object (field [legs 4]) (super-new))
@@ -6864,9 +6864,9 @@ Nested assignments are possible too:
           (define table (vector (vector 'a0 'a1)
                                 (vector 'b0 'b1)))
 
-          (for ([i 2])
+           (for ([i 2])
             (for ([j 2])
-              (:= table.i.j (list i j))))
+              (:= table_i_j (list i j))))
 
           table]
 
@@ -6905,7 +6905,50 @@ A structure contains a value for each field.
 
 @examples[#:label #f #:eval se
           (struct horse (breed height color))
-          (define bella (horse "Danish Warmblood" 170 "brown"))
+          (define bella (horse "Danish Warmblood" 171 "brown"))
+          (code:comment "All fields are transparent.")
+          bella
+          (code:comment "Dot notation can be used to reference fields.")
+          bella.height
+          (code:comment "All fields are mutable. Dot notation works with assignment.")
+          (:= bella.height 171)
+          bella]
+
+@bold{Usage}
+
+@racketusage[(struct name (field ...))]            @linebreak[]
+
+@bold{Description}
+
+Declares a structure type named @racketid[name] with fields @racketid[field]... .
+
+Note: The construct @racket[struct] is the same as the Racket construct struct,
+except that all fields are mutable and transparent by default. Also, @racket[struct]
+works together with the assignment operator @racket[:=] which the standard
+Racket struct doesn't.
+
+
+@;---------
+
+@subsubsection{class}
+
+@bold{Name: } @defidentifier[#'class]
+
+Declares a class. An instance of a class is called an object.
+An object can have fields and methods. 
+By convention class have capitalized names.
+
+
+@bold{Examples}
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 100 100))
+          (fill 196) (no-stroke) (rect 0 0 100 100) (stroke 0) (color-mode 'rgb 255)]
+
+@examples[#:label #f #:eval se
+          (class Horse Object 
+            (fields breed height color))
+          (define bella (horse "Danish Warmblood" 172 "brown"))
           (code:comment "All fields are transparent.")
           bella
           (code:comment "Dot notation can be used to reference fields.")
