@@ -169,6 +169,7 @@
   
 
 (define-syntax (dot/underscore stx)
+  (displayln (list 'dot/underscore stx))
   (syntax-parse stx
     [(_dot/underscore object:id)
      #'object]
@@ -191,7 +192,7 @@
                 (define a                               (find-accessor fields+infos 'field))
                 (set! cached-accessor  a)
                 (set! cached-predicate predicate)
-                (or a (raise-syntax-error 'dot-field "object does not have this field" #'stx))]))
+                (or a (raise-syntax-error 'dot/underscore "object does not have this field" #'stx))]))
            (accessor object)))]
     [(_dot/underscore object:id sep:underscore index)
      (with-syntax
@@ -213,7 +214,7 @@
                [else
                 (set! cached-accessor  #f)
                 (set! cached-predicate #f)
-                (raise-syntax-error 'under-index "value is not indexable with underscore" #'stx)]))
+                (raise-syntax-error 'dot/underscore "value is not indexable with underscore" #'stx)]))
            (accessor object)))]
   [(_dot/underscore object:id (~seq sep field-or-index) ... last-sep last-field-or-index)
    (syntax/loc stx
@@ -223,6 +224,9 @@
 
 (define-syntax (dot-field stx)
   (syntax-parse stx
+    [(_dot-field object:id)
+     (syntax/loc stx
+       object)]
     [(_dot-field object:id field:id)
      (with-syntax
        ([cached-accessor  (syntax-local-lift-expression #'#f)]  ; think: (define cached-accessor #f) 
@@ -242,7 +246,11 @@
                 (define a                               (find-accessor fields+infos 'field))
                 (set! cached-accessor  a)
                 (set! cached-predicate predicate)
-                (or a (raise-syntax-error 'dot-field "object does not have this field" #'stx))]))
+                (or a (raise-syntax-error 'dot-field 
+                                          (string-append "object does not have this field "
+                                                         (symbol->string (syntax-e #'object))
+                                                         (symbol->string (syntax-e #'field)))
+                                          #'stx))]))
            (accessor object)))]
   [(_dot-field object:id field:id ... last-field:id)
    (syntax/loc stx
@@ -278,9 +286,6 @@
      (let ([t (under-index object index ...)])
        (under-index t last-index)))]))
 
-
-
-
 (define-syntax (assign-dot/underscore stx)
   (syntax-parse stx
     ; assign value to object field
@@ -304,8 +309,12 @@
                 (set! cached-mutator   m)
                 (set! cached-predicate predicate)
                 (unless m
-                  (raise-syntax-error ':= "object does not have this field" #'stx))]))
+                  (raise-syntax-error ':= "object does not have this field: ~a" (syntax-e #'field)))
+                m]))
            (mutator object e))))]
+    [(_assign-dot/underscore object:id sep:dot not-a-field e:expr)
+     (raise-syntax-error ':= "field name (i.e. an identifier) expected after the dot"
+                         stx)]
     ; assign value to vector slot
     [(_assign-dot/underscore object:id sep:underscore index:expr e:expr)
      (with-syntax ([cached-mutator   (syntax-local-lift-expression #'#f)]
@@ -327,7 +336,7 @@
     [(_dot-field object:id (~seq sep:separator field-or-index) ... last-sep:separator last-field-or-index e:expr)
      (syntax/loc stx
        (let ([w e] [t (dot-field object (~@ sep field-or-index) ...)])
-         (assign-dot/underscore t last-sep last-field w)))]))
+         (assign-dot/underscore t last-sep last-field-or-index w)))]))
 
 ;; (define name-used-as-index   142)
 ;; (define number-used-as-field 242)
@@ -457,6 +466,7 @@
          (datum->syntax context sym srcloc prop))])))
 
 (define-syntax (:= stx)
+  (displayln (list ':= stx))
   (syntax-parse stx
     [(_ x:id e)     
      (cond
