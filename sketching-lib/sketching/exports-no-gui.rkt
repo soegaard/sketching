@@ -91,9 +91,9 @@
          [(on-key-released)   #'#f]
          [else
           (cond
-            [(id-contains? #'top-id ".")
-             (with-syntax ([(id ...) (map number-id->number (split-id #'top-id "."))])
-               #'(dot-field id ...))]
+            [(or (id-contains? #'top-id ".") (id-contains? #'top-id "_"))
+             (with-syntax ([(id ...) (map number-id->number (split-id-at-dot/underscore #'top-id))])
+               (syntax/loc stx (dot/underscore id ...)))]
             [else
              #'(#%top . top-id)])]))]))
 

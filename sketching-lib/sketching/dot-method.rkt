@@ -5,8 +5,8 @@
                      "syntax-utils.rkt"))
 
 (provide
+ dot/underscore
  dot-field
- dot-assign-field
  declare-struct-fields
  app-dot-method
  define-method
@@ -133,7 +133,7 @@
                        (values (cdr predicate+symbol) predicate)
                        (loop (cdr as)))])))
 
-; Finally we need address how  c.x  eventually evaluates (Circle-x c).
+; Finally we need address how  c.x  eventually evaluates as (Circle-x c).
 ; Since  c.x  isn't bound in our program, the expander expands
 ; c.x into (#%top c.x). In "main.rkt" we have defined a
 ; #%sketching-top, which will be used as #%top by programs
@@ -156,28 +156,26 @@
 ; the next time. The predicate is used to check that we got a value of the
 ; same time as last - if not, then we need to look for the new class.
 
-(define name-used-as-index   142)
-(define number-used-as-field 242)
-(define field-is-unbound     343)
+; Note: The first design used . for both field access and for vector/string indexing.
+;       Expanding into  (if (object? obj) (get-field field obj) (vector-ref obj field))
+;       leads to an unbounded reference (at compile time) when object.field is compiled,
 
-(define-syntax (dot-field stx)
+;; Syntax classes for the separators.
+
+(begin-for-syntax
+  (define-syntax-class dot        #:datum-literals (|.|) (pattern |.|))
+  (define-syntax-class underscore #:datum-literals (|_|) (pattern |_|))
+  (define-syntax-class separator (pattern (~or _:dot _:underscore))))
+  
+
+(define-syntax (dot/underscore stx)
   (syntax-parse stx
-    [(_dot-field object:id field-or-index)
-     (define index-used? (number? (syntax-e #'field-or-index)))
-     (define field-is-bound?
-       (and (identifier? #'field-or-index) ; #f means index  
-            (identifier-binding #'field-or-index 0)))
+    [(_dot/underscore object:id)
+     #'object]
+    [(_dot/underscore object:id sep:dot field:id)
      (with-syntax
-       ([cached-accessor  (syntax-local-lift-expression #'#f)] ; think: (define cached-accessor #f) 
-        [cached-predicate (syntax-local-lift-expression #'#f)] ;        is added at the top-level
-        [stx         stx]
-        [field       (if index-used? #'number-used-as-field #'field-or-index)]
-        [index       (if index-used? #'field-or-index       #'name-used-as-index)]
-        [index-used? index-used?])
-       ; TODO: Efficiency can be improved by special casing field and index use
-       ;       (since an index can't be used with an object)
-       (with-syntax ([field-as-index (if field-is-bound? #'field #'field-is-unbound)])
-
+       ([cached-accessor  (syntax-local-lift-expression #'#f)]  ; think: (define cached-accessor #f) 
+        [cached-predicate (syntax-local-lift-expression #'#f)]) ;        is added at the top-level
        #'(let ()            
            (define accessor
              (cond
@@ -187,9 +185,56 @@
                 (set! cached-accessor  (λ (obj) (get-field field obj)))
                 (set! cached-predicate object?)
                 cached-accessor]
-               [(and index-used? (vector? object))
+               [else
+                (define-values (class-symbol predicate) (find-class-symbol+predicate object))
+                (define fields+infos                    (get-fields+infos class-symbol))
+                (define a                               (find-accessor fields+infos 'field))
+                (set! cached-accessor  a)
+                (set! cached-predicate predicate)
+                (or a (raise-syntax-error 'dot-field "object does not have this field" #'stx))]))
+           (accessor object)))]
+    [(_dot/underscore object:id sep:underscore index)
+     (with-syntax
+       ([cached-accessor  (syntax-local-lift-expression #'#f)]  ; think: (define cached-accessor #f) 
+        [cached-predicate (syntax-local-lift-expression #'#f)]) ;        is added at the top-level
+       #'(let ()            
+           (define accessor
+             (cond
+               [(and cached-predicate (cached-predicate object))
+                cached-accessor]
+               [(vector? object)
                 (set! cached-accessor  (λ (obj) (vector-ref obj index)))
                 (set! cached-predicate vector?)
+                cached-accessor]
+               [(string? object)
+                (set! cached-accessor  (λ (obj) (string-ref obj index)))
+                (set! cached-predicate string?)
+                cached-accessor]
+               [else
+                (set! cached-accessor  #f)
+                (set! cached-predicate #f)
+                (raise-syntax-error 'under-index "value is not indexable with underscore" #'stx)]))
+           (accessor object)))]
+  [(_dot/underscore object:id (~seq sep field-or-index) ... last-sep last-field-or-index)
+   (syntax/loc stx
+     (let ([t (dot/underscore object (~@ sep field-or-index) ...)])
+       (dot/underscore t last-sep last-field)))]))
+
+
+(define-syntax (dot-field stx)
+  (syntax-parse stx
+    [(_dot-field object:id field:id)
+     (with-syntax
+       ([cached-accessor  (syntax-local-lift-expression #'#f)]  ; think: (define cached-accessor #f) 
+        [cached-predicate (syntax-local-lift-expression #'#f)]) ;        is added at the top-level
+       #'(let ()            
+           (define accessor
+             (cond
+               [(and cached-predicate (cached-predicate object))
+                cached-accessor]
+               [(object? object)
+                (set! cached-accessor  (λ (obj) (get-field field obj)))
+                (set! cached-predicate object?)
                 cached-accessor]
                [else
                 (define-values (class-symbol predicate) (find-class-symbol+predicate object))
@@ -197,23 +242,98 @@
                 (define a                               (find-accessor fields+infos 'field))
                 (set! cached-accessor  a)
                 (set! cached-predicate predicate)
-                (cond
-                  [a                  a]
-                  [(vector? object)   (define a (λ (obj) (vector-ref obj field-as-index)))
-                                      (set! cached-accessor  #f) ; can't cache the index can change
-                                      (set! cached-predicate #f)
-                                      a]
-                  [else
-                   (raise-syntax-error 'dot-field "object does not have this field" #'stx)])]))
-           (accessor object))))]
-  [(_dot-field object:id field-or-index ... last-field)
+                (or a (raise-syntax-error 'dot-field "object does not have this field" #'stx))]))
+           (accessor object)))]
+  [(_dot-field object:id field:id ... last-field:id)
    (syntax/loc stx
-     (let ([t (dot-field object field-or-index ...)])
+     (let ([t (dot-field object field ...)])
        (dot-field t last-field)))]))
 
+(define-syntax (under-index stx)
+  (syntax-parse stx
+    [(_under-index object:id index) ; index is id or number
+     (with-syntax
+       ([cached-accessor  (syntax-local-lift-expression #'#f)]  ; think: (define cached-accessor #f) 
+        [cached-predicate (syntax-local-lift-expression #'#f)]) ;        is added at the top-level
+       #'(let ()            
+           (define accessor
+             (cond
+               [(and cached-predicate (cached-predicate object))
+                cached-accessor]
+               [(vector? object)
+                (set! cached-accessor  (λ (obj) (vector-ref obj index)))
+                (set! cached-predicate vector?)
+                cached-accessor]
+               [(string? object)
+                (set! cached-accessor  (λ (obj) (string-ref obj index)))
+                (set! cached-predicate string?)
+                cached-accessor]
+               [else
+                (set! cached-accessor  #f)
+                (set! cached-predicate #f)
+                (raise-syntax-error 'under-index "value is not indexable with underscore" #'stx)]))
+           (accessor object)))]
+  [(_under-index object:id index ... last-index)
+   (syntax/loc stx
+     (let ([t (under-index object index ...)])
+       (under-index t last-index)))]))
 
 
-(define-syntax (dot-assign-field stx)
+
+
+(define-syntax (assign-dot/underscore stx)
+  (syntax-parse stx
+    ; assign value to object field
+    [(_assign-dot/underscore object:id sep:dot field:id e:expr)
+     (with-syntax ([cached-mutator   (syntax-local-lift-expression #'#f)]
+                   [cached-predicate (syntax-local-lift-expression #'#f)])
+       (syntax/loc stx
+         (let ()
+           (define mutator
+             (cond
+               [(and cached-predicate (cached-predicate object))
+                cached-mutator]
+               [(object? object)  
+                (set! cached-mutator  (λ (obj v) (set-field! field obj v)))
+                (set! cached-predicate object?)
+                cached-mutator]               
+               [else
+                (define-values (class-symbol predicate) (find-class-symbol+predicate object))
+                (define fields+infos                    (get-fields+infos class-symbol))
+                (define m                               (find-mutator fields+infos 'field))
+                (set! cached-mutator   m)
+                (set! cached-predicate predicate)
+                (unless m
+                  (raise-syntax-error ':= "object does not have this field" #'stx))]))
+           (mutator object e))))]
+    ; assign value to vector slot
+    [(_assign-dot/underscore object:id sep:underscore index:expr e:expr)
+     (with-syntax ([cached-mutator   (syntax-local-lift-expression #'#f)]
+                   [cached-predicate (syntax-local-lift-expression #'#f)])
+       (syntax/loc stx
+         (let ()
+           (define mutator
+             (cond
+               [(and cached-predicate (cached-predicate object))
+                cached-mutator]
+               [(vector? object)
+                (set! cached-mutator  (λ (obj v) (vector-set! obj index v)))
+                (set! cached-predicate vector?)
+                cached-mutator]
+               [else
+                (raise-syntax-error ':= "underscore expects the object to be a vector" #'stx)]))
+           (mutator object e))))]
+    
+    [(_dot-field object:id (~seq sep:separator field-or-index) ... last-sep:separator last-field-or-index e:expr)
+     (syntax/loc stx
+       (let ([w e] [t (dot-field object (~@ sep field-or-index) ...)])
+         (assign-dot/underscore t last-sep last-field w)))]))
+
+;; (define name-used-as-index   142)
+;; (define number-used-as-field 242)
+;; (define field-is-unbound     343)
+
+#;(define-syntax (dot-assign-field stx)
   (syntax-parse stx
     [(_dot-assign-field object:id field-or-index e:expr)
      (define index-used? (number? (syntax-e #'field-or-index)))
@@ -340,11 +460,15 @@
   (syntax-parse stx
     [(_ x:id e)     
      (cond
-       [(id-contains? #'x ".")
-        (define xs (map number-id->number (split-id #'x ".")))
-        (with-syntax ([(x ...) xs])
+       [(or (id-contains? #'x ".") (id-contains? #'x "_"))
+        (with-syntax ([(id ...) (map number-id->number (split-id-at-dot/underscore #'x))])
           (syntax/loc stx
-            (dot-assign-field x ... e)))]
+            (assign-dot/underscore id ... e)))]
+       #;[(id-contains? #'x ".")
+          (define xs (map number-id->number (split-id #'x ".")))
+          (with-syntax ([(x ...) xs])
+            (syntax/loc stx
+              (dot-assign-field x ... e)))]
        [else
         (syntax/loc stx
           (set! x e))])]
