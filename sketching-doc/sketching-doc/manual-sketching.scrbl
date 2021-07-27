@@ -6874,17 +6874,15 @@ Nested assignments are possible too:
 
 @racketusage[(:= id expr)]            @linebreak[]
 
-Note: The identifier @racketusage[id] can be of the form @racketusage[id.fn1], @racketusage[id.fn1.fn2], etc.
-Here @racket[fn] stands for a field name or an index (integer).
-
-
 @bold{Description}
 
 A simple assignment, like @racketusage[(:= id expr)] evaluates the expression
 and stores the result in the location bound to @racketusage[id].
 
-The assignment operator can also be used to set fields in objects
-or to store values in vectors.
+The identifier @racketusage[id] can contain @racketusage[.f] or @racketusage[_i]
+where @racketusage[f] is a field name and @racketusage[i] is an index (an identifier
+or a natural number_. Here @racketusage[.f] denotes fields in objects or structures
+and @racketusage[_i] denotes reference to a vector slot.
 
 
 @;---------
