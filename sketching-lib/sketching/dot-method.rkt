@@ -169,7 +169,6 @@
   
 
 (define-syntax (dot/underscore stx)
-  (displayln (list 'dot/underscore stx))
   (syntax-parse stx
     [(_dot/underscore object:id)
      #'object]
@@ -333,9 +332,10 @@
                 (raise-syntax-error ':= "underscore expects the object to be a vector" #'stx)]))
            (mutator object e))))]
     
-    [(_dot-field object:id (~seq sep:separator field-or-index) ... last-sep:separator last-field-or-index e:expr)
+    [(_assign-dot/underscore object:id (~seq sep:separator field-or-index) ... 
+                             last-sep:separator last-field-or-index e:expr)
      (syntax/loc stx
-       (let ([w e] [t (dot-field object (~@ sep field-or-index) ...)])
+       (let ([w e] [t (dot/underscore object (~@ sep field-or-index) ...)])
          (assign-dot/underscore t last-sep last-field-or-index w)))]))
 
 ;; (define name-used-as-index   142)
@@ -466,7 +466,6 @@
          (datum->syntax context sym srcloc prop))])))
 
 (define-syntax (:= stx)
-  (displayln (list ':= stx))
   (syntax-parse stx
     [(_ x:id e)     
      (cond
