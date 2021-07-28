@@ -7208,16 +7208,20 @@ The examples using transformations are:
 
 
 @subsubsection[#:tag "example_translate"]{Translate}
-@(example-from-file "basics/transform/translate.rkt")
+@(p5example-from-file "basics/transform/translate.js")
+@(example-from-file   "basics/transform/translate.rkt")
 
 @subsubsection[#:tag "example_scale"]{Scale}
-@(example-from-file "basics/transform/scale.rkt")
+@(p5example-from-file "basics/transform/scale.js")
+@(example-from-file   "basics/transform/scale.rkt")
 
 @subsubsection[#:tag "example_rotate"]{Rotate}
-@(example-from-file "basics/transform/rotate.rkt")
+@(p5example-from-file "basics/transform/rotate.js")
+@(example-from-file   "basics/transform/rotate.rkt")
 
 @subsubsection[#:tag "example_arm"]{Arm}
-@(example-from-file "basics/transform/arm.rkt")
+@(p5example-from-file "basics/transform/arm.js")
+@(example-from-file   "basics/transform/arm.rkt")
 
 
 
