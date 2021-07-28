@@ -1,5 +1,4 @@
 #lang sketching
-
 ;;;
 ;;; Inheritance
 ;;;
@@ -69,7 +68,3 @@
   (arm.display)
   (spots.update)
   (spots.display))
-
-
-
-

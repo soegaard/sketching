@@ -11,7 +11,7 @@
                       second struct random round)
            sketching/exports-no-gui ; was sketching
            ))
-
+@(require scribble/core scribble/html-properties (only-in xml cdata))
 
 @; Used to reference other manuals.
 @(define reference.scrbl '(lib "scribblings/reference/reference.scrbl"))
@@ -45,8 +45,8 @@
    @hyperlink["https://github.com/soegaard/sketching/" "https://github.com/soegaard/sketching/"])
 
 @(define sketching-manual-examples-github
-   @hyperlink["https://github.com/soegaard/sketching/tree/main/sketching-examples/manual-examples/"
-              "https://github.com/soegaard/sketching/tree/main/sketching-examples/manual-examples/"])
+   @hyperlink["https://github.com/soegaard/sketching/tree/main/sketching-doc/sketching-doc/manual-examples/"
+              "https://github.com/soegaard/sketching/tree/main/sketching-doc/sketching-doc/manual-examples/"])
 
 
 @(begin
@@ -58,7 +58,7 @@
    ;; and use them instead in the text above.
    (define p-url "(https://github.com/processing/processing-docs/[^ \n]*)")
    (define r-url "(https://raw.githubusercontent.com/processing/processing-docs/[^ \n]*)")
-   (define s-url "https://github.com/soegaard/sketching/tree/main/sketching-examples/manual-examples/")
+   (define s-url "https://github.com/soegaard/sketching/tree/main/sketching-doc/sketching-doc/manual-examples/")
    (define url-found #f)
    (define (contains-long-url? s)
      (define result (or (regexp-match p-url s) (regexp-match r-url s)))
@@ -82,12 +82,44 @@
             @linebreak[]
             (if (and url-found (original-name url-found))
                 @hyperlink[url-found (list @bold{Original: } " " (original-name url-found))]
-                '()))))
-                
+                '())))
+   (define p5counter 0)
+   (define (p5example-from-file . examples)
+     (define example (first examples))
+     (set! p5counter (+ p5counter 1))
+     (define new-container (string-append "p5container" (number->string p5counter)))
+     (define (fix-container line) (regexp-replace "p5container" line new-container))
+     (define all-lines
+       (append* (for/list ([example examples])
+                  (define in (open-input-file (example->path example)))
+                  (for/list ([line (in-lines in)])
+                    (fix-container line)))))
+     (define code (string-append* (add-between all-lines "\n")))
+     (define p5example
+       (xexpr-property
+        ; Note: P5 sketches are in "global" mode, so in order to display more than one sketch at the same
+        ;       page, we need to embed the sketches in iframes. The alternative is to rewrite all the
+        ;       sketches.
+        (cdata #f #f (string-append 
+                      "<iframe width='640' height='360' srcdoc='<html><head>"
+                      "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.4/p5.min.js\"></script>"
+                      "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.4/addons/p5.dom.min.js\"></script>"
+                      "</head>"
+                      "<body><div id=\"p5container" (~a p5counter) "\"></div>"
+                      "<script type=\"text/javascript\">" code "</script>"
+                      "</body>"
+                      "'></html> </iframe>"
+                      ))
+        (cdata #f #f "")))     
+     @elem[#:style (style #f (list p5example)) example]))
 
-
-
-@title[#:tag "sketching"]{Sketching @linebreak[] A Language for Creative Coding}
+@(require (only-in scribble/core            style )
+          (only-in scribble/html-properties js-addition attributes)
+          (only-in net/url                  string->url))
+@(define p5-url    (string->url "https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.4/p5.min.js"))
+@(define p5dom-url (string->url "https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.4/addons/p5.dom.min.js"))
+@title[#:style (style #f (list (js-addition p5-url) (js-addition p5dom-url) (attributes '((lang . "en")))))
+       #:tag "sketching"]{Sketching @linebreak[] A Language for Creative Coding}
 
 @defmodule[sketching #:use-sources (sketching/exports-no-gui)]
 
@@ -7041,7 +7073,9 @@ is what we in everyday language think of, when we hear the word "color".
 
 Move the cursor vertically over each bar to alter its hue.
 
+@(p5example-from-file "basics/color/hue.js")
 @(example-from-file "basics/color/hue.rkt")
+
 
 @subsubsection[#:tag "example_saturation"]{Saturation}
 
@@ -7051,29 +7085,35 @@ A "saturated" color is pure and an "unsaturated" color has a large component of 
 
 Move the cursor vertically over each bar to alter its saturation.
 
-@(example-from-file "basics/color/saturation.rkt")
+@(p5example-from-file "basics/color/saturation.js")
+@(example-from-file   "basics/color/saturation.rkt")
+
 
 @subsubsection[#:tag "example_brightness"]{Brightness}
+Move the cursor vertically over each bar to alter its brightness.
+@(p5example-from-file "basics/color/brightness.js")
+@(example-from-file   "basics/color/brightness.rkt")
 
-This program adjusts the brightness of a part of the image by
-calculating the distance of each pixel to the mouse.
-
-@(example-from-file "basics/color/brightness.rkt")
 
 @subsubsection[#:tag "example_color_variables"]{Color Variables}
-@(example-from-file "basics/color/color-variables.rkt")
+@(p5example-from-file "basics/color/color-variables.js")
+@(example-from-file   "basics/color/color-variables.rkt")
 
 @subsubsection[#:tag "example_relativity"]{Relativity}
-@(example-from-file "basics/color/relativity.rkt")
+@(p5example-from-file "basics/color/relativity.js")
+@(example-from-file   "basics/color/relativity.rkt")
 
 @subsubsection[#:tag "example_linear_gradient"]{Linear Gradient}
-@(example-from-file "basics/color/linear-gradient.rkt")
+@(p5example-from-file "basics/color/linear-gradient.js")
+@(example-from-file   "basics/color/linear-gradient.rkt")
 
 @subsubsection[#:tag "example_radial_gradient"]{Radial Gradient}
-@(example-from-file "basics/color/radial-gradient.rkt")
+@(p5example-from-file "basics/color/radial-gradient.js")
+@(example-from-file   "basics/color/radial-gradient.rkt")
 
 @subsubsection[#:tag "example_wave_gradient"]{Wave Gradient}
-@(example-from-file "basics/color/wave-gradient.rkt")
+@(p5example-from-file "basics/color/wave-gradient.js")
+@(example-from-file   "basics/color/wave-gradient.rkt")
 
 
 @subsection[#:tag "examples_classes_and_objects"]{Classes and Objects}
@@ -7084,16 +7124,23 @@ The examples are:
 
 
 @subsubsection[#:tag "example_objects"]{Objects}
-@(example-from-file "basics/objects/objects.rkt")
+@(p5example-from-file "basics/objects/objects.js")
+@(example-from-file   "basics/objects/objects.rkt")
 
 @subsubsection[#:tag "example_multiple_constructors"]{Multiple Constructors}
-@(example-from-file "basics/objects/multiple-constructors.rkt")
+@(p5example-from-file "basics/objects/multiple-constructors.js")
+@(example-from-file   "basics/objects/multiple-constructors.rkt")
 
 @subsubsection[#:tag "example_composite_objects"]{Composite Objects}
-@(example-from-file "basics/objects/composite-objects.rkt")
+@(p5example-from-file "basics/objects/composite-objects.js"
+                      "basics/objects/egg.js"
+                      "basics/objects/ring.js"
+                      "basics/objects/egg-ring.js")
+@(example-from-file   "basics/objects/composite-objects.rkt")
 
 @subsubsection[#:tag "example_inheritance"]{Inheritance}
-@(example-from-file "basics/objects/inheritance.rkt")
+@(p5example-from-file "basics/objects/inheritance.js")
+@(example-from-file   "basics/objects/inheritance.rkt")
 
 
 @subsection[#:tag "examples_input"]{Input}
@@ -7104,40 +7151,52 @@ The input examples are:
 
 
 @subsubsection[#:tag "example_mouse_1d"]{Mouse 1D}
-@(example-from-file "basics/input/mouse-1d.rkt")
+@(p5example-from-file "basics/input/mouse-1d.js")
+@(example-from-file   "basics/input/mouse-1d.rkt")
 
 @subsubsection[#:tag "example_mouse_2d"]{Mouse 2D}
-@(example-from-file "basics/input/mouse-2d.rkt")
+@(p5example-from-file "basics/input/mouse-2d.js")
+@(example-from-file   "basics/input/mouse-2d.rkt")
 
 @subsubsection[#:tag "example_mouse_press"]{Mouse Press}
-@(example-from-file "basics/input/mouse-press.rkt")
+@(p5example-from-file "basics/input/mouse-press.js")
+@(example-from-file   "basics/input/mouse-press.rkt")
 
 @subsubsection[#:tag "example_mouse_signals"]{Mouse Signals}
-@(example-from-file "basics/input/mouse-signals.rkt")
+@(p5example-from-file "basics/input/mouse-signals.js")
+@(example-from-file   "basics/input/mouse-signals.rkt")
 
 @subsubsection[#:tag "example_easing"]{Easing}
-@(example-from-file "basics/input/easing.rkt")
+@(p5example-from-file "basics/input/easing.js")
+@(example-from-file   "basics/input/easing.rkt")
 
 @subsubsection[#:tag "example_constrain"]{Constrain}
-@(example-from-file "basics/input/constrain.rkt")
+@(p5example-from-file "basics/input/constrain.js")
+@(example-from-file   "basics/input/constrain.rkt")
 
 @subsubsection[#:tag "example_storing_inputs"]{Storing Input}
-@(example-from-file "basics/input/storing-input.rkt")
+@(p5example-from-file "basics/input/storing-input.js")
+@(example-from-file   "basics/input/storing-input.rkt")
 
 @subsubsection[#:tag "example_mouse_functions"]{Mouse Functions}
-@(example-from-file "basics/input/mouse-functions.rkt")
+@(p5example-from-file "basics/input/mouse-functions.js")
+@(example-from-file   "basics/input/mouse-functions.rkt")
 
 @subsubsection[#:tag "example_keyboard"]{Keyboard}
-@(example-from-file "basics/input/keyboard.rkt")
+@(p5example-from-file "basics/input/keyboard.js")
+@(example-from-file   "basics/input/keyboard.rkt")
 
 @subsubsection[#:tag "example_keyboard_functions"]{Keyboard Functions}
-@(example-from-file "basics/input/keyboard-functions.rkt")
+@(p5example-from-file "basics/input/keyboard-functions.js")
+@(example-from-file   "basics/input/keyboard-functions.rkt")
 
 @subsubsection[#:tag "example_milliseconds"]{Milliseconds}
-@(example-from-file "basics/input/milliseconds.rkt")
+@(p5example-from-file "basics/input/milliseconds.js")
+@(example-from-file   "basics/input/milliseconds.rkt")
 
 @subsubsection[#:tag "example_clock"]{Clock}
-@(example-from-file "basics/input/clock.rkt")
+@(p5example-from-file "basics/input/clock.js")
+@(example-from-file   "basics/input/clock.rkt")
 
 
 

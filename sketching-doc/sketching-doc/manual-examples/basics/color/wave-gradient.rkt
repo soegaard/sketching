@@ -12,12 +12,12 @@
 
 (define (setup)
   (size 640 360)
-  (background 200)
+  ; (background 200)
   (no-loop))
 
 (define (draw)
-  (define w/2 width #;(quotient width  2))
-  (define h/2 height #;(quotient height 2))
+  (define w/2 width)
+  (define h/2 height)
   ;; To efficiently set all the pixels on screen, make the set() 
   ;; calls on a PImage, then write the result to the screen.
   (define gradient (create-image width height 'rgb))
@@ -40,6 +40,4 @@
         (image-set gradient (+ w/2 (int    j))         (+ h/2    (int py))         c)
         (image-set gradient (+ w/2 (int (+ j filler))) (+ h/2 (+ (int py) filler)) c))))
   ;; Draw the image to the screen
-  ; (set 0 0 gradient)
-  ;;Another alternative for drawing to the screen
   (image gradient 0 0))
