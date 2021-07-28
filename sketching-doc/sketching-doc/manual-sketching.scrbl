@@ -101,7 +101,7 @@
         ;       page, we need to embed the sketches in iframes. The alternative is to rewrite all the
         ;       sketches.
         (cdata #f #f (string-append 
-                      "<iframe width='640' height='360' srcdoc='<html><head>"
+                      "<iframe frameBorder='0' width='640' height='360' srcdoc='<html><head>"
                       "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.4/p5.min.js\"></script>"
                       "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.4/addons/p5.dom.min.js\"></script>"
                       "</head>"
@@ -7251,13 +7251,16 @@ The examples using vectors are:
 @local-table-of-contents[#:style 'immediate-only]
 
 @subsubsection[#:tag "example_vectors"]{Vectors}
-@(example-from-file "basics/vectors/vector.rkt")
+@(p5example-from-file "basics/vectors/vector.js")
+@(example-from-file   "basics/vectors/vector.rkt")
 
 @subsubsection[#:tag "example_vector_2d"]{Vector 2d}
-@(example-from-file "basics/vectors/vector-2d.rkt")
+@(p5example-from-file "basics/vectors/vector-2d.js")
+@(example-from-file   "basics/vectors/vector-2d.rkt")
 
 @subsubsection[#:tag "example_vector_of_objects"]{Vector of objects}
-@(example-from-file "basics/vectors/vector-of-objects.rkt")
+@(p5example-from-file "basics/vectors/vector-of-objects.js" "basics/vectors/vector-of-objects-module.js")
+@(example-from-file   "basics/vectors/vector-of-objects.rkt")
 
 
 
