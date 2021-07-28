@@ -7232,13 +7232,16 @@ The typography examples are:
 @local-table-of-contents[#:style 'immediate-only]
 
 @subsubsection[#:tag "example_letters"]{Letters}
-@(example-from-file "basics/typography/letters.rkt")
+@(p5example-from-file "basics/typography/letters.js")
+@(example-from-file   "basics/typography/letters.rkt")
 
 @subsubsection[#:tag "example_words"]{Words}
-@(example-from-file "basics/typography/words.rkt")
+@(p5example-from-file "basics/typography/words.js")
+@(example-from-file   "basics/typography/words.rkt")
 
 @subsubsection[#:tag "example_text_rotation"]{Text Rotation}
-@(example-from-file "basics/typography/text-rotation.rkt")
+@(p5example-from-file "basics/typography/text-rotation.js")
+@(example-from-file   "basics/typography/text-rotation.rkt")
 
 
 @subsection[#:tag "examples_vectors"]{Vectors}
