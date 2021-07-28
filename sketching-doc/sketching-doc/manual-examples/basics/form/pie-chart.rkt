@@ -23,3 +23,4 @@
     (fill gray)
     (arc (* 1/2 width) (* 1/2 height) diameter diameter last-angle (+ last-angle (radians a)))
     (+= last-angle (radians a))))
+

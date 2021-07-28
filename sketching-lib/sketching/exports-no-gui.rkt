@@ -186,6 +186,7 @@
  
  Object
  (all-from-out racket/class) ; class wasn't imported here
+ ; (except-out (all-from-out "class.rkt") class)
  ; define-method
  declare-struct-fields
  define-method
