@@ -7271,22 +7271,28 @@ The form examples are:
 @local-table-of-contents[#:style 'immediate-only]
 
 @subsubsection[#:tag "example_points_and_lines"]{Points and Lines}
-@(example-from-file "basics/form/point-and-lines.rkt")
+@(p5example-from-file "basics/form/point-and-lines.js")
+@(example-from-file   "basics/form/point-and-lines.rkt")
 
 @subsubsection[#:tag "example_pie_chart"]{Pie Chart}
-@(example-from-file "basics/form/pie-chart.rkt")
+@(p5example-from-file "basics/form/pie-chart.js")
+@(example-from-file   "basics/form/pie-chart.rkt")
 
 @subsubsection[#:tag "example_regular_polygons"]{Regular Polygons}
-@(example-from-file "basics/form/regular-polygons.rkt")
+@(p5example-from-file "basics/form/regular-polygons.js")
+@(example-from-file   "basics/form/regular-polygons.rkt")
 
 @subsubsection[#:tag "example_start"]{Star}
-@(example-from-file "basics/form/star.rkt")
+@(p5example-from-file "basics/form/star.js")
+@(example-from-file   "basics/form/star.rkt")
 
 @subsubsection[#:tag "example_triangle_strip"]{Triangle Strip}
-@(example-from-file "basics/form/triangle-strip.rkt")
+@(p5example-from-file "basics/form/triangle-strip.js")
+@(example-from-file   "basics/form/triangle-strip.rkt")
 
 @subsubsection[#:tag "example_bezier"]{Bezier}
-@(example-from-file "basics/form/bezier.rkt")
+@(p5example-from-file "basics/form/bezier.js")
+@(example-from-file   "basics/form/bezier.rkt")
 
 
 
