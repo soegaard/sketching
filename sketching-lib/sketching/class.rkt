@@ -3,7 +3,8 @@
 
 (provide Class Object
          ; from racket/class:
-         make-object new define/public define/override super-make-object inherit-field)
+         ; make-object new define/public define/override super-make-object inherit-field init-fields
+         (all-from-out racket/class))
 
 ;;;
 ;;; Simple Classes and Objects for Sketching

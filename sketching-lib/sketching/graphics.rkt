@@ -399,14 +399,15 @@
   ; https://processing.org/reference/background_.html
   ; todo: allow image as background
   (define col (args->color args 'background))
-  (define reg (send dc get-clipping-region))
-  (send dc set-clipping-region #f)
-  ;(define old (send dc get-transformation))
-  ;(send dc set-transformation (vector (vector 1 0 0 1 0 0) 0 0 1 1 0))
-  (send dc set-background col)
-  (send dc clear)
-  ; (send dc set-transformation old)
-  (send dc set-clipping-region reg))
+  (when dc
+    (define reg (send dc get-clipping-region))
+    (send dc set-clipping-region #f)
+    ;(define old (send dc get-transformation))
+    ;(send dc set-transformation (vector (vector 1 0 0 1 0 0) 0 0 1 1 0))
+    (send dc set-background col)
+    (send dc clear)
+    ; (send dc set-transformation old)
+    (send dc set-clipping-region reg)))
 
 (define (smoothing mode)
   (send dc set-smoothing mode))
