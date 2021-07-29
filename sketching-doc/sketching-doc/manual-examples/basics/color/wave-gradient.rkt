@@ -12,7 +12,7 @@
 
 (define (setup)
   (size 640 360)
-  ; (background 200)
+  (background 200)
   (no-loop))
 
 (define (draw)

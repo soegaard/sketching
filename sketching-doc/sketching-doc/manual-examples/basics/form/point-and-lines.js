@@ -28,6 +28,7 @@ function setup() {
 
   // Draw white points
   stroke(255);
+  strokeWeight(4);
   point(p1, p1);
   point(p1, p3); 
   point(p2, p4);
