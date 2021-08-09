@@ -9,3 +9,5 @@
 (define pkg-desc "collection of Sketching examples")
 
 (define pkg-authors '(soegaard))
+
+(define test-omit-paths "manual-examples")
