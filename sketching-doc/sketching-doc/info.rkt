@@ -9,3 +9,5 @@
                      "sandbox-lib"))
 
 (define scribblings '(("manual-sketching.scrbl" (multi-page) (language))))
+
+(define test-omit-paths "manual-examples")
