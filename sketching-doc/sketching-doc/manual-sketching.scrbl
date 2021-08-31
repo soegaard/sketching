@@ -101,7 +101,7 @@
         ;       page, we need to embed the sketches in iframes. The alternative is to rewrite all the
         ;       sketches.
         (cdata #f #f (string-append 
-                      "<iframe frameBorder='0' width='640' height='360' srcdoc='<html><head>"
+                      "<iframe style='border:0;' frameBorder='0' width='640' height='360' scrolling='no' srcdoc='<html><head>"
                       "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.4/p5.min.js\"></script>"
                       "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.4/addons/p5.dom.min.js\"></script>"
                       "</head>"

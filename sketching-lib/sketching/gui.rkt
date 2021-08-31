@@ -177,8 +177,12 @@
   (define frame  (new sketching-frame%
                       [label "sketch"]
                       [style '(fullscreen-button)]
-                      ; place the frame in the upper right corner
-                      [x w] [y 0]))
+                      ; Note [Issue #21]:
+                      ;   On macOS [x w] [y 0] will place the frame in the upper right corner.
+                      ;   On Windows it will place the frame out of sight. 
+                      ;   For now we don't specifify x and y which uses the default placement.
+                      ;   On macOS it the upper, left corner of the screen.
+                      ))
   (set! top-frame frame)
   
   (define canvas (new sketching-canvas%
