@@ -17,6 +17,8 @@
  load-pixels
  update-pixels
  set-pixel
+
+ save
  )
 
 ;;;
@@ -35,6 +37,41 @@
 (define top-bitmap           #f)
 (define top-bitmap-dc        #f)
 (define top-timer  #f)
+
+
+;;;
+;;; File
+;;;
+
+; Drawing goes to the top-bitmap, which the gui will then copy to screen.
+; This allows both `save` and `get-pixel`.
+; Drawing directly to the screen would be faster.
+
+(define bitmap-kind
+  (list 'unknown/mask 'unknown/alpha
+        'gif 'gif/mask 'gif/alpha
+        'jpeg 'jpeg/alpha
+        'png 'png/mask 'png/alpha
+        'xbm 'xbm/alpha 'xpm 'xpm/alpha
+        'bmp 'bmp/alpha))
+
+(define (save filepath
+              #:kind          [kind          'png]
+              #:monochrome?   [monochrome?   #f]
+              #:alpha?        [alpha?        #f]
+              #:backing-scale [backing-scale 1.0]
+              #:quality       [quality       75]) ; default for save-file 
+  (unless (member kind bitmap-kind)
+    (raise-argument-error
+     'save (~a "one of the symbols " (add-between (map ~a bitmap-kind) " "))
+     kind))
+  (when dc
+    (define w     (current-width))
+    (define h     (current-height))
+    (define bm    (make-object bitmap% w h monochrome? alpha? backing-scale))
+    (define bm-dc (new bitmap-dc% [bitmap bm]))
+    (send bm-dc draw-bitmap top-bitmap 0 0)
+    (send bm save-file filepath kind quality)))
 
 
 ;;;

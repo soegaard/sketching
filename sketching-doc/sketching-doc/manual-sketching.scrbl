@@ -419,7 +419,9 @@ section contains small examples. The third section contains more elaborate examp
    (CRow "Classes and objects"
          @elem{@racket[class] @racket[Object] @racket[make-object] @racket[new]})
    (CRow "Dot Notation"
-         @elem{. (dot notation)})))
+         @elem{. (dot notation)})
+   (CRow "Files"
+         @elem{save})))
 
 @(render-cheat-sheet)
 
@@ -7032,6 +7034,50 @@ A builtin class with no methods or fields.
 
 Subclasses of @racket[Object] work with @racket[display], @racket[write]
 and @racket[print] to display its fields and field values.
+
+@;---------
+
+@subsubsection{save}
+
+@bold{Name: } @defidentifier[#'save]
+
+Saves the current display as an image file.
+
+@bold{Examples}
+
+@codeblock{
+#lang sketching
+
+(define (setup)
+  (size 100 100)
+  ; Use no-loop to produce one frame only
+  (no-loop))
+
+(define (draw)
+  (background "white")
+  (stroke "red")
+  (line 0 0 100 100)
+  (stroke "blue")
+  (line 0 100 100 0)
+  (save "test.png"))}
+
+
+@bold{Usage}
+
+@racketusage[(save filename)]               @linebreak[]
+@racketusage[(save filename #:kind 'png)]   @linebreak[]
+@racketusage[(save filename #:kind 'jpeg)]  @linebreak[]
+@racketusage[(save filename #:kind 'bmp)]   @linebreak[]
+@racketusage[(save filename #:kind 'gif)]   @linebreak[]
+
+
+The filename can be a @racket[string] or a file @racket[path].
+
+@bold{Description}
+
+Saves the current display as an image file.
+The default image format is @tt{png} but you use specify other
+file formats such as @tt{jpeg}, @tt{bmp} and @tt{gif}.
 
 
 @;-------------------

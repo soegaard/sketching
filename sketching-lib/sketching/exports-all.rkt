@@ -26,10 +26,7 @@
          start
 
          frame-rate
-         set-frame-rate!
-         )
-
-
+         set-frame-rate!)
 
 
 ;;;
