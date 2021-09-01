@@ -218,7 +218,7 @@
   [(_dot/underscore object:id (~seq sep field-or-index) ... last-sep last-field-or-index)
    (syntax/loc stx
      (let ([t (dot/underscore object (~@ sep field-or-index) ...)])
-       (dot/underscore t last-sep last-field)))]))
+       (dot/underscore t last-sep last-field-or-index)))]))
 
 
 (define-syntax (dot-field stx)
