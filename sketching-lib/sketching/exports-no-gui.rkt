@@ -51,6 +51,7 @@
          "graphics.rkt"
          "math.rkt"
          "math-operators.rkt"
+         "noise.rkt"
          "parameters.rkt"
          "time-and-date.rkt"
          "transform.rkt")
@@ -310,6 +311,10 @@
  unbinary 
  unhex
 
+ ;; Noise
+ noise
+ simplex-noise
+ 
  ;; Environment / Gui
  ; gui cursor
  ; gui nap ; sleep in milliseconds
