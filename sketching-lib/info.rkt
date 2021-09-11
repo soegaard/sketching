@@ -6,6 +6,7 @@
                "draw-lib"
                "pict-lib"
                "math-lib"
+               "noise"
                "gui-lib"
                "cairo-lib"))
 
