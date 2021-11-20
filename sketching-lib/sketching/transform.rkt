@@ -10,6 +10,9 @@
          push-matrix
          pop-matrix
          reset-matrix
+         get-matrix
+         set-matrix
+         ; apply-matrix
          )
 
 (define (translate dx dy)
@@ -45,5 +48,18 @@
   ; (define initial (send dc get-initial-matrix))
   (define initial (vector 1. 0. 0. 1. 0. 0.))
   (send dc set-transformation (vector initial 0. 0. 1. 1. 0.)))
+
+(struct transformation (vec) #:transparent) 
+
+(define (get-matrix)
+  (transformation (send dc get-transformation)))
+
+(define (set-matrix t)
+  (unless (transformation? t)
+    (error 'set-matrix "expected a transformation, got: ~a" t))
+  (send dc set-transformation (transformation-vec t)))
     
-  
+;; (define (apply-matrix a b c d e f)
+;;   (define mat (vector a b c d d e))
+;;   (send dc set-transformation (vector initial 0. 0. 1. 1. 0.)))
+

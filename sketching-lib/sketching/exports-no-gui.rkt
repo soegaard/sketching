@@ -51,6 +51,7 @@
          "graphics.rkt"
          "math.rkt"
          "math-operators.rkt"
+         "noise.rkt"
          "parameters.rkt"
          "time-and-date.rkt"
          "transform.rkt")
@@ -301,6 +302,8 @@
  push-matrix
  pop-matrix
  reset-matrix
+ get-matrix
+ set-matrix
 
  ;; Conversion
  binary
@@ -310,6 +313,10 @@
  unbinary 
  unhex
 
+ ;; Noise
+ noise
+ simplex-noise
+ 
  ;; Environment / Gui
  ; gui cursor
  ; gui nap ; sleep in milliseconds

@@ -430,7 +430,8 @@
 (define the-black-color     (send the-color-database find-color "black"))
 (define the-black-pen       (send the-pen-list find-or-create-pen (make-object color% 0 0 0) 0 'solid))
 
-(define (image bitmap x y)
+; Old version that doesn't support the last arguments
+#;(define (image bitmap x y)
   (define mode (current-image-mode))
   (define (draw x y w h)
     (cond
@@ -475,6 +476,70 @@
                (draw x0 y0 (* 2. w) (* 2. h))]
     [else      (error 'image "internal error: unsupported image mode, got: ~a" mode)]))
 
+; new version
+(define (image bitmap
+               x y                          ; destination position
+               [w        #f] [h         #f] ; destination sizes
+               [src-x     0] [src-y      0] ; source position
+               [src-width w] [src-height h]); source sizes
+  ; TODO: Currently draw-bitmap-section doesn't support different
+  ;       source and destination size.
+  ;       For now we assume the sizes are equal.
+  (set! w (or w (send bitmap get-width)))
+  (set! h (or h (send bitmap get-height)))
+  (set! src-width  w)
+  (set! src-height h)
+  
+  (define mode (current-image-mode))
+  (define (draw x y w h)
+    ; draw bitmap with upper, left corner at (x,y)
+    (cond
+      ; TODO: Test the tint version
+      [(current-tint-color)
+       ; 1. Create temporary bitmap
+       (define tmp-bitmap (make-bitmap w h)) ; color-alpha, argb32
+       (define tmp-dc     (new bitmap-dc% [bitmap tmp-bitmap]))
+       ; 2. Make a copy of our original bitmap
+       (send tmp-dc draw-bitmap bitmap 0 0
+             'solid the-black-color ; ignored
+             bitmap) ; mask (i.e. respect transparency)
+
+       ; 3. Tint the temporary copy
+       (define target  (new ImageSurface [bitmap tmp-bitmap]))
+       (define context (new Context      [target target]))
+       ; TODO TODO:  use actual tint color here
+       (send context set-source-rgba 0. 0. 0. 0.5) ; red green blue alpha) ; in the range 0.0 to 1.0
+       (send context set-operator 'atop)
+       (send context paint)
+
+       ; 4. Draw the copy
+       (send dc draw-bitmap-section tmp-bitmap x y 'solid the-black-color tmp-bitmap)
+       
+       ;; (send tmp-dc draw-bitmap bitmap 0 0)       
+       ;; (define tint-brush (current-tint-brush))
+       ;; (when tint-brush
+       ;;   (send tmp-dc set-brush tint-brush)
+       ;;   (send tmp-dc set-pen   the-transparent-pen)
+       ;;   (send tmp-dc draw-rectangle 0 0 w h))       ;; (send dc draw-bitmap tmp-bitmap x y)]
+       ]
+      [else
+       (define smoothing (send dc get-smoothing))
+       (send dc set-smoothing 'unsmoothed)
+       (send dc draw-bitmap-section
+             bitmap                           ; source 
+             x y                              ; dest
+             src-x src-y src-width src-height ; source
+             'solid the-black-color bitmap)
+       (send dc set-smoothing smoothing)]))
+  (case mode
+    [(corner)  (draw x y w h)] ; x,y is upper left corner
+    [(corners) (define-values (x0 y0 x1 y1) (values (min x w) (min y h) (max x w) (max y h)))
+               (draw x0 y0 (- x1 x0) (- y1 y0))] ; two opposite corners
+    [(center)  (define-values (x0 y0 w0 h0) (values (- x (/ w 2.)) (- y (/ h 2.)) w h))
+               (draw x0 y0 w0 h0)]
+    [(radius)  (define-values (x0 y0) (values (- x w) (- y h)))
+               (draw x0 y0 (* 2. w) (* 2. h))]
+    [else      (error 'image "internal error: unsupported image mode, got: ~a" mode)]))
 
 
 (define (image-mode mode)
