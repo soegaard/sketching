@@ -304,7 +304,10 @@
  reset-matrix
  get-matrix
  set-matrix
-
+ shear-x
+ shear-y
+ apply-matrix
+ 
  ;; Conversion
  binary
  char
