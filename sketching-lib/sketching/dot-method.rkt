@@ -191,30 +191,40 @@
                 (define a                               (find-accessor fields+infos 'field))
                 (set! cached-accessor  a)
                 (set! cached-predicate predicate)
-                (or a (raise-syntax-error 'dot/underscore "object does not have this field" #'stx))]))
+                (or a (raise-syntax-error 'dot/underscore "object does not have this field" #'object #'field))]))
            (accessor object)))]
     [(_dot/underscore object:id sep:underscore index)
      (with-syntax
        ([cached-accessor  (syntax-local-lift-expression #'#f)]  ; think: (define cached-accessor #f) 
         [cached-predicate (syntax-local-lift-expression #'#f)]) ;        is added at the top-level
        #'(let ()            
-           (define accessor
+           ; problem: if the index is a bound in a for-clause, then
+           ;          lifting the expression won't work - since `for`
+           ;          doesn't mutate the variable
+           ; fix:     ? comment out
+           ; sigh...               
+           #;(define accessor
              (cond
                [(and cached-predicate (cached-predicate object))
                 cached-accessor]
                [(vector? object)
-                (set! cached-accessor  (λ (obj) (vector-ref obj index)))
-                (set! cached-predicate vector?)
-                cached-accessor]
+                  (set! cached-accessor  (λ (obj) (vector-ref obj index)))
+                  (set! cached-predicate vector?)                
+                  cached-accessor]
                [(string? object)
-                (set! cached-accessor  (λ (obj) (string-ref obj index)))
-                (set! cached-predicate string?)
-                cached-accessor]
+                  (set! cached-accessor  (λ (obj) (string-ref obj index)))
+                  (set! cached-predicate string?)
+                  cached-accessor]
                [else
                 (set! cached-accessor  #f)
                 (set! cached-predicate #f)
                 (raise-syntax-error 'dot/underscore "value is not indexable with underscore" #'stx)]))
-           (accessor object)))]
+           #;(accessor object)
+           (define obj object)
+           (cond
+             [(vector? obj) (vector-ref obj index)]
+             [(string? obj) (string-ref obj index)]
+             [else (error 'underscore "value is not indexable with underscore" obj)])))]
   [(_dot/underscore object:id (~seq sep field-or-index) ... last-sep last-field-or-index)
    (syntax/loc stx
      (let ([t (dot/underscore object (~@ sep field-or-index) ...)])
