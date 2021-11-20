@@ -513,7 +513,10 @@
        (send context paint)
 
        ; 4. Draw the copy
+       (define smoothing (send dc get-smoothing))
+       (send dc set-smoothing 'unsmoothed)
        (send dc draw-bitmap-section tmp-bitmap x y 'solid the-black-color tmp-bitmap)
+       (send dc set-smoothing smoothing)
        
        ;; (send tmp-dc draw-bitmap bitmap 0 0)       
        ;; (define tint-brush (current-tint-brush))
@@ -529,7 +532,9 @@
              bitmap                           ; source 
              x y                              ; dest
              src-x src-y src-width src-height ; source
-             'solid the-black-color bitmap)
+             ; Don't use the mask with color bitmaps...
+             ; 'solid the-black-color bitmap
+             )
        (send dc set-smoothing smoothing)]))
   (case mode
     [(corner)  (draw x y w h)] ; x,y is upper left corner
