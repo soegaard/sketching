@@ -302,6 +302,8 @@
  push-matrix
  pop-matrix
  reset-matrix
+ get-matrix
+ set-matrix
 
  ;; Conversion
  binary
