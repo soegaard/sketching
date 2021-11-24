@@ -85,9 +85,9 @@
 
 (define new-random
   (case-lambda
+    [()         (random)]
     [(high)     (* high (random))]
     [(low high) (+ low (* (- high low) (random)))]))
-
     
 (define (round-up x)
   ; round ties towards +inf.0
