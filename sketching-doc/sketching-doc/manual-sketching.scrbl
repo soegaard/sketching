@@ -350,11 +350,12 @@ section contains small examples. The third section contains more elaborate examp
                @racket[lerp]
                @racket[log]
                @racket[mag]
-               @racket[remap]
                @racket[max]
                @racket[min]
                @racket[norm]
                @racket[pow]
+               @racket[random]
+               @racket[remap]
                @racket[round]
                @racket[sq]
                @racket[sqrt]})
@@ -385,6 +386,10 @@ section contains small examples. The third section contains more elaborate examp
                @racket[π/4]
                @racket[2pi]
                @racket[2π]
+               })
+    (CRow "Noise"
+         @elem{@racket[noise]
+               @racket[simplex-noise]
                })))
 
 
@@ -5200,6 +5205,9 @@ The function @racketusage[(mag x y)] computes the magnitude (length) of the vect
 The formula used to compute the magnitude is @racket[(sqrt (+ (* x x) (* y y)))].
 
 
+
+
+
 @;---------
 
 @subsubsection{@racket[remap] - Convert from one range to another}
@@ -5368,6 +5376,59 @@ Computes the power @racketid[x] to @racketid[y].
 
 Note: In Racket we normally use @racket[expt] (short for exponentiate) 
 instead of @racket[pow].
+
+@;---------
+
+@subsubsection{@racket[random] - Random numbers}
+
+@bold{Name}
+
+@defidentifier[#'random]
+
+Generates random floating point numbers.
+Each time it is called, it will generate a new number.
+The arguments determine the range.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se          
+          (code:comment "A random number between 4 and 8.")
+          (random 4 8)
+          (code:comment "A random number between 0 and 4.")
+          (random 4)
+          (code:comment "A random number between 0 and 1.")
+          (random)]
+
+@bold{Usage}
+
+@racketusage[(random)]          @linebreak[]
+@racketusage[(random to)]       @linebreak[]
+@racketusage[(random from to)]  @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[from]   "lower bound")
+               (list @racketid[to]     "upper bound"))]
+
+
+@bold{Description}
+
+The function call @racketusage[(random from to)] generates a random floating point number between
+@racketid[from] and @racketid[to].
+
+
+The function call @racketusage[(random to)] generates a random floating point number between
+@racketid[0] and @racketid[to].
+
+
+The function call @racketusage[(random)] generates a random floating point number between
+@racketid[0] and @racketid[1].
+
+
+@bold{Note}
+
+This version of @racket[random] behaves differently than the one used standard Racket.
+Use @racket[(require (only-in racket random))] belown the lang line
+in order to get the standard behaviour back.
 
 
 @;---------
@@ -6130,6 +6191,63 @@ Converts a hexadecimal string to an integer.
 @bold{Description}
 
 Converts a hexadecimal string to an integer.
+
+
+@;---------
+@;---------
+@;---------
+
+@subsection{Noise}
+
+@;---------
+
+@subsubsection{@racket[noise] - Noise}
+
+
+@bold{Name}
+
+@defidentifier[#'noise]
+
+Returns the Perlin noise value at specified coordinates.
+
+@bold{Examples}
+
+@examples[#:label #f #:eval se
+(cos 0)
+(cos (/ π 2))
+(cos (radians 90))]
+
+
+@examples[#:hidden #:eval se
+          (current-dc (new-bitmap-dc 360 100))
+          (fill 196) (no-stroke) (rect 0 0 360 100) (stroke 0) (color-mode 'rgb 255) (fill 255)]
+
+
+@examples[#:label #f #:eval se
+(size 360 100)
+(eval:alts
+ (for ([d (in-range 0 360 4)]) 
+   (line d 50 d (+ 50 (* 40 (cos (radians d))))))
+ (begin
+   (for ([d (in-range 0 360 4)]) 
+     (line d 50 d (+ 50 (* 40 (cos (radians d))))))
+   (send dc get-bitmap)))]
+
+
+@bold{Usage}
+
+@racketusage[(cos x)]          @linebreak[]
+
+@tabular[#:sep @hspace[1]
+         (list (list @racketid[x]   "an angle in radians"))]
+
+
+@bold{Description}
+
+Computes the cosine of angle @racketid[x] measured in radians.
+
+Note: Use @racket[radians] to convert an angle in degrees to radians.
+
 
 
 @;---------
