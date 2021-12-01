@@ -4398,6 +4398,11 @@ System variable holding the currently pressed key.
 The value of @racket[key] is only valid if @racket[key-pressed] is true.
 
 
+@bold{Related}
+
+See also @racket[on-key-pressed] and @racket[on-key-released].
+
+
 @;---------
 
 @subsubsection{key-pressed}
