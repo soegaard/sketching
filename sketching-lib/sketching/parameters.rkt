@@ -68,7 +68,10 @@
  pixels set-pixels!
  
  pixel-height set-pixel-height!
- pixel-width  set-pixel-width!)
+ pixel-width  set-pixel-width!
+
+ current-bitmap->canvas-bitmap
+ )
 
 (define (positive-integer? x)
   (and (number? x) (positive? x) (integer? x) x))
@@ -81,6 +84,10 @@
 
 (define (make-one-of-guard options)
   (λ (x) (and (member x options) x)))
+
+(define (real-guard x)
+  (and (number? x) (real? x) x))
+
 
 ;; (define (make-color/false-guard who)
 ;;   (λ (x)
@@ -108,7 +115,7 @@
 ; Frames
 (define current-frame-count        (make-parameter  0 non-negative-integer?))
 (define current-frame-rate         (make-parameter 15 positive-integer?))
-(define current-actual-frame-rate  (make-parameter 10 positive-integer?))
+(define current-actual-frame-rate  (make-parameter 10 real-guard))
 
 (define current-draw (make-parameter #f))
 (define dc           #f)
@@ -185,3 +192,5 @@
 
 
 (define current-shapes                (make-parameter '()))
+
+(define current-bitmap->canvas-bitmap (make-parameter (λ (x) x)))
