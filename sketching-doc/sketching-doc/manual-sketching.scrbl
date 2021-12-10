@@ -4435,7 +4435,7 @@ System variable, true if some key is pressed.
 
 System variable, true if some key is pressed.
 
-Use @racket[key] to find out, which key is pressed.
+Use @racket[key] to find out which key is pressed.
 
 
 @;---------
@@ -4476,7 +4476,7 @@ is called each time a key is pressed.
 
 
 If defined in your program, the event handler @racket[on-key-pressed]
-is called each time some key is pressed.
+is called each time some key is pressed. The key that was pressed is stored in the @racket[key] variable.
 
 
 @;---------
@@ -4517,7 +4517,7 @@ is called each time a is released.
 
 
 If defined in your program, the event handler @racket[on-key-released]
-is called each time a key is released.
+is called each time a key is released. The key that was released is stored in the @racket[key] variable.
 
 
 @;---------
