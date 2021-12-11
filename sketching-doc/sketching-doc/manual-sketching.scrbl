@@ -6769,7 +6769,7 @@ displayed since the program started.
 (define (draw)
   (background 0)
   (fill 255)
-  (println frame-rate))]
+  (text (~a frame-count) 50 50))]
 
 
 
