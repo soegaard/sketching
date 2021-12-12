@@ -6803,7 +6803,7 @@ The system variable @racket[frame-rate] contains the approximate frame rate.
 
 (define (draw)
   (line 0 0 width height)
-  (text (~a frame-rate) 40 50))]
+  (println frame-rate))]
 
 
 
@@ -6838,7 +6838,7 @@ Sets the desired number of frames to be displayed per second.
 
 (define (draw)
   (line 0 0 width height)
-  (text (~a frame-rate) 40 50))]
+  (println frame-rate))]
 
 
 
