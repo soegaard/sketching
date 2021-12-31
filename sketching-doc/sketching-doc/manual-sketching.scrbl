@@ -454,6 +454,25 @@ make an Github issue at @|sketching-github|.
 
 @subsection[#:tag "ref:color"]{Color}
 
+There are quite a few ways of specifying colors for both the stroke, fill and background.
+
+An single integer is interpreted as a gray tone (black is 0 and white is 255).
+
+A string or symbol with the name of "common" colors like white, black, red, etc
+gives the corresponding color. The full list of recognized color names is the same
+as used @link["https://docs.racket-lang.org/draw/color-database___.html"]{elsewhere}
+in Racket.
+
+A string of the form @racket["#rrggbb"] where @racket[rr], @racket[gg] and @racket[bb]
+are hexadecimal (0-9a-f) is seen as an rgb-color code.
+
+If three numbers are used, they are interpreted as either rgb (red-green-blue) values 
+or hsb (hue-saturation-brightness) values according to the current color mode.
+
+The default scale of most color values are from 0 to 255, but the user can change
+the maximum value of a scale using @racket[color-mode]. 
+
+
 @; Note: The documentation won't build on the package server if racket/gui is instantiated.
 @;       This means we need to use racket/draw and sketching/exports-no-gui
 @;       instead of racket/gui and sketching.
@@ -4396,6 +4415,11 @@ System variable holding the currently pressed key.
 System variable holding the currently pressed key.
 
 The value of @racket[key] is only valid if @racket[key-pressed] is true.
+
+
+@bold{Related}
+
+See also @racket[on-key-pressed] and @racket[on-key-released].
 
 
 @;---------
