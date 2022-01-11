@@ -340,17 +340,6 @@
   (set! timer-stats-index (modulo (+ timer-stats-index 1) 5)))
 
 
-(define timer-stats  (vector 1000. 1000. 1000. 1000. 1000.)) ; milliseconds
-(define timer-stats-index 0)
-(define timer-previous-time (current-inexact-milliseconds))
-(define (timer-stats-mean) (* 0.2 (for/sum ([t timer-stats]) t)))
-(define (timer-stat!)
-  (define now (current-inexact-milliseconds))
-  (define t (- now timer-previous-time))
-  (set! timer-previous-time now)
-  (vector-set! timer-stats timer-stats-index t)
-  (set! timer-stats-index (modulo (+ timer-stats-index 1) 5)))
-
 (define (handle-on-timer)
   ; Note: Beware that (send top-timer interval) returns the number
   ;       that the timer was set to, not the actual time.
