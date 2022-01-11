@@ -7506,21 +7506,26 @@ The math examples are:
 
 @subsubsection[#:tag "example_distance_1d"]{Distance 1D}
 @(p5example-from-file "basics/math/distance1d.js")
-@(example-from-file   "basics/math/distance1d.rkt")
+@(example-from-file "basics/math/distance1d.rkt")
 
-@subsubsection[#:tag "example_distance_2d"]{Distance 2D}
+@subsubsection[#:tag  "example_distance_2d"]{Distance 2D}
+@(p5example-from-file "basics/math/distance2d.js")
 @(example-from-file "basics/math/distance2d.rkt")
 
 @subsubsection[#:tag "example_remap"]{Remap}
+@(p5example-from-file "basics/math/remap.js")
 @(example-from-file "basics/math/remap.rkt")
 
 @subsubsection[#:tag "example_sine"]{Sine}
+@(p5example-from-file "basics/math/sine.js")
 @(example-from-file "basics/math/sine.rkt")
 
 @subsubsection[#:tag "example_sine_cosine"]{Sine Cosine}
+@(p5example-from-file "basics/math/sine-cosine.js")
 @(example-from-file "basics/math/sine-cosine.rkt")
 
 @subsubsection[#:tag "example_sine_wave"]{Sine Wave}
+@(p5example-from-file "basics/math/sine-wave.js")
 @(example-from-file "basics/math/sine-wave.rkt")
 
 @;-------------------
