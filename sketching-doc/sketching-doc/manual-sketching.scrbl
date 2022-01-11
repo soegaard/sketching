@@ -7484,7 +7484,6 @@ The form examples are:
 
 
 
-
 @subsection[#:tag "examples_image"]{Image}
 
 The image examples are:
@@ -7494,6 +7493,34 @@ The image examples are:
 @subsubsection[#:tag "example_pointilism"]{Pointilism}
 @(example-from-file "basics/image/pointilism.rkt")
 
+
+
+@subsection[#:tag "examples_math"]{Math}
+
+The math examples are:
+
+@local-table-of-contents[#:style 'immediate-only]
+
+@subsubsection[#:tag "example_increment_decrement"]{Increment and Decrement}
+@(example-from-file "basics/math/increment-decrement.rkt")
+
+@subsubsection[#:tag "example_distance_1d"]{Distance 1D}
+@(example-from-file "basics/math/distance1d.rkt")
+
+@subsubsection[#:tag "example_distance_2d"]{Distance 2D}
+@(example-from-file "basics/math/distance2d.rkt")
+
+@subsubsection[#:tag "example_remap"]{Remap}
+@(example-from-file "basics/math/remap.rkt")
+
+@subsubsection[#:tag "example_sine"]{Sine}
+@(example-from-file "basics/math/sine.rkt")
+
+@subsubsection[#:tag "example_sine_cosine"]{Sine Cosine}
+@(example-from-file "basics/math/sine-cosine.rkt")
+
+@subsubsection[#:tag "example_sine_wave"]{Sine Wave}
+@(example-from-file "basics/math/sine-wave.rkt")
 
 @;-------------------
 @;-------------------

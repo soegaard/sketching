@@ -12,26 +12,26 @@ This implementation is a direct translation from the "Increment Decrement" examp
 
 (define (setup)
   (size 640 360)
-  (set! a -1)
-  (set! b width)
+  (:= a -1)
+  (:= b width)
   (color-mode 'hsb width)
   (frame-rate 60))
 
 (define (draw)
   ; (add1 n) is the same as (+ n 1).
-  (set! a (add1 a)) 
+  (:= a (add1 a)) 
   (when (> a width)
     (begin
-      (set! a 0)
-      (set! direction (not direction))))
+      (:= a 0)
+      (:= direction (not direction))))
   (if direction
       (stroke a)
       (stroke (- width a)))
   (line a 0 a (/ (height) 2))
   ; (sub1 n) is the same as (- n 1).
-  (set! b (sub1 b))
+  (:= b (sub1 b))
   (when (< b 0)
-    (set! b width))
+    (:= b width))
   (if direction
       (stroke (- width b))
       (stroke b))
