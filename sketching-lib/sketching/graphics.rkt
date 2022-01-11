@@ -57,6 +57,7 @@
          racket/match
          racket/format
          racket/list
+         racket/gui/base
          "color.rkt"
          "parameters.rkt"
          "math.rkt"
@@ -421,7 +422,8 @@
 ;;;
 
 (define (load-image path)
-  (make-object bitmap% path))
+  ((current-bitmap->canvas-bitmap)
+   (make-object bitmap% path)))
 
 (require cairo)
 

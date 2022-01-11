@@ -32,11 +32,12 @@
 ;;; Globals
 ;;;
 
-(define top-frame            #f)
-(define top-canvas           #f)
-(define top-bitmap           #f)
-(define top-bitmap-dc        #f)
-(define top-timer  #f)
+(define top-frame     #f)
+(define top-canvas    #f)
+(define top-bitmap    #f)
+(define top-bitmap-dc #f)
+(define top-dc        #f)
+(define top-timer     #f)
 
 
 ;;;
@@ -194,16 +195,23 @@
                                  (define on-released (current-on-key-released))        
                                  (when on-released (on-released)))])
       (send this resume-flush))
-        
+
+    (define paint-mode 'fast) ; 
     (define/override (on-paint)   ; repaint (exposed or resized)
-      ; 1. Draw off screen to the top-bitmap
-      (handle-on-paint top-bitmap-dc)
-      ; 2. Now copy the bitmap to the screen
-      (define dc (send this get-dc))
-      (send this suspend-flush)
-      (send dc set-transformation (vector (vector 1 0 0 1 0 0) 0 0 1 1 0))
-      (send dc draw-bitmap top-bitmap 0 0)
-      (send this resume-flush))))
+      (case paint-mode
+        [(slow) ; supports load-pixels, save-pixels and friends
+         ; 1. Draw off screen to the top-bitmap
+         (handle-on-paint top-bitmap-dc)
+         ; 2. Now copy the bitmap to the screen
+         (define dc (send this get-dc))
+         (send this suspend-flush)
+         (send dc set-transformation (vector (vector 1 0 0 1 0 0) 0 0 1 1 0))
+         (send dc draw-bitmap top-bitmap 0 0)
+         (send this resume-flush)]
+        [(fast)
+         (send this suspend-flush)
+         (handle-on-paint (send this get-dc))
+         (send this resume-flush)]))))
 
 (define (initialize-gui)
   ; Initialize gui before calling `setup`.
@@ -213,7 +221,7 @@
   (define-values (w h) (get-display-size))
   (define frame  (new sketching-frame%
                       [label "sketch"]
-                      [style '(fullscreen-button)]
+                      [style '(fullscreen-button)]                      
                       ; Note [Issue #21]:
                       ;   On macOS [x w] [y 0] will place the frame in the upper right corner.
                       ;   On Windows it will place the frame out of sight. 
@@ -224,13 +232,13 @@
   
   (define canvas (new sketching-canvas%
                       ; [style '(gl no-autoclear)]
-                      [style '(no-autoclear)]
+                      ; [style '(no-autoclear)]
                       [parent     frame]
                       [min-width  100]
                       [min-height 100]))
   
   (set! top-canvas            canvas)
-  (set! top-bitmap            (make-screen-bitmap 100 100))
+  (set! top-bitmap            (send canvas make-bitmap 100 100))
   (set! top-bitmap-dc         (new bitmap-dc% [bitmap top-bitmap]))
 
   (define b  (new brush% [color "white"])) ; solid white
@@ -251,7 +259,8 @@
   (define old-dc (send top-canvas get-dc))
   (unless (and (= (current-width)  (send top-bitmap get-width))
                (= (current-height) (send top-bitmap get-height)))
-    (set! top-bitmap    (make-screen-bitmap (current-width) (current-height)))
+    ; (set! top-bitmap    (make-screen-bitmap (current-width) (current-height)))
+    (set! top-bitmap    (send top-canvas  make-bitmap (current-width) (current-height)))    
     (set! top-bitmap-dc (new bitmap-dc% [bitmap top-bitmap]))
     ; Now transfer any settings already made.
     ;   - first we transfer the background
@@ -290,35 +299,51 @@
 
 (define (handle-on-paint dc) ; receives top-bitmap-dc
   ; call draw here
-  (current-dc dc)
-  (define draw (current-draw))
-  (when draw
-    ; calculate time between frames
-    (define previous-milliseconds-at-start-of-frame milliseconds-at-start-of-frame)
-    (define now (current-milliseconds))
-    (reset-milliseconds-at-start-of-frame! now)    
-    (reset-delta-time!
-     (if (= previous-milliseconds-at-start-of-frame 0)
-         1
-         (- now previous-milliseconds-at-start-of-frame)))
+  (parameterize ([current-dc dc])
+    (define draw (current-draw))
+    (when draw
+      ; calculate time between frames
+      (define previous-milliseconds-at-start-of-frame milliseconds-at-start-of-frame)
+      (define now (current-milliseconds))
+      (reset-milliseconds-at-start-of-frame! now)    
+      (reset-delta-time!
+       (if (= previous-milliseconds-at-start-of-frame 0)
+           1
+           (- now previous-milliseconds-at-start-of-frame)))
+      
+      ; store old mouse coordinates
+      (define old-mouse-x (current-mouse-x))
+      (define old-mouse-y (current-mouse-y))    
+      ; reset transformations before calling draw
+      (define old (send dc get-transformation))
+      (send dc set-transformation
+            (vector (vector 1 0 0 1 0 0) 0 0 1 1 0))
+      (draw)
+      (send dc set-transformation old)
+      ; store previous mouse position
+      (current-pmouse-x old-mouse-x)
+      (current-pmouse-y old-mouse-y))
+    ; increment frame counter
+    (current-frame-count (+ 1 (current-frame-count)))
+    (void)))
 
-    ; store old mouse coordinates
-    (define old-mouse-x (current-mouse-x))
-    (define old-mouse-y (current-mouse-y))    
-    ; reset transformations before calling draw
-    (define old (send dc get-transformation))
-    (send dc set-transformation
-          (vector (vector 1 0 0 1 0 0) 0 0 1 1 0))
-    (draw)
-    (send dc set-transformation old)
-    ; store previous mouse position
-    (current-pmouse-x old-mouse-x)
-    (current-pmouse-y old-mouse-y))
-  ; increment frame counter
-  (current-frame-count (+ 1 (current-frame-count)))
-  (void))
+
+(define timer-stats  (vector 1000. 1000. 1000. 1000. 1000.)) ; milliseconds
+(define timer-stats-index 0)
+(define timer-previous-time (current-inexact-milliseconds))
+(define (timer-stats-mean) (* 0.2 (for/sum ([t timer-stats]) t)))
+(define (timer-stat!)
+  (define now (current-inexact-milliseconds))
+  (define t (- now timer-previous-time))
+  (set! timer-previous-time now)
+  (vector-set! timer-stats timer-stats-index t)
+  (set! timer-stats-index (modulo (+ timer-stats-index 1) 5)))
 
 (define (handle-on-timer)
+  ; Note: Beware that (send top-timer interval) returns the number
+  ;       that the timer was set to, not the actual time.
+  (timer-stat!)  
+  (current-actual-frame-rate (/ (round (* 10 (/ 1000 (timer-stats-mean)))) 10))
   (when (current-loop-running?)
     (send top-canvas on-paint) ;xxx
     ; change timer interval, if frame-rate has been set
@@ -376,6 +401,22 @@
   (define g (send c green))
   (define b (send c blue))
   (bytes a r g b))
+
+
+; An attempt to let `load-image` create canvas bitmaps
+; instead of regular bitmaps. Didn't work out at first try.
+
+;; (define (bitmap->canvas-bitmap bm)
+;;   (define w   (send bm get-width))
+;;   (define h   (send bm get-height))
+;;   (define cbm (send top-canvas make-bitmap w h))
+;;   ; (define cbm (make-screen-bitmap w h))
+;;   (define cdc (new bitmap-dc% [bitmap cbm]))
+;;   (send cdc draw-bitmap bm 0 0)
+;;   cbm)
+
+;; (current-bitmap->canvas-bitmap bitmap->canvas-bitmap)
+
 
 ;;; ---------------------
 
