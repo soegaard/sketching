@@ -40,6 +40,7 @@
                      racket/syntax
                      "syntax-utils.rkt")
          (except-in racket/class class)
+         (only-in racket/vector vector-copy)
          racket/format
          "class.rkt"          
          "color.rkt"
@@ -93,7 +94,8 @@
          [else
           (cond
             [(or (id-contains? #'top-id ".") (id-contains? #'top-id "_"))
-             (with-syntax ([(id ...) (map number-id->number (split-id-at-dot/underscore #'top-id))])
+             (with-syntax ([(id ...) (map number-id->number 
+                                          (split-id-at-dot/underscore #'top-id))])
                (syntax/loc stx (dot/underscore id ...)))]
             [else
              #'(#%top . top-id)])]))]))
@@ -164,6 +166,43 @@
        (struct . more))]))
 
 ;;;
+;;; #%ref - Indexing
+;;; 
+
+; SYNTAX  (sketching-ref id expr)
+; SYNTAX  (sketching-ref id expr expr)
+
+(define-syntax (sketching-ref stx)
+  (syntax-parse stx
+    [(_ref id:id e:expr)
+     (syntax/loc stx
+       (let ([v id] [i e])
+         (cond
+           [(vector? v) (vector-ref v i)]
+           [(string? v) (string-ref v i)]
+           [(hash? v)   (hash-ref v i)]
+           [(list? v)   (list-ref v i)]
+           [else        (raise-argument-error
+                         '#%ref "expected a vector, string, list or hash, got: "
+                         v)])))]
+    [(_ref id:id e1:expr e2:expr)
+     (syntax/loc stx
+       (let ([v id] [i e1] [j e2])
+         (cond
+           [(vector? v) (if j
+                            (vector-copy v i j)
+                            (vector-copy v i (string-length v)))]
+           [(string? v) (cond
+                          [(and i j) (substring v i j)]
+                          [j         (substring v 0 j)]
+                          [i         (substring v i (string-length v))]
+                          [else      (substring v 0 (string-length v))])]
+           [(hash? v)   (hash-ref v i j)]
+           [else        (raise-argument-error
+                         '#%ref "two argument indexing works for hash tables, got: "
+                         v)])))]))
+
+;;;
 ;;; Exports
 ;;;
 
@@ -174,7 +213,7 @@
              random          ; the random in P differs from the standard Racket one
              #%module-begin  
              #%top
-             #%app
+             #%app             
              struct)
  (all-from-out racket/format)
  ;;; Our versions the following:
@@ -182,6 +221,7 @@
  (rename-out [sketching-top          #%top])
  (rename-out [sketching-struct       struct])
  (rename-out [sketching-app          #%app])
+ (rename-out [sketching-ref          #%ref])
  (rename-out [Class                  class])
 
  
