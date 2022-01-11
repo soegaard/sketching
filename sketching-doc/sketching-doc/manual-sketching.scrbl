@@ -7505,7 +7505,8 @@ The math examples are:
 @(example-from-file "basics/math/increment-decrement.rkt")
 
 @subsubsection[#:tag "example_distance_1d"]{Distance 1D}
-@(example-from-file "basics/math/distance1d.rkt")
+@(p5example-from-file "basics/math/distance1d.js")
+@(example-from-file   "basics/math/distance1d.rkt")
 
 @subsubsection[#:tag "example_distance_2d"]{Distance 2D}
 @(example-from-file "basics/math/distance2d.rkt")
