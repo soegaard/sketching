@@ -15,7 +15,7 @@ This implementation is a direct translation from the "Distance 2D" example from 
   (size 800 600)
   (no-stroke)
   (frame-rate 60)
-  (set! max-distance (dist 0 0 width height)))
+  (:= max-distance (dist 0 0 width height)))
 
 (define (draw)
   (background 0)
