@@ -57,7 +57,6 @@
          racket/match
          racket/format
          racket/list
-         racket/gui/base
          "color.rkt"
          "parameters.rkt"
          "math.rkt"
