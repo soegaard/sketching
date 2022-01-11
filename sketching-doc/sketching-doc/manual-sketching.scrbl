@@ -4454,7 +4454,7 @@ System variable, true if some key is pressed.
 
 System variable, true if some key is pressed.
 
-Use @racket[key] to find out, which key is pressed.
+Use @racket[key] to find out which key is pressed.
 
 
 @;---------
@@ -4495,7 +4495,7 @@ is called each time a key is pressed.
 
 
 If defined in your program, the event handler @racket[on-key-pressed]
-is called each time some key is pressed.
+is called each time some key is pressed. The key that was pressed is stored in the @racket[key] variable.
 
 
 @;---------
@@ -4536,7 +4536,7 @@ is called each time a is released.
 
 
 If defined in your program, the event handler @racket[on-key-released]
-is called each time a key is released.
+is called each time a key is released. The key that was released is stored in the @racket[key] variable.
 
 
 @;---------
@@ -6822,7 +6822,7 @@ The system variable @racket[frame-rate] contains the approximate frame rate.
 
 (define (draw)
   (line 0 0 width height)
-  (text (~a frame-rate) 40 50))]
+  (println frame-rate))]
 
 
 
@@ -6857,7 +6857,7 @@ Sets the desired number of frames to be displayed per second.
 
 (define (draw)
   (line 0 0 width height)
-  (text (~a frame-rate) 40 50))]
+  (println frame-rate))]
 
 
 
@@ -7484,7 +7484,6 @@ The form examples are:
 
 
 
-
 @subsection[#:tag "examples_image"]{Image}
 
 The image examples are:
@@ -7494,6 +7493,40 @@ The image examples are:
 @subsubsection[#:tag "example_pointilism"]{Pointilism}
 @(example-from-file "basics/image/pointilism.rkt")
 
+
+
+@subsection[#:tag "examples_math"]{Math}
+
+The math examples are:
+
+@local-table-of-contents[#:style 'immediate-only]
+
+@subsubsection[#:tag "example_increment_decrement"]{Increment and Decrement}
+@(example-from-file "basics/math/increment-decrement.rkt")
+
+@subsubsection[#:tag "example_distance_1d"]{Distance 1D}
+@(p5example-from-file "basics/math/distance1d.js")
+@(example-from-file "basics/math/distance1d.rkt")
+
+@subsubsection[#:tag  "example_distance_2d"]{Distance 2D}
+@(p5example-from-file "basics/math/distance2d.js")
+@(example-from-file "basics/math/distance2d.rkt")
+
+@subsubsection[#:tag "example_remap"]{Remap}
+@(p5example-from-file "basics/math/remap.js")
+@(example-from-file "basics/math/remap.rkt")
+
+@subsubsection[#:tag "example_sine"]{Sine}
+@(p5example-from-file "basics/math/sine.js")
+@(example-from-file "basics/math/sine.rkt")
+
+@subsubsection[#:tag "example_sine_cosine"]{Sine Cosine}
+@(p5example-from-file "basics/math/sine-cosine.js")
+@(example-from-file "basics/math/sine-cosine.rkt")
+
+@subsubsection[#:tag "example_sine_wave"]{Sine Wave}
+@(p5example-from-file "basics/math/sine-wave.js")
+@(example-from-file "basics/math/sine-wave.rkt")
 
 @;-------------------
 @;-------------------
