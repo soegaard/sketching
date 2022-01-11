@@ -4,68 +4,66 @@
  * Move the mouse left and right to control the
  * speed and direction of the moving shapes.
  *
- * From https://processing.org/examples/distance1d.html
+ * From https://p5js.org/examples/math-distance-1d.html
  */
 
-function runLiveSketch(s) {
-  var xpos1;
-  var xpos2;
-  var xpos3;
-  var xpos4;
-  var thin = 8;
-  var thick = 36;
+let xpos1;
+let xpos2;
+let xpos3;
+let xpos4;
+let thin = 8;
+let thick = 36;
 
-  s.setup = () => {
-    s.createCanvas(640, 360);
-    s.noStroke();
-    xpos1 = s.width / 2;
-    xpos2 = s.width / 2;
-    xpos3 = s.width / 2;
-    xpos4 = s.width / 2;
-  };
+function setup() {
+  createCanvas(710, 400);
+  noStroke();
+  xpos1 = width / 2;
+  xpos2 = width / 2;
+  xpos3 = width / 2;
+  xpos4 = width / 2;
+}
 
-  s.draw = () => {
-    s.background(0);
+function draw() {
+  background(0);
 
-    var mx = s.mouseX * 0.4 - s.width / 5.0;
+  let mx = mouseX * 0.4 - width / 5.0;
 
-    s.fill(102);
-    s.rect(xpos2, 0, thick, s.height / 2);
-    s.fill(204);
-    s.rect(xpos1, 0, thin, s.height / 2);
-    s.fill(102);
-    s.rect(xpos4, s.height / 2, thick, s.height / 2);
-    s.fill(204);
-    s.rect(xpos3, s.height / 2, thin, s.height / 2);
+  fill(102);
+  rect(xpos2, 0, thick, height / 2);
+  fill(204);
+  rect(xpos1, 0, thin, height / 2);
+  fill(102);
+  rect(xpos4, height / 2, thick, height / 2);
+  fill(204);
+  rect(xpos3, height / 2, thin, height / 2);
 
-    xpos1 += mx / 16;
-    xpos2 += mx / 64;
-    xpos3 -= mx / 16;
-    xpos4 -= mx / 64;
+  xpos1 += mx / 16;
+  xpos2 += mx / 64;
+  xpos3 -= mx / 16;
+  xpos4 -= mx / 64;
 
-    if (xpos1 < -thin) {
-      xpos1 = s.width;
-    }
-    if (xpos1 > s.width) {
-      xpos1 = -thin;
-    }
-    if (xpos2 < -thick) {
-      xpos2 = s.width;
-    }
-    if (xpos2 > s.width) {
-      xpos2 = -thick;
-    }
-    if (xpos3 < -thin) {
-      xpos3 = s.width;
-    }
-    if (xpos3 > s.width) {
-      xpos3 = -thin;
-    }
-    if (xpos4 < -thick) {
-      xpos4 = s.width;
-    }
-    if (xpos4 > s.width) {
-      xpos4 = -thick;
-    }
-  };
+  if (xpos1 < -thin) {
+    xpos1 = width;
+  }
+  if (xpos1 > width) {
+    xpos1 = -thin;
+  }
+  if (xpos2 < -thick) {
+    xpos2 = width;
+  }
+  if (xpos2 > width) {
+    xpos2 = -thick;
+  }
+  if (xpos3 < -thin) {
+    xpos3 = width;
+  }
+  if (xpos3 > width) {
+    xpos3 = -thin;
+  }
+  if (xpos4 < -thick) {
+    xpos4 = width;
+  }
+  if (xpos4 > width) {
+    xpos4 = -thick;
+  }
 }
