@@ -47,7 +47,13 @@
 (define-syntax (sketching-module-begin stx)
   (syntax-parse stx
     [(_sketching-module-begin def/expr ...)
-     (define ctx (car (syntax->list #'(def/expr ...))))
+     (define def/exprs (syntax->list #'(def/expr ...)))
+     (define ctx (if (null? def/exprs) stx (car def/exprs)))
+     (define msg (if (null? def/exprs)
+                     ; a both setup and draw is missing
+                     (string-append "Define  setup  and  draw  functions.\n " 
+                                    "Examples: https://soegaard.github.io/sketching/Examples.html")
+                     ""))
      (with-syntax ([initialize        (datum->syntax ctx 'initialize)]
                    [setup             (datum->syntax ctx 'setup)]
                    [draw              (datum->syntax ctx 'draw)]
@@ -58,7 +64,8 @@
                    [on-key-pressed    (datum->syntax ctx 'on-key-pressed)]
                    [on-key-released   (datum->syntax ctx 'on-key-released)]
                    [default-setup     (datum->syntax ctx 'default-setup)]
-                   [default-draw      (datum->syntax ctx 'default-draw)])
+                   [default-draw      (datum->syntax ctx 'default-draw)]
+                   [message           msg])
      (syntax/loc stx
        (#%module-begin
         (initialize) ; setup frame, canvas and drawing context (pen, brush)
@@ -73,7 +80,8 @@
         (current-on-mouse-dragged  on-mouse-dragged)
         (current-on-key-pressed    on-key-pressed)
         (current-on-key-released   on-key-released)
-        (start) ; start event loop
+        (displayln message)
+        (start) ; start event loop        
         )))]))
 
 ;;;
