@@ -8,7 +8,7 @@
                "math-lib"
                "noise"
                "gui-lib"
-               "cairo-lib" #:version "1.1"))
+               ("cairo-lib" #:version "1.1")))
 
 (define build-deps '())
 
