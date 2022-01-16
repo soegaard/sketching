@@ -22,6 +22,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "eXodiquas",
+      "name": "Timo Netzer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19648183?v=4",
+      "profile": "http://exodiquas.eu",
+      "contributions": [
+        "code",
+        "example"
+      ]
     }
   ],
   "contributorsPerLine": 7,
