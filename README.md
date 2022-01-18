@@ -40,9 +40,6 @@ The Processing code is here:
 
 https://github.com/processing/processing-docs/tree/master/content/examples
 
-# Contributions
-
-
 
 ## Contributors ✨
 
