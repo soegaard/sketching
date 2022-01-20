@@ -254,13 +254,16 @@
 (define (start-gui)
   ; todo  (current-density (display-density))
   ; store the time now, used by millis
-  (send top-canvas min-width  (current-width))
-  (send top-canvas min-height (current-height))
+  ; Note: The minimum gui size is 100x100.
+  (define cur-width  (max 100 (current-width)))
+  (define cur-height (max 100 (current-height)))
+  (send top-canvas min-width  cur-width)
+  (send top-canvas min-height cur-height)
   (define old-dc (send top-canvas get-dc))
-  (unless (and (= (current-width)  (send top-bitmap get-width))
-               (= (current-height) (send top-bitmap get-height)))
+  (unless (and (= cur-width  (send top-bitmap get-width))
+               (= cur-height (send top-bitmap get-height)))
     ; (set! top-bitmap    (make-screen-bitmap (current-width) (current-height)))
-    (set! top-bitmap    (send top-canvas  make-bitmap (current-width) (current-height)))    
+    (set! top-bitmap    (send top-canvas  make-bitmap cur-width cur-height))
     (set! top-bitmap-dc (new bitmap-dc% [bitmap top-bitmap]))
     ; Now transfer any settings already made.
     ;   - first we transfer the background
