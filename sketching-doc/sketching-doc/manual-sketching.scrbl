@@ -7502,6 +7502,7 @@ The math examples are:
 @local-table-of-contents[#:style 'immediate-only]
 
 @subsubsection[#:tag "example_increment_decrement"]{Increment and Decrement}
+@(p5example-from-file "basics/math/increment-decrement.js")
 @(example-from-file "basics/math/increment-decrement.rkt")
 
 @subsubsection[#:tag "example_distance_1d"]{Distance 1D}
@@ -7527,6 +7528,18 @@ The math examples are:
 @subsubsection[#:tag "example_sine_wave"]{Sine Wave}
 @(p5example-from-file "basics/math/sine-wave.js")
 @(example-from-file "basics/math/sine-wave.rkt")
+
+@subsubsection[#:tag "example_polar_to_cartesian"]{Polar to Cartesian}
+@(p5example-from-file "basics/math/polar-to-cartesian.js")
+@(example-from-file "basics/math/polar-to-cartesian.rkt")
+
+@subsubsection[#:tag "example_arctangent"]{Arctangent}
+@(p5example-from-file "basics/math/arctangent.js")
+@(example-from-file "basics/math/arctangent.rkt")
+
+@subsubsection[#:tag "example_arctangent"]{Graphing 2D Equations}
+@(p5example-from-file "basics/math/graphing-2d-equations.js")
+@(example-from-file "basics/math/graphing-2d-equations.rkt")
 
 @;-------------------
 @;-------------------
