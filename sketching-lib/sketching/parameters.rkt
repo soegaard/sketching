@@ -79,8 +79,25 @@
 (define (non-negative-integer? x)
   (and (number? x) (integer? x) (or (zero? x) (positive? x)) x))
 
-(define (make-at-least-guard n)
-  (λ (x) (and (positive-integer? n) (>= x n) x)))
+;; This guard is not used anymore.
+;; It got split into width-guard and height-guard
+;; (define (make-at-least-guard n)
+;; ; BUG?: Should this return #f or at least n?
+;;   (λ (x) (and (positive-integer? n) (>= x n) x)))
+
+(define (width-guard x)
+  (unless (and (positive-integer? x) (>= x 100)) ; raises an error when the width of the canvas is set to below 100 pixels
+    (raise-argument-error 'width
+                          "width must be greater or equal to 100"
+                          x))
+  x)
+
+(define (height-guard x)
+  (unless (and (positive-integer? x) (>= x 100)) ; raises an error when the height of the canvas is set to below 100 pixels
+    (raise-argument-error 'height
+                          "height must be greater or equal to 100"
+                          x))
+  x)
 
 (define (make-one-of-guard options)
   (λ (x) (and (member x options) x)))
@@ -101,8 +118,8 @@
 (define (string-guard  x) (and (string?  x) x))
 
 ; Size of the canvas
-(define current-width  (make-parameter 100 (make-at-least-guard 100)))
-(define current-height (make-parameter 100 (make-at-least-guard 100)))
+(define current-width  (make-parameter 100 (width-guard 100)))
+(define current-height (make-parameter 100 (height-guard 100)))
 
 ; Pixel density
 (define current-density (make-parameter 1 (make-one-of-guard '(1 2)))) 
