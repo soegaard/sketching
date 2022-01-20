@@ -73,37 +73,61 @@
  current-bitmap->canvas-bitmap
  )
 
+(require racket/format racket/list)
+
+;;; Predicates
+
 (define (positive-integer? x)
   (and (number? x) (positive? x) (integer? x) x))
 
 (define (non-negative-integer? x)
   (and (number? x) (integer? x) (or (zero? x) (positive? x)) x))
 
-;; This guard is not used anymore.
-;; It got split into width-guard and height-guard
-;; (define (make-at-least-guard n)
-;; ; BUG?: Should this return #f or at least n?
-;;   (λ (x) (and (positive-integer? n) (>= x n) x)))
-
-(define (width-guard x)
-  (unless (and (positive-integer? x) (>= x 100)) ; raises an error when the width of the canvas is set to below 100 pixels
-    (raise-argument-error 'width
-                          "width must be greater or equal to 100"
-                          x))
-  x)
-
-(define (height-guard x)
-  (unless (and (positive-integer? x) (>= x 100)) ; raises an error when the height of the canvas is set to below 100 pixels
-    (raise-argument-error 'height
-                          "height must be greater or equal to 100"
-                          x))
-  x)
-
-(define (make-one-of-guard options)
-  (λ (x) (and (member x options) x)))
-
-(define (real-guard x)
+(define (real-number? x)
   (and (number? x) (real? x) x))
+
+(define (one-of? x options)
+  (member x options))
+
+
+;;; Guards
+
+(define (make-guard who arg-name check? message)
+  (λ (x)
+    (unless (check? x)
+      (raise-arguments-error who message arg-name x))
+    x))
+
+(define (make-positive-integer-guard who arg-name)  
+  (make-guard who arg-name positive-integer? "positive integer (at least 1)"))
+
+(define (make-non-negative-integer-guard who arg-name)  
+  (make-guard who arg-name non-negative-integer? "non-negative integer (at least 0)"))
+
+(define (make-real-guard who arg-name)
+  (make-guard who arg-name real-number? "real number"))
+
+(define (make-one-of-guard who arg-name options)
+  (define (check? x) (one-of? x options))
+  (define message    (apply ~a "one of these were expected: " (add-between (map ~a options) ", ")))
+  (make-guard who arg-name check? message))
+
+(define (make-boolean-guard who arg-name)
+  (make-guard who arg-name boolean? "boolean"))
+
+(define (make-string-guard who arg-name)
+  (make-guard who arg-name string? "string"))
+
+
+; Note: The width-guard and height-guard only checks
+;       that width and height are positive integers.
+;       The smallest size of a gui window is 100x100,
+;       but other drawing contexts (say an svg) allow
+;       smaller size. Instead we make "gui.rkt" open a
+;       larger window, if the sizes are too small.
+
+(define width-guard  (make-positive-integer-guard 'width  "width"))
+(define height-guard (make-positive-integer-guard 'height "height"))
 
 
 ;; (define (make-color/false-guard who)
@@ -114,15 +138,13 @@
 ;;       [(color? x)   x]
 ;;       [else         (raise-argument-error who "a color or #f" x)])))
 
-(define (boolean-guard x) (and (boolean? x) x))
-(define (string-guard  x) (and (string?  x) x))
 
 ; Size of the canvas
-(define current-width  (make-parameter 100 (width-guard 100)))
-(define current-height (make-parameter 100 (height-guard 100)))
+(define current-width  (make-parameter 100 width-guard))
+(define current-height (make-parameter 100 height-guard))
 
 ; Pixel density
-(define current-density (make-parameter 1 (make-one-of-guard '(1 2)))) 
+(define current-density (make-parameter 1 (make-one-of-guard 'density "density" '(1 2))))
 (define pixel-width     1) 
 (define pixel-height    1)
 
@@ -130,20 +152,20 @@
 (define (set-pixel-height! n) (set! pixel-height n))
 
 ; Frames
-(define current-frame-count        (make-parameter  0 non-negative-integer?))
-(define current-frame-rate         (make-parameter 15 positive-integer?))
-(define current-actual-frame-rate  (make-parameter 10 real-guard))
+(define current-frame-count        (make-parameter  0 (make-non-negative-integer-guard 'frame-count       "n")))
+(define current-frame-rate         (make-parameter 15 (make-positive-integer-guard     'frame-rate        "n")))
+(define current-actual-frame-rate  (make-parameter 10 (make-real-guard                 'actual-frame-rate "r")))
 
-(define current-draw (make-parameter #f))
-(define dc           #f)
+(define current-draw    (make-parameter #f))
+(define dc              #f)
 (define current-dc      (make-parameter #f (λ (x) (set! dc x) x)))
 (define current-no-gui  (make-parameter #f)) ; #t = no gui, #f = show gui
 (define current-fill    (make-parameter #f))
 
-(define current-ellipse-mode (make-parameter 'center (make-one-of-guard '(center radius corner corners))))
-(define current-rect-mode    (make-parameter 'corner (make-one-of-guard '(center radius corner corners))))
-(define current-color-mode   (make-parameter 'rgb    (make-one-of-guard '(rgb hsb))))
-(define current-image-mode   (make-parameter 'center (make-one-of-guard '(center radius corner corners))))
+(define current-ellipse-mode (make-parameter 'center (make-one-of-guard 'ellipse-mode "mode" '(center radius corner corners))))
+(define current-rect-mode    (make-parameter 'corner (make-one-of-guard 'rect-mode    "mode" '(center radius corner corners))))
+(define current-color-mode   (make-parameter 'rgb    (make-one-of-guard 'color-mode   "mode" '(rgb hsb))))
+(define current-image-mode   (make-parameter 'center (make-one-of-guard 'image-mode   "mode" '(center radius corner corners))))
 (define current-tint-color   (make-parameter #f      #;(make-color/false-guard 'current-tint-color)))
 (define current-tint-brush   (make-parameter #f))    ; a brush%
                                                                 
@@ -187,22 +209,23 @@
   
 
 
-(define current-font-size            (make-parameter 12      (λ (x) (and (<= 0.0 x 1024.0) x))))
-(define current-font-face            (make-parameter "Monaco" string-guard))
-(define current-font-style           (make-parameter 'normal (make-one-of-guard '(normal slant italic))))
-(define current-font-weight          (make-parameter 'normal (λ (x)  (and (or (and (integer? x) (<= 100 x 1000))
-                                                                              (member x '(thin ultralight light semilight
-                                                                                               book normal medium semibol bold
-                                                                                               ultrabold heavy ultraheavy)))
-                                                                          x))))
-(define current-font-underlined?     (make-parameter #f       boolean-guard))
-(define current-font-smoothing       (make-parameter 'default (make-one-of-guard '(default partly-smoothed smoothed unsmoothed))))
-(define current-font-size-in-pixels? (make-parameter #f       boolean-guard)) ; #f means size in pixels
-(define current-font-hinting         (make-parameter 'aligned (make-one-of-guard '(aligned unaligned))))
-(define current-font-family          (make-parameter 'default (make-one-of-guard '(default decorative roman script swiss modern symbol system))))
+(define current-font-size            (make-parameter 12       (λ (x) (or (and (<= 0.0 x 1024.0) x) 12))))
+(define current-font-face            (make-parameter "Monaco" (make-string-guard 'font-face "face")))
+(define current-font-style           (make-parameter 'normal  (make-one-of-guard 'font-style "style" '(normal slant italic))))
+(define current-font-weight          (make-parameter 'normal  (λ (x) (or (and (or (and (integer? x) (<= 100 x 1000))
+                                                                                  (member x '(thin ultralight light semilight
+                                                                                                   book normal medium semibol bold
+                                                                                                   ultrabold heavy ultraheavy)))
+                                                                              x)
+                                                                         'normal))))
+(define current-font-underlined?     (make-parameter #f       (make-boolean-guard 'font-underlined?     "underlined?")))
+(define current-font-smoothing       (make-parameter 'default (make-one-of-guard  'font-smoothing       "mode" '(default partly-smoothed smoothed unsmoothed))))
+(define current-font-size-in-pixels? (make-parameter #f       (make-boolean-guard 'font-size-in-pixels? "mode"))) ; #f means size in pixels
+(define current-font-hinting         (make-parameter 'aligned (make-one-of-guard  'font-hinting         "mode" '(aligned unaligned))))
+(define current-font-family          (make-parameter 'default (make-one-of-guard  'font-family          "mode" '(default decorative roman script swiss modern symbol system))))
 
-(define current-text-horizontal-align (make-parameter 'left    (make-one-of-guard '(left right center))))
-(define current-text-vertical-align   (make-parameter 'top     (make-one-of-guard '(top bottom center baseline))))
+(define current-text-horizontal-align (make-parameter 'left   (make-one-of-guard 'text-horizontal-align "mode" '(left right center))))
+(define current-text-vertical-align   (make-parameter 'top    (make-one-of-guard 'text-vertical-align   "mode" '(top bottom center baseline))))
 
 (define pixels                        (make-parameter #f))
 (define (set-pixels! v) (set! pixels v))
