@@ -89,14 +89,18 @@
 (define (one-of? x options)
   (member x options))
 
+(define (string-or-false? x)
+  (or (string? x) (eq? x #f)))
+
 
 ;;; Guards
 
-(define (make-guard who arg-name check? message)
+(define (make-guard who arg-name check? message [default #f])
   (λ (x)
-    (unless (check? x)
-      (raise-arguments-error who message arg-name x))
-    x))
+    (cond
+      [(check? x) x]
+      [default    default]
+      [else       (raise-arguments-error who message arg-name x)])))
 
 (define (make-positive-integer-guard who arg-name)  
   (make-guard who arg-name positive-integer? "positive integer (at least 1)"))
@@ -117,6 +121,9 @@
 
 (define (make-string-guard who arg-name)
   (make-guard who arg-name string? "string"))
+
+(define (make-string-or-false-guard who arg-name)
+  (make-guard who arg-name string-or-false? "string or #f"))
 
 
 ; Note: The width-guard and height-guard only checks
@@ -210,7 +217,7 @@
 
 
 (define current-font-size            (make-parameter 12       (λ (x) (or (and (<= 0.0 x 1024.0) x) 12))))
-(define current-font-face            (make-parameter "Monaco" (make-string-guard 'font-face "face")))
+(define current-font-face            (make-parameter "Monaco" (make-string-or-false-guard 'font-face "face")))
 (define current-font-style           (make-parameter 'normal  (make-one-of-guard 'font-style "style" '(normal slant italic))))
 (define current-font-weight          (make-parameter 'normal  (λ (x) (or (and (or (and (integer? x) (<= 100 x 1000))
                                                                                   (member x '(thin ultralight light semilight
