@@ -40,7 +40,7 @@
     [else (error 'hex "can't convert value to hexadecimal, got: ~a" x)]))
 
 (define (unhex s)
-  (string->number s 2))
+  (string->number s 16))
 
 (define (int x)
   (cond
