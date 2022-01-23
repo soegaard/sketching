@@ -167,7 +167,7 @@
 (define dc              #f)
 (define current-dc      (make-parameter #f (λ (x) (set! dc x) x)))
 (define current-no-gui  (make-parameter #f)) ; #t = no gui, #f = show gui
-(define current-fill    (make-parameter #f))
+(define current-fill    (make-parameter #t))
 
 (define current-ellipse-mode (make-parameter 'center (make-one-of-guard 'ellipse-mode "mode" '(center radius corner corners))))
 (define current-rect-mode    (make-parameter 'corner (make-one-of-guard 'rect-mode    "mode" '(center radius corner corners))))
