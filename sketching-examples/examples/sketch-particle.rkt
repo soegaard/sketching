@@ -31,7 +31,8 @@
 (define (setup)
   (frame-rate 30)
   (size 600 400)
-  (color-mode 'hsb 255 255 255))
+  ; (color-mode 'hsb 255 255 255)
+  )
 
 (define (mouse-pressed)
   (for ([i 10])
