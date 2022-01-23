@@ -3,7 +3,8 @@
 #| 
 Sketching example: Remap
 
-This implementation is a direct translation from the "Map" example from https://processing.org/examples/map.html.
+This implementation is a direct translation from the "Map" example from 
+https://processing.org/examples/map.html.
 |#
 
 (define (setup)
