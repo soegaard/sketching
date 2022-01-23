@@ -77,7 +77,7 @@
   ; x,y          center
   ; w,h          width, height
   ; start, stop  in radians (clockwise [sigh])
-  ; mode         todo ignored for now
+  ; mode         default is open with pie-fill
 
   ; x,y upper left, start=0 is three o'clock and half-pi is twelve o'clock. 
   ; (send dc draw-arc x y w h start stop) 
@@ -96,7 +96,7 @@
       [(current-fill)
        (define path (new dc-path%))
        (case mode
-         [(#f open-pie)
+         [(#f open-pie) ; #f means use default
           (send path move-to (+ x w/2) (+ y h/2)) ; center
           (send path arc x y w h from to)
           (send path close)
@@ -115,8 +115,10 @@
           (send dc set-pen the-transparent-pen)
           (send dc draw-path path)
           (send dc set-pen old-pen)
-          ; draw stroke
-          (send dc draw-arc x y w h from to)]
+          ; now draw curved outline only
+          (define path2 (new dc-path%))
+          (send path2 arc x y w h from to)
+          (send dc draw-path path2)]
          [(chord)
           (send path arc x y w h from to)
           (send path close)
@@ -129,8 +131,38 @@
       [else
        ;; no fill here
        (define path (new dc-path%))
-       (send path arc x y w h from to)
-       (send dc draw-path path)]))
+       (case mode
+         [(#f open-pie) ; #f means use default
+          (send path arc x y w h from to)
+          (send dc draw-path path)]
+         [(chord)
+          (send path arc x y w h from to)
+          (send path close)
+          (send dc draw-path path)]
+         [(pie)
+          (send path move-to (+ x w/2) (+ y h/2)) ; center
+          (send path arc x y w h from to)
+          (send path close)
+          (send dc draw-path path)]
+         [(open-pie)
+          (send path move-to (+ x w/2) (+ y h/2)) ; center
+          (send path arc x y w h from to)
+          (send dc draw-path path)]
+         [(open)
+          (send path arc x y w h from to)
+          (send path close)
+          ; fill segment without stroke
+          (define old-pen (send dc get-pen))
+          (send dc set-pen the-transparent-pen)
+          (send dc draw-path path)
+          (send dc set-pen old-pen)
+          ; draw stroke
+          (send dc draw-arc x y w h from to)]
+         [else (error 'arc "unsupported mode")])]))
+  
+       ;; (define path (new dc-path%))
+       ;; (send path arc x y w h from to)
+       ;; (send dc draw-path path)]))
   
   (case ellipse-mode
     [(corner)  (draw-arc x y w h from to)] ; x,y is upper left corner
