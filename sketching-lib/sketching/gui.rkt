@@ -196,7 +196,7 @@
                                  (when on-released (on-released)))])
       (send this resume-flush))
 
-    (define paint-mode 'slow) ; 
+    (define paint-mode 'fast) ; 
     (define/override (on-paint)   ; repaint (exposed or resized)
       (case paint-mode
         [(slow) ; supports load-pixels, save-pixels and friends
