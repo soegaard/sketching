@@ -18,8 +18,7 @@
       (if (not finalized)
         (set-shape-rev-points! shape-struct
                                (cons (cons x y) (shape-rev-points shape-struct)))
-        (error 'vertex "vertex can't be added to a finalized shape."))
-      (displayln (shape-rev-points shape-struct)))
+        (error 'vertex "vertex can't be added to a finalized shape.")))
     (define/public (begin-shape [kind 'default])
       (set! finalized #f)
       (set! shape-struct (new-shape kind)))
