@@ -50,6 +50,11 @@
          tint
          triangle
          vertex
+         new-shape
+         finish-shape
+         draw-shape
+         (struct-out
+          shape)
          )
 
 (require racket/draw
@@ -807,24 +812,31 @@
            (send path line-to (x p) (y p)))
          (when close?
            (send path close))
-         (define (draw dc) (send dc draw-path path))
+         (define (draw dc [xt 0] [yt 0])
+           (send dc translate xt yt)
+           (send dc draw-path path)
+           (send dc translate (- xt) (- yt)))
          (make-shape kind #f draw)]
         [(points)
-         (define (draw dc)
+         (define (draw dc [xt 0] [yt 0])
+           (send dc translate xt yt)
            (for ([p points])
-             (send dc draw-point (x p) (y p))))
+             (send dc draw-point (x p) (y p)))
+           (send dc translate (- xt) (- yt)))
          (make-shape kind #f draw)]
         [(lines)
          (define n (length points))
          ; skip the last point, if there is an odd number of points
          (set! points (if (even? n) points (reverse (rest rev-points))))
-         (define (draw dc)
+         (define (draw dc [xt 0] [yt 0])
+           (send dc translate xt yt)
            (let loop ([ps points])
              (unless (empty? ps)
                (define p (first ps))
                (define q (second ps))
                (send dc draw-line (x p) (y p) (x q) (y q))
-               (loop (rest (rest ps))))))
+               (loop (rest (rest ps)))))
+           (send dc translate (- xt) (- yt)))
          (make-shape kind #f draw)]
         [(triangles)
          (define n (length points))
@@ -845,9 +857,11 @@
                    (send path line-to (x s) (y s))
                    (send path close)
                    (cons path (loop (rest (rest (rest ps)))))))))           
-         (define (draw dc)
+         (define (draw dc [xt 0] [yt 0])
+           (send dc translate xt yt)
            (for ([path paths])
-             (send dc draw-path path)))
+             (send dc draw-path path))
+           (send dc translate (- xt) (- yt)))
          (make-shape kind #f draw)]
         [(triangle-strip)
          (define n (length points))
@@ -867,10 +881,12 @@
                   (send path close)
                   (cons path
                         (loop q s (rest ps)))]))))
-         (define (draw dc)
+         (define (draw dc [xt 0] [yt 0])
+           (send dc translate xt yt)
            (unless (< n 3)
              (for ([path paths])
-               (send dc draw-path path))))
+               (send dc draw-path path)))
+           (send dc translate (- xt) (- yt)))
          (make-shape kind #f draw)]
         [(triangle-fan)
          (define n (length points))
@@ -890,10 +906,12 @@
                   (send path close)
                   (cons path
                         (loop p s (rest ps)))]))))
-         (define (draw dc)
+         (define (draw dc [xt 0] [yt 0])
+           (send dc translate xt yt)
            (unless (< n 3)
              (for ([path paths])
-               (send dc draw-path path))))
+               (send dc draw-path path)))
+           (send dc translate (- xt) (- yt)))
          (make-shape kind #f draw)]
         [(quads)
          (define n (length points))
@@ -916,9 +934,11 @@
                    (send path line-to (x s) (y s))
                    (send path close)
                    (cons path (loop (rest (rest (rest (rest ps))))))))))
-         (define (draw dc)
+         (define (draw dc [xt 0] [yt 0])
+           (send dc translate xt yt)
            (for ([path paths])
-             (send dc draw-path path)))
+             (send dc draw-path path))
+           (send dc translate (- xt) (- yt)))
          (make-shape kind #f draw)]
         [(quad-strip)
          (define n (length points))
@@ -940,17 +960,19 @@
                   (send path close)
                   (cons path
                         (loop r s (rest (rest ps))))]))))
-         (define (draw dc)
+         (define (draw dc [xt 0] [yt 0])
+           (send dc translate xt yt)
            (unless (< n 4)
              (for ([path paths])
-               (send dc draw-path path))))
+               (send dc draw-path path)))
+           (send dc translate (- xt) (- yt)))
          (make-shape kind #f draw)]
         [else
          (error who (~a "internal error: got the kind " kind))])))
 
-(define (draw-shape shape)
+(define (draw-shape shape [x 0] [y 0])
   (define draw (shape-draw shape))
-  (when draw (draw dc)))
+  (when draw (draw dc x y)))
 
 (define (begin-shape [kind 'default])
   (define old-shapes (current-shapes))
@@ -967,7 +989,3 @@
   (define shape      (car (current-shapes)))
   (define rev-points (shape-rev-points shape))
   (set-shape-rev-points! shape (cons (cons x y) rev-points)))
-
-
-
-    
