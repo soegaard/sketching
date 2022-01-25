@@ -9,7 +9,11 @@
 ; shape% class to represent storable shapes.
 (define shape%
   (class object%
-    (define-values (shape-struct finalized) (values #f #f))
+    (define-values (shape-struct
+                    finalized
+                    visible) (values #f
+                                     #f
+                                     #t))
     (define/public (vertex x y)
       (if (not finalized)
         (set-shape-rev-points! shape-struct
@@ -23,8 +27,12 @@
       (set! shape-struct (finish-shape shape-struct 'end-shape closed?))
       (set! finalized #t))
     (define/public (draw [x 0] [y 0])
-      (when finalized
+      (when (and finalized visible)
         (draw-shape shape-struct x y)))
+    (define/public (visible?)
+      visible)
+    (define/public (set-visible v)
+      (set! visible v))
     (super-new)))
 
 (define (shape-create)
