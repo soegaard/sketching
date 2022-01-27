@@ -62,6 +62,7 @@
          racket/match
          racket/format
          racket/list
+         "transform.rkt"
          "color.rkt"
          "parameters.rkt"
          "math.rkt"
@@ -789,6 +790,33 @@
 ; by draw-shape.
 ; Until end-shape is called, draw will be #f.
 
+; A dc-state holds the significant modifications for drawing.
+; Currently there are: transform, fill and stroke.
+(struct dc-state (transform fill stroke) #:mutable #:transparent)
+
+; Stores the current state of the dc in a dc-state struct.
+(define (store-dc-state)
+  (dc-state
+   (send dc get-transformation)
+   (send dc get-brush)
+   (send dc get-pen)))
+
+; Restores a specific state of the dc.
+(define (restore-dc-state state)
+  (match-let ([(dc-state transform fill stroke) state])
+    (send dc set-transformation transform)
+    (send dc set-brush fill)
+    (send dc set-pen stroke)))
+
+(define (apply-modifications shape-fill shape-stroke transformation-matrix)
+  (when shape-fill
+    (apply fill shape-fill))
+  (when shape-stroke
+    (apply stroke shape-stroke))
+  (when transformation-matrix
+    ; BUG?: The matrix->transformation function does not return a transformation-struct.
+    (set-matrix (transformation (matrix->transformation transformation-matrix)))))
+
 (define (new-shape [kind 'default])
   (shape kind '() #f))
 
@@ -812,55 +840,25 @@
            (send path line-to (x p) (y p)))
          (when close?
            (send path close))
-         (define (draw dc [xt 0] [yt 0] [shape-fill #f] [shape-stroke #f])
-           (define old-fill (send dc get-brush))
-           (when shape-fill
-             (apply fill shape-fill))
-           (define old-stroke (send dc get-pen))
-           (when shape-stroke
-             (apply stroke shape-stroke))
-           (send dc translate xt yt)
-           (send dc draw-path path)
-           (send dc translate (- xt) (- yt))
-           (send dc set-brush old-fill)
-           (send dc set-pen old-stroke))
+         (define (draw dc) 
+           (send dc draw-path path))
          (make-shape kind #f draw)]
         [(points)
-         (define (draw dc [xt 0] [yt 0] [shape-fill #f] [shape-stroke #f])
-           (define old-fill (send dc get-brush))
-           (when shape-fill
-             (apply fill shape-fill))
-           (define old-stroke (send dc get-pen))
-           (when shape-stroke
-             (apply stroke shape-stroke))
-           (send dc translate xt yt)
+         (define (draw dc)
            (for ([p points])
-             (send dc draw-point (x p) (y p)))
-           (send dc translate (- xt) (- yt))
-           (send dc set-brush old-fill)
-           (send dc set-pen old-stroke))
+             (send dc draw-point (x p) (y p))))
          (make-shape kind #f draw)]
         [(lines)
          (define n (length points))
          ; skip the last point, if there is an odd number of points
          (set! points (if (even? n) points (reverse (rest rev-points))))
-         (define (draw dc [xt 0] [yt 0] [shape-fill #f] [shape-stroke #f])
-           (define old-fill (send dc get-brush))
-           (when shape-fill
-             (apply fill shape-fill))
-           (define old-stroke (send dc get-pen))
-           (when shape-stroke
-             (apply stroke shape-stroke))
-           (send dc translate xt yt)
+         (define (draw dc)
            (let loop ([ps points])
              (unless (empty? ps)
                (define p (first ps))
                (define q (second ps))
                (send dc draw-line (x p) (y p) (x q) (y q))
-               (loop (rest (rest ps)))))
-           (send dc translate (- xt) (- yt))
-           (send dc set-brush old-fill)
-           (send dc set-pen old-stroke))
+               (loop (rest (rest ps))))))
          (make-shape kind #f draw)]
         [(triangles)
          (define n (length points))
@@ -881,19 +879,9 @@
                    (send path line-to (x s) (y s))
                    (send path close)
                    (cons path (loop (rest (rest (rest ps)))))))))           
-         (define (draw dc [xt 0] [yt 0] [shape-fill #f] [shape-stroke #f])
-           (define old-fill (send dc get-brush))
-           (when shape-fill
-             (apply fill shape-fill))
-           (define old-stroke (send dc get-pen))
-           (when shape-stroke
-             (apply stroke shape-stroke))
-           (send dc translate xt yt)
+         (define (draw dc)
            (for ([path paths])
-             (send dc draw-path path))
-           (send dc translate (- xt) (- yt))
-           (send dc set-brush old-fill)
-           (send dc set-pen old-stroke))
+             (send dc draw-path path)))
          (make-shape kind #f draw)]
         [(triangle-strip)
          (define n (length points))
@@ -913,20 +901,10 @@
                   (send path close)
                   (cons path
                         (loop q s (rest ps)))]))))
-         (define (draw dc [xt 0] [yt 0] [shape-fill #f] [shape-stroke #f])
-           (define old-fill (send dc get-brush))
-           (when shape-fill
-             (apply fill shape-fill))
-           (define old-stroke (send dc get-pen))
-           (when shape-stroke
-             (apply stroke shape-stroke))
-           (send dc translate xt yt)
+         (define (draw dc)
            (unless (< n 3)
              (for ([path paths])
-               (send dc draw-path path)))
-           (send dc translate (- xt) (- yt))
-           (send dc set-brush old-fill)
-           (send dc set-pen old-stroke))
+               (send dc draw-path path))))
          (make-shape kind #f draw)]
         [(triangle-fan)
          (define n (length points))
@@ -946,20 +924,10 @@
                   (send path close)
                   (cons path
                         (loop p s (rest ps)))]))))
-         (define (draw dc [xt 0] [yt 0] [shape-fill #f] [shape-stroke #f])
-           (define old-fill (send dc get-brush))
-           (when shape-fill
-             (apply fill shape-fill))
-           (define old-stroke (send dc get-pen))
-           (when shape-stroke
-             (apply stroke shape-stroke))
-           (send dc translate xt yt)
+         (define (draw dc)
            (unless (< n 3)
              (for ([path paths])
-               (send dc draw-path path)))
-           (send dc translate (- xt) (- yt))
-           (send dc set-brush old-fill)
-           (send dc set-pen old-stroke))
+               (send dc draw-path path))))
          (make-shape kind #f draw)]
         [(quads)
          (define n (length points))
@@ -982,19 +950,9 @@
                    (send path line-to (x s) (y s))
                    (send path close)
                    (cons path (loop (rest (rest (rest (rest ps))))))))))
-         (define (draw dc [xt 0] [yt 0] [shape-fill #f] [shape-stroke #f])
-           (define old-fill (send dc get-brush))
-           (when shape-fill
-             (apply fill shape-fill))
-           (define old-stroke (send dc get-pen))
-           (when shape-stroke
-             (apply stroke shape-stroke))
-           (send dc translate xt yt)
+         (define (draw dc)
            (for ([path paths])
-             (send dc draw-path path))
-           (send dc translate (- xt) (- yt))
-           (send dc set-brush old-fill)
-           (send dc set-pen old-stroke))
+             (send dc draw-path path)))
          (make-shape kind #f draw)]
         [(quad-strip)
          (define n (length points))
@@ -1016,27 +974,28 @@
                   (send path close)
                   (cons path
                         (loop r s (rest (rest ps))))]))))
-         (define (draw dc [xt 0] [yt 0] [shape-fill #f] [shape-stroke #f])
-           (define old-fill (send dc get-brush))
-           (when shape-fill
-             (apply fill shape-fill))
-           (define old-stroke (send dc get-pen))
-           (when shape-stroke
-             (apply stroke shape-stroke))
-           (send dc translate xt yt)
+         (define (draw dc)
            (unless (< n 4)
              (for ([path paths])
-               (send dc draw-path path)))
-           (send dc translate (- xt) (- yt))
-           (send dc set-brush old-fill)
-           (send dc set-pen old-stroke))
+               (send dc draw-path path))))
          (make-shape kind #f draw)]
         [else
          (error who (~a "internal error: got the kind " kind))])))
 
-(define (draw-shape shape [x 0] [y 0] [fill-args #f] [stroke-args #f])
+(define (draw-shape shape
+                    [x 0]
+                    [y 0]
+                    [fill-args #f]
+                    [stroke-args #f]
+                    [transformation-matrix (new-matrix 1 0 0 1 0 0)])
   (define draw (shape-draw shape))
-  (when draw (draw dc x y fill-args stroke-args)))
+  (when draw
+    (define old-dc (store-dc-state))
+    (apply-modifications fill-args stroke-args transformation-matrix)
+    (send dc translate x y) ; this is for the (draw shape x y) offset.
+    (draw dc)
+    (send dc translate (- x) (- y)) ; this is to restore the offset.
+    (restore-dc-state old-dc)))
 
 (define (begin-shape [kind 'default])
   (define old-shapes (current-shapes))
