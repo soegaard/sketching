@@ -15,7 +15,14 @@
          set-matrix
          apply-matrix
          shear-x
-         shear-y)
+         shear-y
+         translation-matrix
+         scaling-matrix
+         rotation-matrix
+         new-matrix
+         matrix->transformation
+         transformation->matrix
+         transformation)
 
 ;;; Implementation Notes
 

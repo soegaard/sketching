@@ -55,7 +55,8 @@
          "noise.rkt"
          "parameters.rkt"
          "time-and-date.rkt"
-         "transform.rkt")
+         "transform.rkt"
+         "shape.rkt")
 
 
 
@@ -303,6 +304,10 @@
  tint
  triangle
  vertex
+
+ ;; Shape
+ Shape
+ shape-create
  
  ;; Math
  abs

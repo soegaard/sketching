@@ -50,6 +50,11 @@
          tint
          triangle
          vertex
+         new-shape
+         finish-shape
+         draw-shape
+         (struct-out
+          shape)
          )
 
 (require racket/draw
@@ -57,6 +62,7 @@
          racket/match
          racket/format
          racket/list
+         "transform.rkt"
          "color.rkt"
          "parameters.rkt"
          "math.rkt"
@@ -784,6 +790,33 @@
 ; by draw-shape.
 ; Until end-shape is called, draw will be #f.
 
+; A dc-state holds the significant modifications for drawing.
+; Currently there are: transform, fill and stroke.
+(struct dc-state (transform fill stroke) #:mutable #:transparent)
+
+; Stores the current state of the dc in a dc-state struct.
+(define (store-dc-state)
+  (dc-state
+   (send dc get-transformation)
+   (send dc get-brush)
+   (send dc get-pen)))
+
+; Restores a specific state of the dc.
+(define (restore-dc-state state)
+  (match-let ([(dc-state transform fill stroke) state])
+    (send dc set-transformation transform)
+    (send dc set-brush fill)
+    (send dc set-pen stroke)))
+
+(define (apply-modifications shape-fill shape-stroke transformation-matrix)
+  (when shape-fill
+    (apply fill shape-fill))
+  (when shape-stroke
+    (apply stroke shape-stroke))
+  (when transformation-matrix
+    ; BUG?: The matrix->transformation function does not return a transformation-struct.
+    (set-matrix (transformation (matrix->transformation transformation-matrix)))))
+
 (define (new-shape [kind 'default])
   (shape kind '() #f))
 
@@ -807,7 +840,8 @@
            (send path line-to (x p) (y p)))
          (when close?
            (send path close))
-         (define (draw dc) (send dc draw-path path))
+         (define (draw dc) 
+           (send dc draw-path path))
          (make-shape kind #f draw)]
         [(points)
          (define (draw dc)
@@ -948,9 +982,20 @@
         [else
          (error who (~a "internal error: got the kind " kind))])))
 
-(define (draw-shape shape)
+(define (draw-shape shape
+                    [x 0]
+                    [y 0]
+                    [fill-args #f]
+                    [stroke-args #f]
+                    [transformation-matrix (new-matrix 1 0 0 1 0 0)])
   (define draw (shape-draw shape))
-  (when draw (draw dc)))
+  (when draw
+    (define old-dc (store-dc-state))
+    (apply-modifications fill-args stroke-args transformation-matrix)
+    (send dc translate x y) ; this is for the (draw shape x y) offset.
+    (draw dc)
+    (send dc translate (- x) (- y)) ; this is to restore the offset.
+    (restore-dc-state old-dc)))
 
 (define (begin-shape [kind 'default])
   (define old-shapes (current-shapes))
@@ -967,7 +1012,3 @@
   (define shape      (car (current-shapes)))
   (define rev-points (shape-rev-points shape))
   (set-shape-rev-points! shape (cons (cons x y) rev-points)))
-
-
-
-    
