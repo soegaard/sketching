@@ -7,7 +7,7 @@
          sketching/graphics
          sketching/transform)
 
-; shape% class to represent storable shapes.
+; Shape class to represent storable shapes.
 (define Shape
   (class object%
     (define-values (shape-struct

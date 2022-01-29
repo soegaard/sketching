@@ -306,7 +306,7 @@
  vertex
 
  ;; Shape
- shape%
+ Shape
  shape-create
  
  ;; Math
