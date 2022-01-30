@@ -307,7 +307,7 @@
 
  ;; Shape
  Shape
- shape-create
+ create-shape
  
  ;; Math
  abs
