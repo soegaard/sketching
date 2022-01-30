@@ -988,13 +988,28 @@
                     [fill-args #f]
                     [stroke-args #f]
                     [transformation-matrix (new-matrix 1 0 0 1 0 0)])
+  ; Draw the shape at coordinates (x,y) in user space.
+
+  ; The drawing context dc contains the current transformation from user space to screen space.
+  
+  ; The `draw` function of shape draws in a local coordinate system with center (0,0).
+  ; The transformation matrix (affected by translate, rotate and scale) of the shape
+  ; applies to the local coordinate system.
+
   (define draw (shape-draw shape))
   (when draw
-    (define old-dc (store-dc-state))
-    (apply-modifications fill-args stroke-args transformation-matrix)
-    (send dc translate x y) ; this is for the (draw shape x y) offset.
+    (define old-dc (store-dc-state))    
+    ; 1. The current matrix transforms from user space to screen space.
+    (define C (get-current-matrix))
+    ; 2. Since the transformation-matrix transforms from local to local space,
+    ;    we need to translate (0,0) into (x,y) before X can be applied.
+    (define T   (translation-matrix x y))
+    ; 3. Finally set the current transformation: from local space to screen space.
+    (apply-modifications fill-args stroke-args
+                         (multiply-matrix C T transformation-matrix))
+    ; 4. Draw.
     (draw dc)
-    (send dc translate (- x) (- y)) ; this is to restore the offset.
+    ; 5. Restore state.
     (restore-dc-state old-dc)))
 
 (define (begin-shape [kind 'default])

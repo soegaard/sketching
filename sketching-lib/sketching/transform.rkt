@@ -12,6 +12,7 @@
          pop-matrix
          reset-matrix
          get-matrix
+         get-current-matrix
          set-matrix
          apply-matrix
          shear-x
@@ -20,8 +21,11 @@
          scaling-matrix
          rotation-matrix
          new-matrix
+         multiply-matrix
          matrix->transformation
+         apply-matrix-to-point
          transformation->matrix
+         transformation->vector
          transformation)
 
 ;;; Implementation Notes
@@ -49,6 +53,15 @@
 (define (get-current-matrix)
   (transformation->matrix (send dc get-transformation))) 
 
+(define (apply-matrix-to-point M x y)
+  (define v (send M ->vector))
+  (define-values (xx yx xy yy x0 y0)
+    (values (vector-ref v 0) (vector-ref v 1) (vector-ref v 2)
+            (vector-ref v 3) (vector-ref v 4) (vector-ref v 5)))
+  (values (+ (* xx x) (* xy y) x0)
+          (+ (* yx x) (* yy y) y0)))
+
+
 ; Cairo has a few builtin transformations
 
 (define (rotation-matrix angle)
@@ -58,7 +71,7 @@
 
 (define (translation-matrix dx dy)
   (define M (new Matrix))
-  (send M init-translate dy dx)
+  (send M init-translate dx dy)
   M)
 
 (define (scaling-matrix sx sy)
@@ -128,7 +141,17 @@
   (define app (new-matrix a b c d e f))
   (send mat multiply app mat)
   (send dc set-transformation (matrix->transformation mat)))
-  
+
+(define (multiply-matrix2 m1 m2)
+  (define M (new Matrix))
+  (send M multiply m2 m1) ; sigh: cairy uses a strange order
+  M)
+
+(define (multiply-matrix m . ms)
+  (let loop ([ms (cons m ms)])
+    (cond
+      [(null? (cdr ms)) (car ms)]
+      [else             (multiply-matrix2 (car ms) (loop (cdr ms)))])))
 
 ;;; Stack of transformations
 
@@ -156,6 +179,9 @@
   (send dc set-transformation (vector initial 0. 0. 1. 1. 0.)))
 
 (struct transformation (vec) #:transparent) 
+
+(define (transformation->vector t)
+  (transformation-vec t))
 
 (define (get-matrix)
   (transformation (send dc get-transformation)))

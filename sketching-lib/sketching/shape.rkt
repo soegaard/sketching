@@ -69,18 +69,21 @@
     (define/public (set-stroke . args)
       (set! stroke-args args))
     (define/public (translate dx dy)
+      ; Note: The cairo `multiply` flips the order of a normal multiply.
       (define tra (translation-matrix dx dy))
-      (send transformation-matrix multiply tra transformation-matrix))
+      (send transformation-matrix multiply transformation-matrix tra))
     (define/public scale
+      ; Note: The cairo `multiply` flips the order of a normal multiply.
       (case-lambda
-        [(s) (define sca (scaling-matrix s s))
-             (send transformation-matrix multiply sca transformation-matrix)]
+        [(s)     (define sca (scaling-matrix s s))
+                 (send transformation-matrix multiply transformation-matrix sca)]
         [(sx sy) (define sca (scaling-matrix sx sy))
-                 (send transformation-matrix multiply sca transformation-matrix)]
+                 (send transformation-matrix multiply transformation-matrix sca)]
         [else (error 'scale "incorrect arguments")]))
     (define/public (rotate angle)
+      ; Note: The cairo `multiply` flips the order of a normal multiply.
       (define rot (rotation-matrix angle))
-      (send transformation-matrix multiply rot transformation-matrix))
+      (send transformation-matrix multiply transformation-matrix rot))
     (define/public (reset-matrix)
       (set! transformation-matrix (new-matrix 1 0 0 1 0 0)))
     (super-new)))
