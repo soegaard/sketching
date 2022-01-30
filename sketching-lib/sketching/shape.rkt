@@ -1,7 +1,7 @@
 #lang racket/base
 
 (provide Shape
-         shape-create)
+         create-shape)
 
 (require racket/class
          sketching/graphics
@@ -88,5 +88,5 @@
       (set! transformation-matrix (new-matrix 1 0 0 1 0 0)))
     (super-new)))
 
-(define (shape-create)
+(define (create-shape)
   (new Shape))
