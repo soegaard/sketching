@@ -11,6 +11,7 @@
  current-density
  current-draw              
  current-dc  dc              ; set by on-paint before calling draw
+ with-dc                     ; use with-dc to parameterize current-dc
  current-fill
 
  current-font-size 
@@ -168,6 +169,18 @@
 (define current-dc      (make-parameter #f (λ (x) (set! dc x) x)))
 (define current-no-gui  (make-parameter #f)) ; #t = no gui, #f = show gui
 (define current-fill    (make-parameter #t))
+
+(require (for-syntax racket/base syntax/parse))
+(define-syntax (with-dc stx)
+  (syntax-parse stx
+    [(_with-dc dc:expr body ...)
+     (syntax/loc stx
+       (let ()
+         (define old (current-dc))
+         (begin0
+             (parameterize ([current-dc dc])
+               body ...)
+           (current-dc old))))]))
 
 (define current-ellipse-mode (make-parameter 'center (make-one-of-guard 'ellipse-mode "mode" '(center radius corner corners))))
 (define current-rect-mode    (make-parameter 'corner (make-one-of-guard 'rect-mode    "mode" '(center radius corner corners))))
