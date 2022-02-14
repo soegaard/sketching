@@ -62,6 +62,7 @@
          racket/match
          racket/format
          racket/list
+         racket/path
          "transform.rkt"
          "color.rkt"
          "parameters.rkt"
@@ -459,8 +460,18 @@
 ;;;
 
 (define (load-image path)
-  ((current-bitmap->canvas-bitmap)
-   (make-object bitmap% path)))
+  (define ext (path-get-extension path))
+  (define bm
+    (case ext
+      [(#".png")  (make-object bitmap% path 'png/alpha)]
+      [(#".bmp")  (make-object bitmap% path 'bmp/alpha)]
+      [(#".jpg")  (make-object bitmap% path 'jpeg/alpha)]
+      [(#".jpeg") (make-object bitmap% path 'jpeg/alpha)]
+      [(#".gif")  (make-object bitmap% path 'gif/alpha)]
+      [(#".xbm")  (make-object bitmap% path 'xbm/alpha)]
+      [(#".xpm")  (make-object bitmap% path 'xpm/alpha)]
+      [else       (make-object bitmap% path)]))
+  ((current-bitmap->canvas-bitmap) bm))
 
 (require cairo)
 
@@ -572,7 +583,9 @@
              x y                              ; dest
              src-x src-y src-width src-height ; source
              ; Don't use the mask with color bitmaps...
-             ; 'solid the-black-color bitmap
+             ; Load the png with kind 'png/alpha
+             ; 'solid the-black-color ; these are ignored for color bitmaps
+             ; bitmap ; use the α channel as mask
              )
        (send dc set-smoothing smoothing)]))
   (case mode
