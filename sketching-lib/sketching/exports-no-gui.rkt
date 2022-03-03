@@ -394,6 +394,8 @@
 
  ; gui initialize
  ; gui start
+
+ with-dc
  )
 
 ;;;
