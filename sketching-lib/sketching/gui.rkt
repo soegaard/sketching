@@ -118,12 +118,19 @@
   (class canvas%
     ; (define (on-initial-resize w h) (send this clear))
     (super-new)
+
+    (define mouse-inside? #f)
     
-    (define/override (on-event e) ; mouse events
+    (define/override (on-event e) ; mouse events      
       (when (is-a? e mouse-event%)
-        (current-mouse-x (send e get-x))
-        (current-mouse-y (send e get-y)))
-      
+        ; Windows returns (0,0) for (x,y) when the mouse is outside the window,
+        ; so on Windows we need to keep track of entering and leaving events.
+        (when (send e entering?) (set! mouse-inside? #t))
+        (when (send e leaving?)  (set! mouse-inside? #f))
+        (unless (and (eq? (system-type) 'windows) (not mouse-inside?))
+          (current-mouse-x (send e get-x))
+          (current-mouse-y (send e get-y))))
+        
       (define (released? t) (member t ups))
       (define (pressed?  t) (member t downs))
       (define (moved?    t) (and (member t moves)
