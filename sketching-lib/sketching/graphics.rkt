@@ -14,6 +14,7 @@
          fill
          green
          image
+         image-mask
          image-mode
          image-get
          image-set
@@ -598,6 +599,44 @@
                (draw x0 y0 (* 2. w) (* 2. h))]
     [else      (error 'image "internal error: unsupported image mode, got: ~a" mode)]))
 
+; draw monochrome image 
+(define (image-mask mask-bitmap
+                    x y                          ; destination position
+                    [color  the-black-color]     ; destination color
+                    [w        #f] [h         #f] ; destination sizes
+                    [src-x     0] [src-y      0] ; source position
+                    [src-width w] [src-height h]); source sizes
+  ; TODO: Currently draw-bitmap-section doesn't support different
+  ;       source and destination size.
+  ;       For now we assume the sizes are equal.
+  (set! w (or w (send mask-bitmap get-width)))
+  (set! h (or h (send mask-bitmap get-height)))
+  (set! src-width  w)
+  (set! src-height h)
+  (set! color (args->color (list color) 'image-mask))
+  
+  (define mode (current-image-mode))
+  (define (draw x y w h)
+    ; draw bitmap with upper, left corner at (x,y)
+    (define smoothing (send dc get-smoothing))
+    (send dc set-smoothing 'unsmoothed)
+    (send dc draw-bitmap-section
+          mask-bitmap                      ; source 
+          x y                              ; dest
+          src-x src-y src-width src-height ; source
+          'solid
+          color
+          mask-bitmap)
+    (send dc set-smoothing smoothing))
+  (case mode
+    [(corner)  (draw x y w h)] ; x,y is upper left corner
+    [(corners) (define-values (x0 y0 x1 y1) (values (min x w) (min y h) (max x w) (max y h)))
+               (draw x0 y0 (- x1 x0) (- y1 y0))] ; two opposite corners
+    [(center)  (define-values (x0 y0 w0 h0) (values (- x (/ w 2.)) (- y (/ h 2.)) w h))
+               (draw x0 y0 w0 h0)]
+    [(radius)  (define-values (x0 y0) (values (- x w) (- y h)))
+               (draw x0 y0 (* 2. w) (* 2. h))]
+    [else      (error 'image-mask "internal error: unsupported image mode, got: ~a" mode)]))
 
 (define (image-mode mode)
   (unless (member mode '(center radius corner corners))
