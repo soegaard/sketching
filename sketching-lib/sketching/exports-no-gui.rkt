@@ -258,6 +258,7 @@
  green
  hue 
  image
+ image-mask
  image-mode
  image-set
  image-get
