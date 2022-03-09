@@ -314,7 +314,7 @@
   (define pen     (send dc get-pen))
   (define new-pen (new pen%
                        [color   (send pen get-color)]
-                       [width   weight]
+                       [width   (min 255. (max 0. weight))]
                        [style   (send pen get-style)]
                        [cap     (send pen get-cap)]
                        [join    (send pen get-join)]
