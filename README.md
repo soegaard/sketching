@@ -1,6 +1,6 @@
 # Sketching
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![Racket](https://img.shields.io/badge/-Made%20with%20Racket-darkred?logo=racket)](https://racket-lang.org)
 [![Discourse users](https://img.shields.io/discourse/users?label=Discuss%20on%20Racket%20Discourse&logo=racket&server=https%3A%2F%2Fracket.discourse.group)](https://racket.discourse.group/)
@@ -56,6 +56,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://peterdohertys.website/"><img src="https://avatars.githubusercontent.com/u/289949?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Pete Doherty</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=ethagnawl" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/ericcervin"><img src="https://avatars.githubusercontent.com/u/1158978?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ericcervin</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=ericcervin" title="Documentation">📖</a> <a href="https://github.com/soegaard/sketching/issues?q=author%3Aericcervin" title="Bug reports">🐛</a> <a href="#example-ericcervin" title="Examples">💡</a></td>
     <td align="center"><a href="http://linkedin.com/in/stephen-de-gabrielle/"><img src="https://avatars.githubusercontent.com/u/108047?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stephen De Gabrielle</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=spdegabrielle" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://samth.github.io"><img src="https://avatars.githubusercontent.com/u/244723?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sam Tobin-Hochstadt</b></sub></a><br /><a href="#maintenance-samth" title="Maintenance">🚧</a></td>
   </tr>
 </table>
 
