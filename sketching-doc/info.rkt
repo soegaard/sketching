@@ -2,9 +2,12 @@
 
 (define collection 'multi)
 
-(define deps '("base"))
+(define deps '("scribble-lib"
+               "sketching-lib"
+               "base"))
 
-(define build-deps '("gui-doc"
+(define build-deps '("sandbox-lib"
+                     "gui-doc"
                      "pict-doc"
                      "at-exp-lib"
                      "base"
