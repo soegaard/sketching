@@ -63,6 +63,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "samth",
+      "name": "Sam Tobin-Hochstadt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/244723?v=4",
+      "profile": "http://samth.github.io",
+      "contributions": [
+        "maintenance"
+      ]
     }
   ],
   "contributorsPerLine": 7,
