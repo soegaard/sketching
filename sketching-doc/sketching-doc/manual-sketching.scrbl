@@ -209,8 +209,7 @@ section contains small examples. The third section contains more elaborate examp
                @racket[pmouse-y]})
    (CRow "Buttons"
          @elem{@racket[mouse-button]
-               @racket[mouse-pressed]
-               @racket[mouse-released]})
+               @racket[mouse-pressed]})
    (CRow "Events"
          @elem{@racket[on-mouse-dragged]
                @racket[on-mouse-moved] @LB
