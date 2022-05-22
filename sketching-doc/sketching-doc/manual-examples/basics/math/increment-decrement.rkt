@@ -3,11 +3,14 @@
 #| 
 Sketching example: Increment Decrement
 
-This implementation is a direct translation from the "Increment Decrement" example from https://processing.org/examples/incrementdecrement.html.
+This implementation is a direct translation from the "Increment Decrement" example:
+https://processing.org/examples/incrementdecrement.html
+
+The expression (--  a) decrements a and returns the new value.
 |#
 
-(define a #f)
-(define b #f)
+(define a         #f)
+(define b         #f)
 (define direction #t)
 
 (define (setup)
@@ -18,18 +21,15 @@ This implementation is a direct translation from the "Increment Decrement" examp
   (frame-rate 60))
 
 (define (draw)
-  ; (add1 n) is the same as (+ n 1).
-  (:= a (add1 a)) 
+  (++ a)
   (when (> a width)
-    (begin
-      (:= a 0)
-      (:= direction (not direction))))
+    (:= a 0)
+    (:= direction (not direction)))
   (if direction
       (stroke a)
       (stroke (- width a)))
   (line a 0 a (/ (height) 2))
-  ; (sub1 n) is the same as (- n 1).
-  (:= b (sub1 b))
+  (-- b)
   (when (< b 0)
     (:= b width))
   (if direction
