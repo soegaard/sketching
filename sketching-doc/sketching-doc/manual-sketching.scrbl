@@ -222,7 +222,8 @@ section contains small examples. The third section contains more elaborate examp
    (CRow "Keyboard Events"
          @elem{@racket[on-key-pressed]
                @racket[on-key-released] @LB
-               @racket[on-key-typed]})
+               @;racket[on-key-typed]
+               })
    
    (CRow "Time and Date"
          @elem{@racket[year]
@@ -4203,6 +4204,8 @@ value @racketid[mouse-y] had in the previous frame.
 @;---------
 
 @subsubsection{on-mouse-pressed}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" on-mouse-pressed)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 @bold{Name: } @defidentifier[#'on-mouse-pressed]
 
@@ -4243,6 +4246,8 @@ is called each time a mouse button is pressed.
 @;---------
 
 @subsubsection{on-mouse-released}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" on-mouse-released)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 @bold{Name: } @defidentifier[#'on-mouse-released]
 
@@ -4284,6 +4289,8 @@ is called each time a mouse button is released.
 @;---------
 
 @subsubsection{on-mouse-moved}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" on-mouse-moved)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 @bold{Name: } @defidentifier[#'on-mouse-moved]
 
@@ -4327,6 +4334,8 @@ is called each time the mouse is moved.
 @;---------
 
 @subsubsection{on-mouse-dragged}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" on-mouse-dragged)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 @bold{Name: } @defidentifier[#'on-mouse-dragged]
 
@@ -4459,6 +4468,8 @@ Use @racket[key] to find out which key is pressed.
 @;---------
 
 @subsubsection{on-key-pressed}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" on-key-pressed)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 @bold{Name: } @defidentifier[#'on-key-pressed]
 
@@ -4500,6 +4511,8 @@ is called each time some key is pressed. The key that was pressed is stored in t
 @;---------
 
 @subsubsection{on-key-released}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" on-mouse-released)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 @bold{Name: } @defidentifier[#'on-key-released]
 
@@ -4529,6 +4542,8 @@ is called each time a is released.
 @bold{Usage}
 
 @racketusage[(define (on-key-released) <body>)]        @linebreak[]
+@(require (for-label (only-in "manual-dummy-bindings.rkt" on-key-released)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 
 @bold{Description}
@@ -6488,6 +6503,8 @@ This is the smallest that is supported across Windows, macOS, and Linux
 @;---------
 
 @subsubsection{fullscreen}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" fullscreen)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 @bold{Name: } @defidentifier[#'fullscreen]
 
@@ -6522,6 +6539,8 @@ Call @racket[fullscreen] from @racket[setup].
 @;---------
 
 @subsubsection{cursor}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" cursor)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 @bold{Name: } @defidentifier[#'cursor]
 
@@ -6588,6 +6607,8 @@ Use @racketusage[(cursor bm)] to use a bitmap as a custom mouse cursor.
 @;---------
 
 @subsubsection{no-cursor}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" no-cursor)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 @bold{Name: } @defidentifier[#'no-cursor]
 
@@ -6697,6 +6718,8 @@ Text smoothing is not affected by this setting.
 @;---------
 
 @subsubsection{nap}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" nap)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 @bold{Name: } @defidentifier[#'nap]
 
@@ -6807,6 +6830,8 @@ is incremented.
 @;---------
 
 @subsubsection{frame-rate}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" frame-rate)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 @bold{Name: } @defidentifier[#'frame-rate]
 
@@ -6842,6 +6867,8 @@ Use @racket[set-frame-rate!] to set the frame rate to another value.
 @;---------
 
 @subsubsection{set-frame-rate!}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" set-frame-rate!)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 @bold{Name: } @defidentifier[#'set-frame-rate!]
 
@@ -6888,6 +6915,9 @@ the desired number of frames per second might be achievable.
 @;---------
 
 @subsubsection{loop}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" loop)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
+
 
 @bold{Name: } @defidentifier[#'loop]
 
@@ -6940,6 +6970,8 @@ each frame.
 @;---------
 
 @subsubsection{no-loop}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" no-loop)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 @bold{Name: } @defidentifier[#'no-loop]
 
@@ -7179,6 +7211,8 @@ and @racket[print] to display its fields and field values.
 @;---------
 
 @subsubsection{save}
+@(require (for-label (only-in "manual-dummy-bindings.rkt" save)))
+@declare-exporting[#:use-sources ("manual-dummy-bindings.rkt")]
 
 @bold{Name: } @defidentifier[#'save]
 
