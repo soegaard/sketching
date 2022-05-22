@@ -11,3 +11,7 @@
 (define pkg-authors '(soegaard))
 
 (define test-omit-paths "manual-examples")
+(define deps '("base"
+               "data-lib"
+               "metapict"
+               "sketching-lib"))

@@ -28,8 +28,9 @@ jobs:
           xvfb-run -a raco setup --jobs 1 sketching-doc
       - name: Build documentation with raco scribble
         run: |
-          xvfb-run -a raco scribble +m --redirect-main http://pkg-build.racket-lang.org/doc/ --htmls --dest ./htmls sketching-doc/sketching-doc/manual-sketching.scrbl
+          pwd
           ls -r *        
+          xvfb-run -a raco scribble +m --redirect-main http://pkg-build.racket-lang.org/doc/ --htmls --dest ./htmls sketching-doc/sketching-doc/manual-sketching.scrbl
       - name: Push to Github Pages
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
