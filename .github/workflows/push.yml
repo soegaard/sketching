@@ -28,6 +28,7 @@ jobs:
           xvfb-run -a raco setup --jobs 1 sketching-doc
       - name: Build documentation with raco scribble
         run: |
+          cd sketching-doc/sketching-doc
           pwd
           ls -r *        
           xvfb-run -a raco scribble +m --redirect-main http://pkg-build.racket-lang.org/doc/ --htmls --dest ./htmls sketching-doc/sketching-doc/manual-sketching.scrbl
