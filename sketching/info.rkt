@@ -5,7 +5,7 @@
 (define deps    '("sketching-lib" "sketching-doc"))
 (define implies '("sketching-lib" "sketching-doc"))
 
-(define pkg-desc "Drawing and animation library inspried by Processing.")
+(define pkg-desc "Drawing and animation library inspired by Processing.")
 
 (define pkg-authors '(soegaard))
 
