@@ -103,6 +103,14 @@
   (send dc set-transformation (matrix->transformation mat)))
 
 (define (translate dx dy)
+  ; This is is a debug version, to check whether the version
+  ; below is correct.
+  (define mat (get-current-matrix))
+  (define tra (translation-matrix dx dy))
+  (send mat multiply tra mat)
+  (send dc set-transformation (matrix->transformation mat)))
+
+#;(define (translate dx dy)
   ; We could implement `translate` in the same way as `rotate`,
   ; we do it directly in the name of efficiency.
   
