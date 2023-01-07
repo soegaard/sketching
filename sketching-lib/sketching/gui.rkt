@@ -228,7 +228,7 @@
   (define-values (w h) (get-display-size))
   (define frame  (new sketching-frame%
                       [label "sketch"]
-                      [style '(fullscreen-button)]                      
+                      [style '(fullscreen-button)]
                       ; Note [Issue #21]:
                       ;   On macOS [x w] [y 0] will place the frame in the upper right corner.
                       ;   On Windows it will place the frame out of sight. 
@@ -394,6 +394,7 @@
 (define (fullscreen)
   (when top-frame
     (send top-frame fullscreen #t)
+    (send top-frame focus)
     (define-values (w h) (get-display-size))
     (current-width w)
     (current-height h)))
