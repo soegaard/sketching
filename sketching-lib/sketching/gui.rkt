@@ -203,6 +203,12 @@
                                  (when on-released (on-released)))])
       (send this resume-flush))
 
+    (define/override (on-size width height) ; canvas resized
+      (current-width  width)
+      (current-height height)
+      (when (current-on-resize)
+        ((current-on-resize) width height)))
+    
     (define paint-mode 'fast) ; 
     (define/override (on-paint)   ; repaint (exposed or resized)
       (case paint-mode

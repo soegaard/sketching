@@ -39,6 +39,8 @@
  current-on-mouse-pressed  
  current-on-mouse-moved    
  current-on-mouse-dragged
+
+ current-on-resize
  
  current-mouse-released 
  current-mouse-pressed  
@@ -214,6 +216,7 @@
 (define current-on-key-pressed       (make-parameter #f)) ; call back
 (define current-on-key-released      (make-parameter #f)) ; call back
 
+(define current-on-resize            (make-parameter #f)) ; call back
 
 (define milliseconds-at-start-of-program 0) ; set by start
 (define (reset-milliseconds-at-start-of-program! n)
