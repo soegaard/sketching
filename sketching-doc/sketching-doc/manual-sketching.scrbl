@@ -39,7 +39,7 @@
 
 @(define license-link
    @hyperlink["https://creativecommons.org/licenses/by-nc-sa/4.0/"
-              "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License."])
+              "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License"])
 
 @(define sketching-github
    @hyperlink["https://github.com/soegaard/sketching/" "https://github.com/soegaard/sketching/"])
@@ -214,7 +214,8 @@ section contains small examples. The third section contains more elaborate examp
          @elem{@racket[on-mouse-dragged]
                @racket[on-mouse-moved] @LB
                @racket[on-mouse-pressed]
-               @racket[on-mouse-released]})
+               @racket[on-mouse-released]
+               @racket[on-resize]})
 
    (CRow "Keys"
          @elem{@racket[key] 
@@ -4375,6 +4376,45 @@ is called each time the mouse is dragged.
 If defined in your program, the event handler @racket[on-mouse-dragged]
 is called each time the mouse is dragged. A mouse is dragged, when
 it is moved while while a mouse button is pressed.
+
+
+@;---------
+
+@subsubsection{on-resize}
+@(require (for-label (only-in sketching-doc/manual-dummy-bindings on-resize)))
+@declare-exporting[#:use-sources (sketching-doc/manual-dummy-bindings)]
+
+@bold{Name: } @defidentifier[#'on-resize]
+
+If defined in your program, the event handler @racket[on-resize]
+is called each time the window is resized.
+
+@bold{Example}
+
+@codeblock{
+#lang sketching
+
+(define (setup)
+  (size 400 300))
+
+(define (on-resize width height)
+  (displayln (list width height)))
+
+(define (draw)
+  (rect (random width) (random height) 100 100))
+}
+
+
+@bold{Usage}
+
+@racketusage[(define (on-resize) <body>)]        @linebreak[]
+
+
+@bold{Description}
+
+
+If defined in your program, the event handler @racket[on-resize]
+is called each time the window changes size.
 
 
 @;---------

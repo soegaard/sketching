@@ -44,4 +44,5 @@
   on-key-pressed
   on-key-released
   on-key-typed
+  on-resize
   )
