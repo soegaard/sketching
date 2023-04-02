@@ -234,6 +234,7 @@
 
 ; The levels are drawn with unicode.
 
+;; Level 1 - soegaard
 (define level-data
   (vector
    ;0   4   8   2   6   0   4   8
@@ -263,6 +264,37 @@
    "╔═╝.└┘.└────────────┘.└┘.╚═╗"
    "║..........................║"
    "╚══════════════════════════╝"))
+
+; Level - Stephen de Gabrielle
+#;(define level-data
+  (vector
+   ;0   4   8   2   6   0   4   8
+   "╔═══╗║T║╔════╕╒════╗║T║╔═══╗"
+   "║.*.║║t║║..*.║║.*..║║t║║.*.║"
+   "║...╚╝t╚╝.┌┐.║║.┌┐.╚╝t╚╝...║"
+   "║.........││.║║.││.........║"
+   "║.┌──┐.*..└┘.╚╝.└┘..*.┌──┐.║"
+   "║.└──┘................└──┘.║"
+   "║.┌──┐.┌┐.┌──────┐.┌┐.┌──┐.║"
+   "║.└──┘.││.└──┐┌──┘.││.└──┘.║"
+   "║......││....││....││......║"
+   "╚════╗.│└──┐ └┘ ┌──┘│.╔════╝"
+   "     ║.│┌──┘    └──┐│.║     "
+   "     ║.││          ││.║     "
+   "     ║.││ ╔______╗ ││.║     "
+   "═════╝.└┘ ║      ║ └┘.╚═════"
+   "Ttttt .   ╚══════╝   .tttttT"
+   "═════╗.┌┐ ┌──────┐ ┌┐.╔═════"
+   "     ║.││ └──┐┌──┘ ││.║     "
+   "╔════╝.└┘    ││    └┘.╚════╗"
+   "║............││............║"
+   "║.┌──┐.┌───┐.└┘.┌───┐.┌──┐.║"
+   "║.└─┐│.└───┘....└───┘.│┌─┘.║"
+   "║*..└┘................└┘.╔═╝"
+   "╚═╗.......┌──────┐.......╚═╗"
+   "╔═╝.╔╗.╔╗.└──────┘.╔╗.╔╗.*.║"
+   "║.*.║║t║║...*..*...║║t║║.*.║"
+   "╚═══╝║T║╚══════════╝║T║╚═══╝"))
 
 ; T = tunnel portal (connects to other side)
 ; t = tunnel (slow down actors)
@@ -693,10 +725,10 @@
 ;          COLS COLS+1 COLS+2 ...        2*COLS-1
 ;        2*COLS ...           ...        3*COLS-1
 ;         ...                              ...
-; (ROWS-1)*COLS ...           ... (ROWS-1)*COLS-1
+; (ROWS-1)*COLS ...           ...     ROWS*COLS-1
 
-(define LAST-ROW-START (* (- ROWS 1) COLS))
-(define LAST-ROW-END   (- (* (- ROWS 1) COLS) 1))
+(define LAST-ROW-START    (* (- ROWS 1) COLS))
+(define LAST-ROW-END   (- (*    ROWS    COLS) 1))
 
 (define (ij->id i j) (+ (* i COLS) j))
 (define (id->ij id)  (quotient/remainder id COLS))
@@ -722,8 +754,12 @@
 ;  left  id  right
 ;       down
 
-(define (up    id) (if (first-row? id) #f (- id COLS)))
-(define (down  id) (if (last-row?  id) #f (+ id COLS)))
+(define (up    id) (if (first-row? id)
+                       (if (portal? id) (+ id LAST-ROW-START) #f)
+                       (- id COLS)))
+(define (down  id) (if (last-row?  id)
+                       (if (portal? id) (- id LAST-ROW-START) #f)
+                       (+ id COLS)))
 (define (left  id) (if (first-col? id) (if (portal? id) (+ id COLS -1) #f) (- id 1)))
 (define (right id) (if (last-col?  id) (if (portal? id) (- id COLS -1) #f) (+ id 1)))
 
