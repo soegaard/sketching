@@ -100,6 +100,7 @@
 
 (define (start)
   ; (displayln 'start)
+  ; (call-in-nested-thread (λ () (start-gui)))
   (start-gui)
   (void))
 
