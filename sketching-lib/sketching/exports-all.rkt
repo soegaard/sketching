@@ -50,7 +50,7 @@
      (define def/exprs (syntax->list #'(def/expr ...)))
      (define ctx (if (null? def/exprs) stx (car def/exprs)))
      (define msg (if (null? def/exprs)
-                     ; a both setup and draw is missing
+                     ; warn if both setup and draw is missing:
                      (string-append "Define  setup  and  draw  functions.\n " 
                                     "Examples: https://soegaard.github.io/sketching/Examples.html")
                      ""))
@@ -63,8 +63,9 @@
                    [on-mouse-dragged  (datum->syntax ctx 'on-mouse-dragged)]
                    [on-key-pressed    (datum->syntax ctx 'on-key-pressed)]
                    [on-key-released   (datum->syntax ctx 'on-key-released)]
+                   [on-resize         (datum->syntax ctx 'on-resize)]
                    [default-setup     (datum->syntax ctx 'default-setup)]
-                   [default-draw      (datum->syntax ctx 'default-draw)]
+                   [default-draw      (datum->syntax ctx 'default-draw)]                   
                    [message           msg])
      (syntax/loc stx
        (#%module-begin
@@ -80,6 +81,7 @@
         (current-on-mouse-dragged  on-mouse-dragged)
         (current-on-key-pressed    on-key-pressed)
         (current-on-key-released   on-key-released)
+        (current-on-resize         on-resize)
         (displayln message)
         (start) ; start event loop        
         )))]))

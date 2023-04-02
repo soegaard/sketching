@@ -92,6 +92,7 @@
          [(on-mouse-dragged)  #'#f]
          [(on-key-pressed)    #'#f]
          [(on-key-released)   #'#f]
+         [(on-resize)         #'#f]
          [else
           (cond
             [(or (id-contains? #'top-id ".") (id-contains? #'top-id "_"))
@@ -108,7 +109,7 @@
 ; SYNTAX  (sketching-app proc-expr arg ...)
 
 ;   Like #%app, but additionally:
-;     - a call to  o.m  where o is an object and m is a mtheod name,
+;     - a call to  o.m  where o is an object and m is a method name,
 ;       is rewritten to a method call
 ;     - a call to  f, where the identifier f contains no dots,
 ;       is a normal call.
