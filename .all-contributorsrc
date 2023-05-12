@@ -72,6 +72,15 @@
       "contributions": [
         "maintenance"
       ]
+    },
+    {
+      "login": "bennn",
+      "name": "Ben Greenman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1731829?v=4",
+      "profile": "http://ben-greenman.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -79,5 +88,6 @@
   "projectOwner": "soegaard",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "angular"
 }
