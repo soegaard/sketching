@@ -1,6 +1,6 @@
 # Sketching
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![Racket](https://img.shields.io/badge/-Made%20with%20Racket-darkred?logo=racket)](https://racket-lang.org)
 [![Discourse users](https://img.shields.io/discourse/users?label=Discuss%20on%20Racket%20Discourse&logo=racket&server=https%3A%2F%2Fracket.discourse.group)](https://racket.discourse.group/)
@@ -49,15 +49,20 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
-  <tr>
-    <td align="center"><a href="https://racket-stories.com"><img src="https://avatars.githubusercontent.com/u/461765?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jens Axel Søgaard</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=soegaard" title="Documentation">📖</a> <a href="https://github.com/soegaard/sketching/commits?author=soegaard" title="Code">💻</a> <a href="#example-soegaard" title="Examples">💡</a></td>
-    <td align="center"><a href="https://github.com/hasn0life"><img src="https://avatars.githubusercontent.com/u/67935595?v=4?s=100" width="100px;" alt=""/><br /><sub><b>hasn0life</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=hasn0life" title="Documentation">📖</a></td>
-    <td align="center"><a href="http://exodiquas.eu"><img src="https://avatars.githubusercontent.com/u/19648183?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Timo Netzer</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=eXodiquas" title="Code">💻</a> <a href="#example-eXodiquas" title="Examples">💡</a></td>
-    <td align="center"><a href="https://peterdohertys.website/"><img src="https://avatars.githubusercontent.com/u/289949?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Pete Doherty</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=ethagnawl" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/ericcervin"><img src="https://avatars.githubusercontent.com/u/1158978?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ericcervin</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=ericcervin" title="Documentation">📖</a> <a href="https://github.com/soegaard/sketching/issues?q=author%3Aericcervin" title="Bug reports">🐛</a> <a href="#example-ericcervin" title="Examples">💡</a></td>
-    <td align="center"><a href="http://linkedin.com/in/stephen-de-gabrielle/"><img src="https://avatars.githubusercontent.com/u/108047?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stephen De Gabrielle</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=spdegabrielle" title="Documentation">📖</a></td>
-    <td align="center"><a href="http://samth.github.io"><img src="https://avatars.githubusercontent.com/u/244723?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sam Tobin-Hochstadt</b></sub></a><br /><a href="#maintenance-samth" title="Maintenance">🚧</a></td>
-  </tr>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://racket-stories.com"><img src="https://avatars.githubusercontent.com/u/461765?v=4?s=100" width="100px;" alt="Jens Axel Søgaard"/><br /><sub><b>Jens Axel Søgaard</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=soegaard" title="Documentation">📖</a> <a href="https://github.com/soegaard/sketching/commits?author=soegaard" title="Code">💻</a> <a href="#example-soegaard" title="Examples">💡</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/hasn0life"><img src="https://avatars.githubusercontent.com/u/67935595?v=4?s=100" width="100px;" alt="hasn0life"/><br /><sub><b>hasn0life</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=hasn0life" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://exodiquas.eu"><img src="https://avatars.githubusercontent.com/u/19648183?v=4?s=100" width="100px;" alt="Timo Netzer"/><br /><sub><b>Timo Netzer</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=eXodiquas" title="Code">💻</a> <a href="#example-eXodiquas" title="Examples">💡</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://peterdohertys.website/"><img src="https://avatars.githubusercontent.com/u/289949?v=4?s=100" width="100px;" alt="Pete Doherty"/><br /><sub><b>Pete Doherty</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=ethagnawl" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ericcervin"><img src="https://avatars.githubusercontent.com/u/1158978?v=4?s=100" width="100px;" alt="ericcervin"/><br /><sub><b>ericcervin</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=ericcervin" title="Documentation">📖</a> <a href="https://github.com/soegaard/sketching/issues?q=author%3Aericcervin" title="Bug reports">🐛</a> <a href="#example-ericcervin" title="Examples">💡</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://linkedin.com/in/stephen-de-gabrielle/"><img src="https://avatars.githubusercontent.com/u/108047?v=4?s=100" width="100px;" alt="Stephen De Gabrielle"/><br /><sub><b>Stephen De Gabrielle</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=spdegabrielle" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://samth.github.io"><img src="https://avatars.githubusercontent.com/u/244723?v=4?s=100" width="100px;" alt="Sam Tobin-Hochstadt"/><br /><sub><b>Sam Tobin-Hochstadt</b></sub></a><br /><a href="#maintenance-samth" title="Maintenance">🚧</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://ben-greenman.com"><img src="https://avatars.githubusercontent.com/u/1731829?v=4?s=100" width="100px;" alt="Ben Greenman"/><br /><sub><b>Ben Greenman</b></sub></a><br /><a href="https://github.com/soegaard/sketching/commits?author=bennn" title="Code">💻</a></td>
+    </tr>
+  </tbody>
 </table>
 
 <!-- markdownlint-restore -->
